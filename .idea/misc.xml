@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="EntryPointsManager">
-    <list size="3">
+    <list size="6">
       <item index="0" class="java.lang.String" itemvalue="org.jdragon.springz.core.annotation.Autowired" />
-      <item index="1" class="java.lang.String" itemvalue="org.jdragon.springz.core.annotation.Configuration" />
-      <item index="2" class="java.lang.String" itemvalue="org.jdragon.springz.core.annotation.Service" />
+      <item index="1" class="java.lang.String" itemvalue="org.jdragon.springz.core.annotation.Bean" />
+      <item index="2" class="java.lang.String" itemvalue="org.jdragon.springz.core.annotation.Configuration" />
+      <item index="3" class="java.lang.String" itemvalue="org.jdragon.springz.core.annotation.Repository" />
+      <item index="4" class="java.lang.String" itemvalue="org.jdragon.springz.core.annotation.Resource" />
+      <item index="5" class="java.lang.String" itemvalue="org.jdragon.springz.core.annotation.Service" />
     </list>
     <writeAnnotations>
       <writeAnnotation name="org.jdragon.springz.core.annotation.Autowired" />

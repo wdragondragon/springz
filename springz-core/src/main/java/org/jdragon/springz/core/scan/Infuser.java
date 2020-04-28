@@ -1,7 +1,6 @@
 package org.jdragon.springz.core.scan;
 
 import org.jdragon.springz.core.annotation.Autowired;
-import org.jdragon.springz.core.annotation.Qualifier;
 import org.jdragon.springz.core.annotation.Resource;
 import org.jdragon.springz.core.entry.BeanInfo;
 import org.jdragon.springz.core.entry.ClassInfo;
@@ -12,6 +11,7 @@ import org.jdragon.springz.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.Map;
 
@@ -50,35 +50,40 @@ public class Infuser implements ScanAction {
             for (Field field : fields) {
                 //只有field中有Autowired才继续
                 if (field.isAnnotationPresent(Autowired.class)) {
-                    this.infuseAutowired(field, definitionName, getInfuseKey(field));
+                    this.infuse(definitionName, field, getAutowiredValue(field));
                 } else if (field.isAnnotationPresent(Resource.class)) {
-                    this.infuseResource();
+                    this.infuse(definitionName,field,getResourceValue(field));
                 }
             }
 
             Method[] methods = c.getDeclaredMethods();
             for (Method method : methods) {
-                //只有method中有Autowired才继续
-                if (method.isAnnotationPresent(Autowired.class)) {
-                    String methodName = method.getName();
+                //只有method中有Autowired或Resource才继续
+                Annotation annotation = method.getAnnotation(Autowired.class);
+                annotation = annotation != null ? annotation : method.getAnnotation(Resource.class);
+                if (annotation == null) {
+                    continue;
+                }
 
-                    if(methodName.indexOf("set")!=0){
-                        throw new NoSuchMethodException(methodName);
-                    }
+                String methodName = method.getName();
 
-                    String fieldName = methodName.replaceAll("set", "");
+                if (methodName.indexOf("set") != 0) {
+                    throw new NoSuchMethodException(methodName);
+                }
 
-                    fieldName = StringUtils.firstLowerCase(fieldName);
+                String fieldName = methodName.replaceAll("set", "");
+                fieldName = StringUtils.firstLowerCase(fieldName);
 
-                    Field field = c.getDeclaredField(fieldName);
+                Field field = c.getDeclaredField(fieldName);
 
-                    if(field==null){
-                        throw new NoSuchFieldException(fieldName);
-                    }
+                if (field == null) {
+                    throw new NoSuchFieldException(fieldName);
+                }
 
-                    this.infuseAutowired(field, definitionName, getInfuseKey(field));
-                } else if (method.isAnnotationPresent(Resource.class)) {
-                    this.infuseResource();
+                if (annotation instanceof Autowired) {
+                    this.infuse(definitionName, field, getAutowiredValue(field));
+                } else {
+                    this.infuse(definitionName, field, getResourceValue(field));
                 }
             }
         } catch (IllegalAccessException e) {
@@ -86,9 +91,9 @@ public class Infuser implements ScanAction {
         } catch (InstantiationException e) {
             logger.error(LogBuilder.build("缺失空参构造器"));
         } catch (NoSuchFieldException e) {
-            logger.error(LogBuilder.build("注入方法下的字段不存在",e.getMessage()));
-        } catch (NoSuchMethodException e){
-            logger.error(LogBuilder.build("注入方法必须为setXXX",e.getMessage()));
+            logger.error(LogBuilder.build("注入方法下的字段不存在", e.getMessage()));
+        } catch (NoSuchMethodException e) {
+            logger.error(LogBuilder.build("注入方法必须为setXXX", e.getMessage()));
         }
     }
 
@@ -97,7 +102,7 @@ public class Infuser implements ScanAction {
      * @return: java.lang.String
      * @Description: 根据field获取注入对象的key
      **/
-    public String getInfuseKey(Field field) {
+    public String getAutowiredValue(Field field) {
         Class<?> fieldClass = field.getType();
 
         String autowiredValue = fieldClass.getSimpleName();
@@ -109,12 +114,24 @@ public class Infuser implements ScanAction {
     }
 
     /**
+     * @params: [field]
+     * @return: java.lang.String
+     * @Description: 根据field获取注入对象的key
+     **/
+    public String getResourceValue(Field field) {
+        Resource resource = field.getAnnotation(Resource.class);
+        String resourceValue = resource.value();
+        String infuseKey = resourceValue.isEmpty() ? field.getName() : resourceValue;
+        return StringUtils.firstLowerCase(infuseKey);
+    }
+
+    /**
      * @params: [field, targetKey, objectKey]
      * @return: void
-     * @Description: 获取注入目标的targetKey和目标内需注入的field
-     * 获取targetKey对应的bean，将objectKey注入到target的field中
+     * @Description: 传入注入目标的targetKey，目标内需注入的field，注入对象的objectKey
+     * 从beanMap中获取targetObject和object，将object注入到targetObject的field中
      **/
-    public void infuseAutowired(Field field, String targetKey, String objectKey) throws IllegalAccessException, InstantiationException {
+    public void infuse(String targetKey, Field field, String objectKey) throws IllegalAccessException, InstantiationException {
         BeanInfo iBeanInfo = beanMap.get(objectKey);
 
         Object iBean;
@@ -134,9 +151,5 @@ public class Infuser implements ScanAction {
         }
 
         logger.info(LogBuilder.build("注入对象成功", targetKey, objectKey));
-    }
-
-    public void infuseResource() {
-        logger.info("resource");
     }
 }

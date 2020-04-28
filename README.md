@@ -34,32 +34,23 @@
 
 
 
-| 注解                             | 描述                                                         | 作用范围 |
-| :------------------------------- | :----------------------------------------------------------- | -------- |
-| @Component                       | 通用组件，在扫描时加入容器                                   | 类       |
-| @Repository,@Service,@Controller | 属于@Component，声明一个类是组件，在扫描时加入容器           | 类       |
-| @Configuration                   | 属于@Component，通常与@Bean搭配使用，在该注解下的@Bean才能注册到容器中，默认使用单例模式注入 | 类       |
-| @Bean                            | 声明一个方法是bean工厂，在启动时，其注解value值为beanName，返回值为bean，加入容器中，若beanName值为空，则使用方法名，默认使用单例模式注入 | 方法     |
-| @Autowired                       | 标注在字段上，自动从容器从获取与字段类型名字相同的bean，并将他赋给这个字段。 | 字段     |
-| @Qualifier                       | 与@Autowired搭配使用，在使用@Qualifier时，@Autowired中会使用@Qualifier中的值来代替获取字段类型名。 | 字段     |
-| @Value                           | 给组件中的字段赋予默认值，只能赋予有String.class类型的构造的值 | 字段     |
-| @Scope                           | 与@Bean或@Component搭配使用，设置组件的注入模式：单例或原型。默认是使用单例模式 | 类，方法 |
-
-
-
-注意：
-
-- 在使用@Bean对类的方法返回值进行注册时，该类本身也要交给容器管理。
-- 在使用@Autowired对类的非静态变量注入时，该类本身也要交给容器管理。
-- 若字段上没有@Autowired注解，@Qualifier是无效的。
-- @Value缺陷在于，这个被赋予默认值的字段类必须要有一个String.class类型的构造器。
-- @Configuration，@Repository，@Service，@Controller，@Component是一样的，只是用作区分不同作用的组件罢了。
+| 注解                             | 描述                                                         | 作用范围   |
+| :------------------------------- | :----------------------------------------------------------- | ---------- |
+| @Component                       | 通用组件，在扫描时加入容器                                   | 类         |
+| @Repository,@Service,@Controller | 属于@Component，声明一个类是组件，在扫描时加入容器           | 类         |
+| @Configuration                   | 属于@Component，通常与@Bean搭配使用，在该注解下的@Bean才能注册到容器中，默认使用单例模式注入 | 类         |
+| @Bean                            | 声明一个方法是bean工厂，在启动时，其注解value值为beanName，返回值为bean，加入容器中，若beanName值为空，则使用方法名，默认使用单例模式注入 | 方法       |
+| @Autowired                       | 可标注在字段或set方法上，自动从容器从获取与字段类型名字相同的bean，若字段使用：将bean赋给这个字段。若方法使用，则将bean赋给setXXX中XXX首字母小写后的字段名的字段。 | 字段，方法 |
+| @Qualifier                       | 与@Autowired搭配使用，在使用@Qualifier时，@Autowired中会使用@Qualifier中的值来代替获取字段类型名。 | 字段，方法 |
+| @Value                           | 给组件中的字段赋予默认值，只能赋予有String.class类型的构造的值 | 字段       |
+| @Scope                           | 与@Bean或@Component搭配使用，设置组件的注入模式：单例或原型。默认是使用单例模式 | 类，方法   |
+| @Resource                        | 与@Autowired使用相似，但匹配的不是字段类型而是字段名称。与@Autowired搭配@Qualifier使用时无异 | 类，方法   |
 
 
 
 使用方法：
 
-正确设置注解后，在主方法中启动容器
+正确设置注解后，在主方法中启动容器，App.class意味着从App.java这个文件目录下开始扫包
 
 ```java
 import org.jdragon.spring.core.AnnotationApplicationContext;
@@ -70,6 +61,23 @@ public static void main(String[] args) {
 ```
 
 
-### 五、测试截图
+
+注意：
+
+- 创建AnnotationApplicationContext默认会到参数class的路径开始扫描包，暂未实现componentScan注解功能。
+
+- 在使用@Bean对类的方法返回值进行注册时，该类本身也要交给容器管理。
+- 在使用@Autowired与@Resource对类的非静态变量注入时，该类本身也要交给容器管理。
+- 若字段上没有@Autowired注解时，@Qualifier是无效的。
+- @Value缺陷在于，这个被赋予默认值的字段类必须要有一个String.class类型的构造器。
+- @Configuration，@Repository，@Service，@Controller，@Component是一样的，只是用作区分不同作用的组件罢了。
+
+
+
+
+
+### 五、示例测试截图
+
+测试示例代码代码已在springz-test模块，拉取后可自行测试。
 
 ![测试结果](./imgs/测试结果.png)

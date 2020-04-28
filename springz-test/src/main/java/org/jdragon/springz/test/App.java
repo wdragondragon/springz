@@ -4,8 +4,11 @@ package org.jdragon.springz.test;
 
 import org.jdragon.springz.core.AnnotationApplicationContext;
 import org.jdragon.springz.core.annotation.Autowired;
+import org.jdragon.springz.core.annotation.ComponentScan;
+import org.jdragon.springz.core.annotation.Qualifier;
 import org.jdragon.springz.test.component.ComponentTest;
 import org.jdragon.springz.test.controller.UserController;
+import org.jdragon.springz.test.dao.CarDao;
 import org.jdragon.springz.test.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,11 +18,12 @@ import java.util.Arrays;
 /**
  * @author 10619
  */
+@ComponentScan
 public class App {
 
     private static Logger logger = LoggerFactory.getLogger(App.class);
 
-    private static AnnotationApplicationContext ctx;
+    private static AnnotationApplicationContext ctx = new AnnotationApplicationContext(App.class);
 
     @Autowired
     private static ComponentTest componentTest;
@@ -28,12 +32,13 @@ public class App {
     private static UserController userController;
 
     @Autowired
+    @Qualifier("carOneDao")
+    private static CarDao carDao;
+
+    @Autowired
     private static User user;
 
     public static void main(String[] args) {
-
-        ctx = new AnnotationApplicationContext(App.class);
-
         logger.info("已注册bean列表",Arrays.toString(ctx.getBeanDefinitionNames()));
 
         componentTest.test();
@@ -46,7 +51,10 @@ public class App {
 
         userController.saveAndAdd(user);
 
-        ctx.close();
+        carDao.resourceCar();
 
+        carDao.qualifierCar();
+
+        ctx.close();
     }
 }
