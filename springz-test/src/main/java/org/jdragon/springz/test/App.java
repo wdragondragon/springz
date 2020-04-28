@@ -21,6 +21,7 @@ import java.util.Arrays;
  * @author 10619
  */
 @SpringzMain
+@ComponentScan(basePackageClasses = App.class)
 public class App {
 
     private static Logger logger = LoggerFactory.getLogger(App.class);

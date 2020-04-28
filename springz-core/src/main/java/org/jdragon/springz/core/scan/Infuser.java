@@ -58,7 +58,7 @@ public class Infuser implements ScanAction {
 
             Method[] methods = c.getDeclaredMethods();
             for (Method method : methods) {
-                //只有method中有Autowired或Resource才继续
+                //只有method中有Autowired或Resource才继续，并且优先使用Autowired
                 Annotation annotation = method.getAnnotation(Autowired.class);
                 annotation = annotation != null ? annotation : method.getAnnotation(Resource.class);
                 if (annotation == null) {
