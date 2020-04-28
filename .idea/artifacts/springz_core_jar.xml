@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact name="springz-core:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/springz_core_jar</output-path>
+    <root id="root">
+      <element id="archive" name="springz-core.jar">
+        <element id="module-output" name="springz-core" />
+        <element id="module-output" name="springz-utils" />
+      </element>
+      <element id="library" level="project" name="Maven: ch.qos.logback:logback-core:1.2.3" />
+      <element id="library" level="project" name="Maven: ch.qos.logback:logback-classic:1.2.3" />
+      <element id="library" level="project" name="Maven: junit:junit:4.12" />
+      <element id="library" level="project" name="Maven: org.hamcrest:hamcrest-core:1.3" />
+      <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.25" />
+    </root>
+  </artifact>
+</component>

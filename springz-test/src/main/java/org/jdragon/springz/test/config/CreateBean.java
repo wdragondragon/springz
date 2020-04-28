@@ -3,7 +3,9 @@ package org.jdragon.springz.test.config;
 
 import org.jdragon.springz.core.annotation.Bean;
 import org.jdragon.springz.core.annotation.Configuration;
+import org.jdragon.springz.core.annotation.Scope;
 import org.jdragon.springz.core.annotation.Value;
+import org.jdragon.springz.core.entry.BeanInfo;
 import org.jdragon.springz.test.domain.User;
 
 /**
@@ -31,7 +33,7 @@ public class CreateBean {
     private Boolean vip;
 
     @Bean
-//    @Scope(BeanInfo.PROTOTYPE)
+    @Scope(BeanInfo.PROTOTYPE)
     public User user() {
         return new User(username, password, tel, birth, vip);
     }

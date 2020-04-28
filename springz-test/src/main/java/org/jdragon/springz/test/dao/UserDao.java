@@ -1,7 +1,9 @@
 package org.jdragon.springz.test.dao;
 
 
+import org.jdragon.springz.core.annotation.Autowired;
 import org.jdragon.springz.core.annotation.Repository;
+import org.jdragon.springz.core.annotation.Resource;
 import org.jdragon.springz.test.domain.User;
 
 /**
@@ -12,6 +14,14 @@ import org.jdragon.springz.test.domain.User;
  */
 @Repository
 public class UserDao {
+
+    User user1;
+
+    @Autowired
+    public void setUser1(User user1){
+        this.user1 = user1;
+    }
+
     public void save(User user) {
         System.out.println("UserDao===>save:" + user.toString());
     }

@@ -48,7 +48,6 @@ public class UserController {
     public void saveAndAdd(User user) {
         userSaveService.save(user);
         userAddService.add(user);
-
         userService.addAndSave(user);
     }
 }

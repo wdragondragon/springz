@@ -2,10 +2,13 @@ package org.jdragon.springz.core.utils;
 
 
 import org.jdragon.springz.core.annotation.Component;
+import org.jdragon.springz.core.annotation.Qualifier;
 import org.jdragon.springz.core.annotation.Scope;
 import org.jdragon.springz.core.entry.BeanInfo;
+import org.jdragon.springz.utils.StringUtils;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -20,7 +23,7 @@ public class AnnotationUtils {
     /**
      * @params: [annotation]
      * @return: java.lang.String
-     * @Description: 从Component或包含Component的注解上获取value的值
+     * @Description: 获取未知注解上的value值
      **/
 
     public static String getAnnotationAttribute(Annotation annotation, String attribute) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -51,9 +54,9 @@ public class AnnotationUtils {
      * @params: [c]
      * @return: java.lang.String:与Component相关注解的value值
      * @Description: 判断类或方法上有没有Scope
-     * 如果有包含Component，那么再看有没有value值，有的话返回这个值
+     * 如果有包含Scope，那么再看有没有value值，没有的话返回默认的SINGLETON
      **/
-        public static String checkIncludeScope(AnnotatedElement c) {
+    public static String checkIncludeScope(AnnotatedElement c) {
         String scopeValue = null;
         if(c.isAnnotationPresent(Scope.class)){
             Scope scope = c.getAnnotation(Scope.class);
@@ -63,5 +66,20 @@ public class AnnotationUtils {
             scopeValue = BeanInfo.SINGLETON;
         }
         return scopeValue;
+    }
+    /**
+     * @params: [element]
+     * @return: java.lang.String
+     * @Description:
+     **/
+    public static String checkIncludeQualifier(AnnotatedElement element){
+
+        //检测是否有qualifier注解，有则使用注解值来获取注入组件
+        String qualifierValue = null;
+        if (element.isAnnotationPresent(Qualifier.class)) {
+            Qualifier qualifier = element.getDeclaredAnnotation(Qualifier.class);
+            qualifierValue =  qualifier.value();
+        }
+        return qualifierValue;
     }
 }

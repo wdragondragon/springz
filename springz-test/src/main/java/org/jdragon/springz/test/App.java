@@ -15,7 +15,6 @@ import java.util.Arrays;
 /**
  * @author 10619
  */
-
 public class App {
 
     private static Logger logger = LoggerFactory.getLogger(App.class);
