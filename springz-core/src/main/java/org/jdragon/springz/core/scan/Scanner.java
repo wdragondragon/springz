@@ -75,6 +75,7 @@ public class Scanner {
         String baseClazzPackage = baseClazzName.substring(0, baseClazzName.lastIndexOf(PKG_SEPARATOR)).
                 replaceAll("\\" + PKG_SEPARATOR, PATH_SEPARATOR);
         String runType = Objects.requireNonNull(classLoader.getResource(baseClazzPackage)).getProtocol();
+        logger.info(LogBuilder.build("扫描",baseClazzPackage));
         if (scanCache.size() > 0) {
             this.scanCache();
         } else if (RUN_JAR.equals(runType)) {

@@ -14,6 +14,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,7 +58,7 @@ public class Registrar implements ScanAction {
             if (c.isAnnotationPresent(Component.class)) {
                 value = AnnotationUtils.getAnnotationAttribute(c.getAnnotation(Component.class), "value");
             } else {
-                value = AnnotationUtils.checkIncludeComponent(c);
+                value = AnnotationUtils.getComponentValue(c);
             }
 
             //如果上面返回的value是null，说明他所有注解和Component无关，就不需要注册
@@ -66,7 +67,7 @@ public class Registrar implements ScanAction {
             }
 
             //获取Bean的模式范围
-            String scopeValue = AnnotationUtils.checkIncludeScope(c);
+            String scopeValue = AnnotationUtils.getScopeValue(c);
 
             //声明注册的对象
             Object obj = c.newInstance();
@@ -92,7 +93,7 @@ public class Registrar implements ScanAction {
             registerMethod(c.getDeclaredMethods(), obj);
 
         } catch (NoSuchMethodException e) {
-            logger.warn(LogBuilder.build("@Value注解下的变量没有String构造器"),e.getCause());
+            logger.warn(LogBuilder.build("@Value注解下的变量没有String构造器", Arrays.toString(e.getStackTrace())));
         } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
             logger.warn(LogBuilder.build("@构造失败"),e.getCause());
             e.printStackTrace();
@@ -170,7 +171,7 @@ public class Registrar implements ScanAction {
             String[] beanNames = beanAnnotation.value();
 
             //获取Bean的模式范围
-            String scope = AnnotationUtils.checkIncludeScope(method);
+            String scope = AnnotationUtils.getScopeValue(method);
 
             if (beanNames.length == 0) {
                 register(method.getName(), bean, scope);
