@@ -11,9 +11,9 @@ import org.jdragon.springz.test.component.MyFilter;
 import org.jdragon.springz.test.controller.UserController;
 import org.jdragon.springz.test.dao.CarDao;
 import org.jdragon.springz.test.domain.User;
-import org.jdragon.springz.utils.LogBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jdragon.springz.utils.Log.LoggerFactory;
+import org.jdragon.springz.utils.Log.Logger;
+
 
 import java.util.Arrays;
 
@@ -21,14 +21,14 @@ import java.util.Arrays;
  * @author 10619
  */
 @SpringzMain
-//@ComponentScans(value = {
-//        @ComponentScan(basePackageClasses = App.class,includeFilters = {
-//                @Filter(type = FilterType.CUSTOM,classes = {MyFilter.class}),
-//                @Filter(type = FilterType.ANNOTATION
-//                        ,classes = {SpringzMain.class, Component.class, Service.class, Repository.class, Configuration.class, Controller.class}),
-//        }
-//        ,useDefaultFilters = false)}
-//)
+@ComponentScans(value = {
+        @ComponentScan(basePackageClasses = App.class,includeFilters = {
+                @Filter(type = FilterType.CUSTOM,classes = {MyFilter.class}),
+                @Filter(type = FilterType.ANNOTATION
+                        ,classes = {SpringzMain.class, Component.class, Service.class, Repository.class, Configuration.class, Controller.class}),
+        }
+        ,useDefaultFilters = false)}
+)
 //@ComponentScan(basePackageClasses = App.class)
 public class App {
 
@@ -50,7 +50,7 @@ public class App {
     private static User user;
 
     public static void main(String[] args) {
-        logger.info(LogBuilder.build("已注册bean列表",Arrays.toString(ctx.getBeanDefinitionNames())));
+        logger.info("已注册bean列表",Arrays.toString(ctx.getBeanDefinitionNames()));
 
         componentTest.test();
 

@@ -9,7 +9,9 @@ import org.jdragon.springz.core.scan.TypeFilter;
  * @Description:
  */
 public class MyFilter implements TypeFilter {
+    @Override
     public boolean match(Class<?> clazz) {
+
         System.out.println(clazz.getName());
         return false;
     }

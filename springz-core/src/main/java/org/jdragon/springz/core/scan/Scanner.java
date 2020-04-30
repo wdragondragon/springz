@@ -1,10 +1,9 @@
 package org.jdragon.springz.core.scan;
 
 import org.jdragon.springz.core.entry.ClassInfo;
-import org.jdragon.springz.utils.LogBuilder;
+import org.jdragon.springz.utils.Log.LoggerFactory;
+import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.JarURLConnection;
@@ -70,13 +69,10 @@ public class Scanner {
 
     }
     public void init(String...baseClassesName){
-        this.baseClassesName = baseClassesName;
         BaseClassesContext baseClassesContext = new BaseClassesContext();
         setAction(baseClassesContext).doScan();
         filter = new Filter(baseClassesContext.getBasePackageInfoMap());
-        String[]basePackagesForContext = baseClassesContext.getBasePackages(baseClassesName);
-        this.baseClassesName = basePackagesForContext;
-
+        this.baseClassesName = baseClassesContext.getBasePackages(baseClassesName);
     }
 
     public Scanner setAction(ScanAction scanAction) {
@@ -90,7 +86,7 @@ public class Scanner {
             //filter未初始化前扫类，后扫包
             baseClazzPackage = baseClazzPackage.replaceAll("\\" + PKG_SEPARATOR, PATH_SEPARATOR);
             String runType = Objects.requireNonNull(classLoader.getResource(baseClazzPackage)).getProtocol();
-            logger.info(LogBuilder.build("扫描", baseClazzPackage));
+            logger.info("扫描", baseClazzPackage);
 
             if (RUN_JAR.equals(runType)) {
                 this.scanJarPackage(baseClazzPackage);
@@ -157,7 +153,7 @@ public class Scanner {
                     scanAction.action(classInfo);
                 }
             } catch (ClassNotFoundException e) {
-                logger.warn(LogBuilder.build("扫描jar时出现无法创建对象的类", className));
+                logger.warn("扫描jar时出现无法创建对象的类", className);
             } catch(NoClassDefFoundError ignored){ }
         }
     }
@@ -197,7 +193,7 @@ public class Scanner {
                     scanAction.action(classInfo);
                 }
             } catch (ClassNotFoundException e) {
-                logger.warn(LogBuilder.build("扫描Jar时出现无法创建对象的类", className));
+                logger.warn("扫描Jar时出现无法创建对象的类", className);
             }
         }
     }

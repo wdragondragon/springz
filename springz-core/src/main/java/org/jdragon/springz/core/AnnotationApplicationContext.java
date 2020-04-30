@@ -9,9 +9,8 @@ package org.jdragon.springz.core;
 
 import org.jdragon.springz.core.entry.BeanInfo;
 import org.jdragon.springz.core.scan.*;
-import org.jdragon.springz.utils.LogBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jdragon.springz.utils.Log.LoggerFactory;
+import org.jdragon.springz.utils.Log.Logger;
 
 import java.util.Map;
 
@@ -37,7 +36,7 @@ public class AnnotationApplicationContext implements AnnotationResolver,Annotati
         //注入Bean
         injection();
 
-        logger.info(LogBuilder.build("启动所用时间",System.currentTimeMillis()-start+"ms"));
+        logger.info("启动所用时间",System.currentTimeMillis()-start+"ms");
     }
 
     @Override

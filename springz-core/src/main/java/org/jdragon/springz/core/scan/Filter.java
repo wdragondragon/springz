@@ -36,7 +36,6 @@ public class Filter {
      * @Description: 是否同意扫描加载，代码乱，待重构
      **/
     public boolean isAgree(ClassInfo classInfo) {
-
         String classPackage = classInfo.getClassName();
         Class<?> clazz = classInfo.getClazz();
         int maxLength = 0;
@@ -58,9 +57,7 @@ public class Filter {
 
         boolean useDefaultFilters = basePackageInfo.isUseDefaultFilters();
 
-        /**
-            先判断是否使用默认类型，如果符合默认过滤器，直接返true
-         */
+        //先判断是否使用默认类型，如果符合默认过滤器，直接返true
         if (useDefaultFilters) {
             Annotation[] annotations = clazz.getAnnotations();
             for (Annotation annotation : annotations) {
@@ -70,76 +67,45 @@ public class Filter {
                 }
             }
         }
-        boolean exclude = false;
-        boolean include = false;
-        //根据exclude或include分开来写for循环，for循环中又有根据type过滤类型来进行的的判断
-        for (FilterInfo excludeFilterInfo : excludeFiltersInfo) {
-            FilterType filterType = excludeFilterInfo.getType();
-            Class<?>[] excludeClasses = excludeFilterInfo.getClasses();
+        boolean exclude = judge(clazz,excludeFiltersInfo);
+        boolean include = judge(clazz,includeFiltersInfo);
+        //当exclude不成立并且include成立时通过
+        return !exclude && include;
+    }
+
+    /**
+     * @params: [clazz, filtersInfo]
+     * @return: boolean
+     * @Description: 判断exclude与include
+     **/
+    private boolean judge(Class<?> clazz,FilterInfo[] filtersInfo){
+        for (FilterInfo filterInfo : filtersInfo) {
+            FilterType filterType = filterInfo.getType();
+            Class<?>[] filterClasses = filterInfo.getClasses();
+
             if (filterType.equals(FilterType.ANNOTATION)) {
-                for (Class<?> excludeClass : excludeClasses) {
-                    String excludeClassName = excludeClass.getName();
+                for (Class<?> filterClass : filterClasses) {
+                    String filterClassName = filterClass.getName();
                     Annotation[] classAnnotations = clazz.getAnnotations();
                     for (Annotation classAnnotation : classAnnotations) {
                         String classAnnotationName = classAnnotation.annotationType().getName();
-                        if (classAnnotationName.equals(excludeClassName)) {
-                            exclude = true;
-                        }
-                    }
-                    if (exclude) {
-                        break;
-                    }
-                }
-            } else if (filterType.equals(FilterType.ASSIGNABLE_TYPE)) {
-                for (Class<?> excludeClass : excludeClasses) {
-                    if (excludeClass.equals(clazz)) {
-                        exclude = true;
-                        break;
-                    }
-                }
-            } else if (filterType.equals(FilterType.CUSTOM)) {
-                for (Class<?> excludeClass : excludeClasses) {
-                    try {
-                        Method match = excludeClass.getDeclaredMethod("match",Class.class);
-                        boolean isRefuse = (boolean) match.invoke(excludeClass,clazz);
-                        if (isRefuse) {
-                            exclude = true;
-                            break;
-                        }
-                    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-        for (FilterInfo includeFilterInfo : includeFiltersInfo) {
-            FilterType filterType = includeFilterInfo.getType();
-            Class<?>[] includeClasses = includeFilterInfo.getClasses();
-            if (filterType.equals(FilterType.ANNOTATION)) {
-                for (Class<?> includeClass : includeClasses) {
-                    String includeClassName = includeClass.getName();
-                    Annotation[] classAnnotations = clazz.getAnnotations();
-                    for (Annotation classAnnotation : classAnnotations) {
-                        if (classAnnotation.annotationType().getName().equals(includeClassName)) {
-                            include = true;
+                        if (classAnnotationName.equals(filterClassName)) {
+                            return true;
                         }
                     }
                 }
             } else if (filterType.equals(FilterType.ASSIGNABLE_TYPE)) {
-                for (Class<?> includeClass : includeClasses) {
-                    if (includeClass.equals(clazz)) {
-                        include = true;
-                        break;
+                for (Class<?> filterClass : filterClasses) {
+                    if (filterClass.equals(clazz)) {
+                        return true;
                     }
                 }
             } else if (filterType.equals(FilterType.CUSTOM)) {
-                for (Class<?> includeClass : includeClasses) {
+                for (Class<?> filterClass : filterClasses) {
                     try {
-                        Method match = includeClass.getDeclaredMethod("match", Class.class);
-                        boolean isAgree = (boolean) match.invoke(includeClass.newInstance(),clazz);
-                        if (isAgree) {
-                            include = true;
+                        Method match = filterClass.getDeclaredMethod("match",Class.class);
+                        if ((boolean) match.invoke(filterClass.newInstance(),clazz)) {
+                            return true;
                         }
                     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
                         e.printStackTrace();
@@ -147,7 +113,6 @@ public class Filter {
                 }
             }
         }
-
-        return !exclude && include;
+        return false;
     }
 }

@@ -6,10 +6,10 @@ import org.jdragon.springz.core.annotation.Value;
 import org.jdragon.springz.core.entry.BeanInfo;
 import org.jdragon.springz.core.entry.ClassInfo;
 import org.jdragon.springz.core.utils.AnnotationUtils;
-import org.jdragon.springz.utils.LogBuilder;
+import org.jdragon.springz.utils.Log.LoggerFactory;
+import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -93,9 +93,9 @@ public class Registrar implements ScanAction {
             registerMethod(c.getDeclaredMethods(), obj);
 
         } catch (NoSuchMethodException e) {
-            logger.warn(LogBuilder.build("@Value注解下的变量没有String构造器", Arrays.toString(e.getStackTrace())));
+            logger.warn("@Value注解下的变量没有String构造器", Arrays.toString(e.getStackTrace()));
         } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
-            logger.warn(LogBuilder.build("@构造失败"),e.getCause());
+            logger.warn("@构造失败",e.getCause().toString());
             e.printStackTrace();
         }
     }
@@ -109,14 +109,14 @@ public class Registrar implements ScanAction {
         //检查definitionName是否存在
         if (beanMap.containsKey(definitionName)) {
             Object existObj = beanMap.get(definitionName);
-            logger.warn(LogBuilder.build("已存在键名",definitionName,existObj.getClass().getName()));
-            logger.warn(LogBuilder.build("请解决类键名冲突",definitionName, classInfo.getClassName()));
+            logger.warn("已存在键名",definitionName,existObj.getClass().getName());
+            logger.warn("请解决类键名冲突",definitionName, classInfo.getClassName());
             return;
         }
         //将对象放到map容器
         beanMap.put(definitionName, new BeanInfo(obj,scope));
         if (beanMap.containsKey(definitionName)) {
-            logger.info(LogBuilder.build("注册bean成功",definitionName, classInfo.getClassName()));
+            logger.info("注册bean成功",definitionName, classInfo.getClassName());
         }
     }
 
@@ -148,7 +148,7 @@ public class Registrar implements ScanAction {
             Constructor<?> constructor = field.getType().getConstructor(String.class);
             field.setAccessible(true);
             field.set(obj, constructor.newInstance(value));
-            logger.info(LogBuilder.build("注入默认属性成功", classInfo.getClassName(),value));
+            logger.info("注入默认属性成功", classInfo.getClassName(),value);
         }
     }
 

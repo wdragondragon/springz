@@ -6,10 +6,10 @@ import org.jdragon.springz.core.entry.BeanInfo;
 import org.jdragon.springz.core.entry.ClassInfo;
 import org.jdragon.springz.core.utils.AnnotationUtils;
 import org.jdragon.springz.utils.Bean2Utils;
-import org.jdragon.springz.utils.LogBuilder;
+import org.jdragon.springz.utils.Log.LoggerFactory;
+import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
@@ -89,11 +89,11 @@ public class Infuser implements ScanAction {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {
-            logger.error(LogBuilder.build("缺失空参构造器"));
+            logger.error("缺失空参构造器");
         } catch (NoSuchFieldException e) {
-            logger.error(LogBuilder.build("注入方法下的字段不存在", e.getMessage()));
+            logger.error("注入方法下的字段不存在", e.getMessage());
         } catch (NoSuchMethodException e) {
-            logger.error(LogBuilder.build("注入方法必须为setXXX", e.getMessage()));
+            logger.error("注入方法必须为setXXX", e.getMessage());
         }
     }
 
@@ -150,6 +150,6 @@ public class Infuser implements ScanAction {
             field.set(beanMap.get(targetKey).getBean(), iBean);
         }
 
-        logger.info(LogBuilder.build("注入对象成功", targetKey, objectKey));
+        logger.info("注入对象成功", targetKey, objectKey);
     }
 }
