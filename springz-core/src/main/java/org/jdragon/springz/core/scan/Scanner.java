@@ -69,10 +69,12 @@ public class Scanner {
 
     }
     public void init(String...baseClassesName){
+        this.baseClassesName = baseClassesName;
         BaseClassesContext baseClassesContext = new BaseClassesContext();
         setAction(baseClassesContext).doScan();
         filter = new Filter(baseClassesContext.getBasePackageInfoMap());
-        this.baseClassesName = baseClassesContext.getBasePackages(baseClassesName);
+        String[]basePackagesForContext = baseClassesContext.getBasePackages(baseClassesName);
+        this.baseClassesName = basePackagesForContext;
     }
 
     public Scanner setAction(ScanAction scanAction) {
