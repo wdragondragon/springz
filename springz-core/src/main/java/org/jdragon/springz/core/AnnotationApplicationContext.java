@@ -7,26 +7,29 @@ package org.jdragon.springz.core;
  * @Description: 组件管理容器类
  */
 
-
-
 import org.jdragon.springz.core.entry.BeanInfo;
-import org.jdragon.springz.core.scan.Infuser;
-import org.jdragon.springz.core.scan.Registrar;
-import org.jdragon.springz.core.scan.Scanner;
+import org.jdragon.springz.core.scan.*;
+import org.jdragon.springz.utils.LogBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.Map;
 
 
-public class AnnotationApplicationContext implements AnnotationRegister {
+public class AnnotationApplicationContext implements AnnotationResolver,AnnotationRegister{
 
-    private Map<String, BeanInfo> beanMap = new HashMap<>();
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private Map<String, BeanInfo> beanMap;
 
     private Scanner scanner;
 
     public AnnotationApplicationContext(Class<?> baseClazz) {
+        long start = System.currentTimeMillis();
 
-        scanner = new Scanner(baseClazz);
+        String[] baseClassesName = {baseClazz.getPackage().getName()};
+
+        scanner = new Scanner(baseClassesName);
 
         //扫描包和注册组件
         scanAndRegister();
@@ -34,19 +37,20 @@ public class AnnotationApplicationContext implements AnnotationRegister {
         //注入Bean
         injection();
 
+        logger.info(LogBuilder.build("启动所用时间",System.currentTimeMillis()-start+"ms"));
     }
 
     @Override
     public void scanAndRegister() {
         Registrar registrar = new Registrar();
-        scanner.setAction(registrar).action();
+        scanner.setAction(registrar).doScan();
         beanMap = registrar.getBeanOfAll();
     }
 
     @Override
     public void injection() {
         Infuser infuser = new Infuser(beanMap);
-        scanner.setAction(infuser).action();
+        scanner.setAction(infuser).doScan();
     }
 
     public Map<String, BeanInfo> getBeanOfAll() {

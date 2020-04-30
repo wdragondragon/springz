@@ -46,21 +46,21 @@ public class AnnotationUtils {
 
         for (Annotation annotation : annotations) {
             Class<? extends Annotation> aClass = annotation.annotationType();
-            if (aClass.isAnnotationPresent(Component.class)||isIncludeComponent(c)) {
+            if (aClass.isAnnotationPresent(Component.class)|| isIncludeAnnotationType(c,Component.class)) {
                 return getAnnotationAttribute(annotation, "value");
             }
         }
         return null;
     }
 
-    public static boolean isIncludeComponent(Class<?> c){
+    public static boolean isIncludeAnnotationType(Class<?> c, Class<? extends Annotation> includeType){
         Annotation[] annotations = c.getAnnotations();
         for (Annotation annotation : annotations) {
             Class<? extends Annotation> aClass = annotation.annotationType();
-            if (aClass.isAnnotationPresent(Component.class)) {
+            if (aClass.isAnnotationPresent(includeType)) {
                 return true;
             }else if(!baseList.contains(aClass.getSimpleName())){
-                return isIncludeComponent(aClass);
+                return isIncludeAnnotationType(aClass,includeType);
             }
         }
         return false;
@@ -88,7 +88,6 @@ public class AnnotationUtils {
      * @Description:
      **/
     public static String checkIncludeQualifier(AnnotatedElement element){
-
         //检测是否有qualifier注解，有则使用注解值来获取注入组件
         String qualifierValue = null;
         if (element.isAnnotationPresent(Qualifier.class)) {

@@ -3,11 +3,11 @@ package org.jdragon.springz.test;
 
 
 import org.jdragon.springz.core.AnnotationApplicationContext;
-import org.jdragon.springz.core.annotation.Autowired;
-import org.jdragon.springz.core.annotation.ComponentScan;
-import org.jdragon.springz.core.annotation.Qualifier;
-import org.jdragon.springz.core.annotation.SpringzMain;
+import org.jdragon.springz.core.annotation.*;
+import org.jdragon.springz.core.annotation.ComponentScan.Filter;
+import org.jdragon.springz.core.entry.FilterType;
 import org.jdragon.springz.test.component.ComponentTest;
+import org.jdragon.springz.test.component.MyFilter;
 import org.jdragon.springz.test.controller.UserController;
 import org.jdragon.springz.test.dao.CarDao;
 import org.jdragon.springz.test.domain.User;
@@ -21,7 +21,15 @@ import java.util.Arrays;
  * @author 10619
  */
 @SpringzMain
-@ComponentScan(basePackageClasses = App.class)
+//@ComponentScans(value = {
+//        @ComponentScan(basePackageClasses = App.class,includeFilters = {
+//                @Filter(type = FilterType.CUSTOM,classes = {MyFilter.class}),
+//                @Filter(type = FilterType.ANNOTATION
+//                        ,classes = {SpringzMain.class, Component.class, Service.class, Repository.class, Configuration.class, Controller.class}),
+//        }
+//        ,useDefaultFilters = false)}
+//)
+//@ComponentScan(basePackageClasses = App.class)
 public class App {
 
     private static Logger logger = LoggerFactory.getLogger(App.class);

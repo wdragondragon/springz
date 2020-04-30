@@ -25,22 +25,8 @@ public class AppTest
         assertTrue( true );
     }
     @Test
-    public void test() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        Class<?> clazz = UserController.class;
-        Annotation[] annotations = clazz.getAnnotations();
-        for (Annotation annotation : annotations) {
-            Class<? extends Annotation> aClass = annotation.annotationType();
-
-            if (aClass.isAnnotationPresent(Controller.class)) {
-                //检测是否有value是否设值
-                System.out.println("yes");
-            }
-
-        }
-    }
-    public static String getAnnotationAttribute(Annotation annotation, String attribute) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Class<? extends Annotation> aClass = annotation.getClass();
-        Method method = aClass.getDeclaredMethod(attribute);
-        return (String) method.invoke(annotation);
+    public void test(){
+        Class<?> clazz = App.class;
+        System.out.println(clazz.getPackage().getName());
     }
 }

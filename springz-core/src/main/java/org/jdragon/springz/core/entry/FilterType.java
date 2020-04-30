@@ -17,10 +17,6 @@ public enum FilterType {
      */
     ASSIGNABLE_TYPE,
 
-    /**
-     * 使用正则过滤
-     */
-    REGEX,
 
     /** 使用自定义规则过滤
      */

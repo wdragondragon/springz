@@ -23,6 +23,8 @@ public class Scanner {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+
+
     /**
      * 扫描文件后缀
      */
@@ -51,19 +53,30 @@ public class Scanner {
      */
     private final ClassLoader classLoader;
 
-    private final String baseClazzName;
+    private String[] baseClassesName;
 
-    /**
-     * 扫描缓存
-     */
-    private final List<ClassInfo> scanCache = new ArrayList<>();
 
     private ScanAction scanAction;
 
-    public Scanner(final Class<?> baseClazz) {
-        classLoader = baseClazz.getClassLoader();
-        SCAN_BASE_PACKAGE = Objects.requireNonNull(classLoader.getResource("")).getPath();
-        baseClazzName = baseClazz.getName();
+    private Filter filter;
+
+    public Scanner(String...baseClassesName) {
+
+        this.classLoader = getClass().getClassLoader();
+
+        this.SCAN_BASE_PACKAGE = Objects.requireNonNull(classLoader.getResource("")).getPath();
+
+        init(baseClassesName);
+
+    }
+    public void init(String...baseClassesName){
+        this.baseClassesName = baseClassesName;
+        BaseClassesContext baseClassesContext = new BaseClassesContext();
+        setAction(baseClassesContext).doScan();
+        filter = new Filter(baseClassesContext.getBasePackageInfoMap());
+        String[]basePackagesForContext = baseClassesContext.getBasePackages(baseClassesName);
+        this.baseClassesName = basePackagesForContext;
+
     }
 
     public Scanner setAction(ScanAction scanAction) {
@@ -71,17 +84,19 @@ public class Scanner {
         return this;
     }
 
-    public void action() {
-        String baseClazzPackage = baseClazzName.substring(0, baseClazzName.lastIndexOf(PKG_SEPARATOR)).
-                replaceAll("\\" + PKG_SEPARATOR, PATH_SEPARATOR);
-        String runType = Objects.requireNonNull(classLoader.getResource(baseClazzPackage)).getProtocol();
-        logger.info(LogBuilder.build("扫描",baseClazzPackage));
-        if (scanCache.size() > 0) {
-            this.scanCache();
-        } else if (RUN_JAR.equals(runType)) {
-            this.scanJarPackage(baseClazzPackage);
-        } else if (RUN_FILE.equals(runType)) {
-            this.scanFilePackage(baseClazzPackage);
+    public void doScan() {
+        for(String baseClazzName:baseClassesName) {
+            String baseClazzPackage = baseClazzName;
+            //filter未初始化前扫类，后扫包
+            baseClazzPackage = baseClazzPackage.replaceAll("\\" + PKG_SEPARATOR, PATH_SEPARATOR);
+            String runType = Objects.requireNonNull(classLoader.getResource(baseClazzPackage)).getProtocol();
+            logger.info(LogBuilder.build("扫描", baseClazzPackage));
+
+            if (RUN_JAR.equals(runType)) {
+                this.scanJarPackage(baseClazzPackage);
+            } else if (RUN_FILE.equals(runType)) {
+                this.scanFilePackage(baseClazzPackage);
+            }
         }
     }
 
@@ -137,10 +152,13 @@ public class Scanner {
 
             try {
                 Class<?> clazz = Class.forName(className);
-                scanAction.action(new ClassInfo(key, className, clazz));
+                ClassInfo classInfo = new ClassInfo(key, className, clazz);
+                if(isAgree(classInfo)){
+                    scanAction.action(classInfo);
+                }
             } catch (ClassNotFoundException e) {
-                logger.warn(LogBuilder.build("扫描File时出现无法创建对象的类", className));
-            }
+                logger.warn(LogBuilder.build("扫描jar时出现无法创建对象的类", className));
+            } catch(NoClassDefFoundError ignored){ }
         }
     }
 
@@ -173,16 +191,18 @@ public class Scanner {
 
             try {
                 Class<?> clazz = Class.forName(className);
-                scanAction.action(new ClassInfo(key, className, clazz));
+
+                ClassInfo classInfo = new ClassInfo(key, className, clazz);
+                if(isAgree(classInfo)){
+                    scanAction.action(classInfo);
+                }
             } catch (ClassNotFoundException e) {
                 logger.warn(LogBuilder.build("扫描Jar时出现无法创建对象的类", className));
             }
         }
     }
 
-    private void scanCache() {
-        for (ClassInfo classInfo : scanCache) {
-            scanAction.action(classInfo);
-        }
+    private boolean isAgree(ClassInfo classInfo){
+        return filter==null||filter.isAgree(classInfo);
     }
 }
