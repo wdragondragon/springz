@@ -8,6 +8,8 @@ import org.jdragon.springz.test.domain.User;
 import org.jdragon.springz.test.service.UserAddService;
 import org.jdragon.springz.test.service.UserSaveService;
 import org.jdragon.springz.test.service.UserServiceImpl;
+import org.jdragon.springz.utils.Log.Logger;
+import org.jdragon.springz.utils.Log.LoggerFactory;
 
 /**
  * @Author: Jdragon

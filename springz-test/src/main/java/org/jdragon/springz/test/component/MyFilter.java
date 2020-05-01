@@ -1,6 +1,8 @@
 package org.jdragon.springz.test.component;
 
 import org.jdragon.springz.core.scan.TypeFilter;
+import org.jdragon.springz.utils.Log.Logger;
+import org.jdragon.springz.utils.Log.LoggerFactory;
 
 /**
  * @Author: Jdragon
@@ -9,10 +11,12 @@ import org.jdragon.springz.core.scan.TypeFilter;
  * @Description:
  */
 public class MyFilter implements TypeFilter {
+
+    Logger logger = LoggerFactory.getLogger(getClass());
+
     @Override
     public boolean match(Class<?> clazz) {
-
-        System.out.println(clazz.getName());
+//        logger.trace("Filter",clazz.getName());
         return false;
     }
 }

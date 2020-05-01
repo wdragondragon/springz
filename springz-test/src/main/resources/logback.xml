@@ -9,11 +9,11 @@
         </encoder>
     </appender>
 
-    <logger name="org.jdragon.springz" level="info" />
+    <logger name="org.jdragon.springz" level="trace" />
 
     <!-- 日志级别 -->
     <root>
-        <level value="error" />
+        <level value="trace" />
         <appender-ref ref="console" />
     </root>
 </configuration>

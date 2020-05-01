@@ -29,6 +29,7 @@ import java.util.Arrays;
         }
         ,useDefaultFilters = false)}
 )
+//@Import(App.class)
 //@ComponentScan(basePackageClasses = App.class)
 public class App {
 
@@ -52,6 +53,14 @@ public class App {
     public static void main(String[] args) {
         logger.info("已注册bean列表",Arrays.toString(ctx.getBeanDefinitionNames()));
 
+        User userTest = (User) ctx.getBean(User.class);
+
+        User userTest1 = (User) ctx.getBean("user");
+
+        logger.trace(userTest.toString());
+
+        logger.trace(userTest1.toString());
+
         componentTest.test();
 
         componentTest.scopeTest();
@@ -65,6 +74,7 @@ public class App {
         carDao.resourceCar();
 
         carDao.qualifierCar();
+
 
         ctx.close();
     }

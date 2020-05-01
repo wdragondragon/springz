@@ -55,6 +55,7 @@
 | @ComponentScan                   | 标注要扫什么包，并且根据什么条件进行包含与剔除               | 类                                                   |
 | @ComponentScans                  | 可以重复使用@ComponentScan                                   | 类                                                   |
 | @Filter                          | 在@ComponentScan内使用，指定包含或剔除的条件                 | @ComponentScan的includeFilters或excludeFilters属性内 |
+| @Import                          | 根据import的类的全类名，添加一个单例的类实例Bean             | 类                                                   |
 
 
 

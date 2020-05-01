@@ -37,9 +37,9 @@ public class Logger {
     public static String build(String tag,String...messages){
         String linkTag = "===>";
         String separator = ":=:";
-        StringBuilder template = new StringBuilder(tag + linkTag);
+        StringBuilder template = new StringBuilder(tag);
         if(messages.length>0){
-            template.append(messages[0]);
+            template.append(linkTag).append(messages[0]);
             for(int i = 1;i<messages.length;i++){
                 template.append(separator).append(messages[i]);
             }

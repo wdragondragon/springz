@@ -5,6 +5,8 @@ import org.jdragon.springz.core.annotation.Qualifier;
 import org.jdragon.springz.core.annotation.Repository;
 import org.jdragon.springz.core.annotation.Resource;
 import org.jdragon.springz.test.domain.Car;
+import org.jdragon.springz.utils.Log.Logger;
+import org.jdragon.springz.utils.Log.LoggerFactory;
 
 /**
  * @Author: Jdragon
@@ -14,6 +16,9 @@ import org.jdragon.springz.test.domain.Car;
  */
 @Repository("carOneDao")
 public class CarDao {
+
+    Logger logger = LoggerFactory.getLogger(getClass());
+
     @Resource("carOne")
     Car resourceCar;
 
@@ -22,10 +27,10 @@ public class CarDao {
     Car qualifierCar;
 
     public void resourceCar(){
-        System.out.println("CarDao===>resourceCar:"+resourceCar);
+        logger.trace("CarDao","resourceCar:"+resourceCar);
     }
 
     public void qualifierCar(){
-        System.out.println("CarDao===>qualifierCar:"+qualifierCar);
+        logger.trace("CarDao","qualifierCar:"+qualifierCar);
     }
 }

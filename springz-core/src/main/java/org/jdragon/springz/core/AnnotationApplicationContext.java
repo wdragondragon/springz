@@ -11,6 +11,7 @@ import org.jdragon.springz.core.entry.BeanInfo;
 import org.jdragon.springz.core.scan.*;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 import org.jdragon.springz.utils.Log.Logger;
+import org.jdragon.springz.utils.StringUtils;
 
 import java.util.Map;
 
@@ -57,8 +58,22 @@ public class AnnotationApplicationContext implements AnnotationResolver,Annotati
     }
 
     public Object getBean(String key) {
-        return beanMap.get(key);
+        if(beanMap.containsKey(key)){
+            return beanMap.get(key).getBean();
+        }
+        return null;
     }
+
+    public Object getBean(Class<?> clazz) {
+        String simple = StringUtils.firstLowerCase(clazz.getSimpleName());
+        BeanInfo beanInfo = beanMap.get(simple);
+        beanInfo = beanInfo!=null?beanInfo:beanMap.get(clazz.getName());
+        if (beanInfo==null){
+            return null;
+        }
+        return beanInfo.getBean();
+    }
+
 
     public String[] getBeanDefinitionNames() {
         return beanMap.keySet().toArray(new String[0]);
