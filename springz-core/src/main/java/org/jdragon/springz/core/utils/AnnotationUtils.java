@@ -41,12 +41,12 @@ public class AnnotationUtils {
      * @Description: 判断类上有没有间接包含Component。即注解嵌套拆分
      * 如果有包含Component，那么再看有没有value值，有的话返回这个值
      **/
-    public static String getComponentValue(Class<?> c) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public static String getAnnotationValue(Class<?> c, Class<? extends Annotation> annotationClass) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Annotation[] annotations = c.getAnnotations();
 
         for (Annotation annotation : annotations) {
             Class<? extends Annotation> aClass = annotation.annotationType();
-            if (aClass.isAnnotationPresent(Component.class)|| isIncludeAnnotationType(c,Component.class)) {
+            if (aClass.isAnnotationPresent(annotationClass)|| isIncludeAnnotationType(c,annotationClass)) {
                 return getAnnotationAttribute(annotation, "value");
             }
         }

@@ -10,7 +10,7 @@ public interface AnnotationRegister {
     /**
      * 扫描并注册Component与bean组件
      */
-    void scanAndRegister();
+    void registerType();
 
     /**
      * 注入bean

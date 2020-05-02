@@ -1,11 +1,10 @@
 package org.jdragon.springz.test.config;
 
 
-import org.jdragon.springz.core.annotation.Bean;
-import org.jdragon.springz.core.annotation.Configuration;
-import org.jdragon.springz.core.annotation.Scope;
-import org.jdragon.springz.core.annotation.Value;
+import org.jdragon.springz.core.annotation.*;
 import org.jdragon.springz.core.entry.BeanInfo;
+import org.jdragon.springz.test.component.ComponentTest;
+import org.jdragon.springz.test.controller.UserController;
 import org.jdragon.springz.test.domain.Car;
 import org.jdragon.springz.test.domain.User;
 
@@ -35,7 +34,7 @@ public class CreateBean {
 
     @Bean
     @Scope(BeanInfo.PROTOTYPE)
-    public User user() {
+    public User user(UserController controller) {
         return new User(username, password, tel, birth, vip);
     }
 

@@ -1,11 +1,11 @@
-package org.jdragon.springz.core.scan;
+package org.jdragon.springz.core.register;
 
-import org.jdragon.springz.core.annotation.Bean;
-import org.jdragon.springz.core.annotation.Component;
 import org.jdragon.springz.core.annotation.Import;
 import org.jdragon.springz.core.annotation.Value;
 import org.jdragon.springz.core.entry.BeanInfo;
 import org.jdragon.springz.core.entry.ClassInfo;
+import org.jdragon.springz.core.register.Registrar;
+import org.jdragon.springz.core.scan.ScanAction;
 import org.jdragon.springz.core.utils.AnnotationUtils;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 import org.jdragon.springz.utils.Log.Logger;
@@ -14,10 +14,7 @@ import org.jdragon.springz.utils.StringUtils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -27,13 +24,13 @@ import java.util.Map;
  * @Description: 注册者
  */
 
-public class Registrar implements ScanAction {
+public class TypeRegistrar extends Registrar implements ScanAction {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private Map<String, BeanInfo> beanMap = new HashMap<>();
-
-    private ClassInfo classInfo;
+    public TypeRegistrar(Map<String, BeanInfo> beanMap){
+        super(beanMap);
+    }
 
     /**
      * @params: [beanInfo]
@@ -48,21 +45,9 @@ public class Registrar implements ScanAction {
 
             //反射构建对象
             Class<?> c = classInfo.getClazz();
-            //判断类是否为注解，如果是则不需要注册
-            if (c.isAnnotation()) {
-                return;
-            }
 
-            //从类中检测是否有Component注解
-            //若无，再检查类中所有的注解是否有包含Component注解（注解嵌套）
-            String value;
-            if (c.isAnnotationPresent(Component.class)) {
-                value = AnnotationUtils.getAnnotationAttribute(c.getAnnotation(Component.class), "value");
-            } else {
-                value = AnnotationUtils.getComponentValue(c);
-            }
-
-            //如果上面返回的value是null，说明他所有注解和Component无关，就不需要注册
+            String value = getComponentValue(c);
+            //返回的value是null，说明他所有注解和Component无关，就不需要注册
             if (value == null) {
                 return;
             }
@@ -93,9 +78,6 @@ public class Registrar implements ScanAction {
             //将@Value注册到对象中 Object->obj:baseField
             registerFields(c.getDeclaredFields(), obj);
 
-            //将@Bean注解的方法，从beanMap中取出，并注入到obj中 Object->obj:beanField
-            registerMethod(c.getDeclaredMethods(), obj);
-
         } catch (NoSuchMethodException e) {
             logger.warn("@Value注解下的变量没有String构造器", Arrays.toString(e.getStackTrace()));
         } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
@@ -104,25 +86,6 @@ public class Registrar implements ScanAction {
         }
     }
 
-    /**
-     * @params: [definitionName, obj]
-     * @return: void
-     * @Description: 通用注册类，将definitionName作为key,obj作为value存到beanMap中
-     **/
-    private void register(String definitionName, Object obj,String scope) {
-        //检查definitionName是否存在
-        if (beanMap.containsKey(definitionName)) {
-            Object existObj = beanMap.get(definitionName);
-            logger.warn("已存在键名",definitionName,existObj.getClass().getName());
-            logger.warn("请解决类键名冲突",definitionName, classInfo.getClassName());
-            return;
-        }
-        //将对象放到map容器
-        beanMap.put(definitionName, new BeanInfo(obj,scope));
-        if (beanMap.containsKey(definitionName)) {
-            logger.info("注册bean成功",definitionName, classInfo.getClassName());
-        }
-    }
     /**
      * @params: [c, scopeValue]
      * @return: void
@@ -172,36 +135,51 @@ public class Registrar implements ScanAction {
         }
     }
 
-    /**
-     * @params: [methods, obj]
-     * @return: void
-     * @Description: 从传入的方法中，对方法判断是否有@Bean，有则注册Bean到beanMap中
-     **/
-    private void registerMethod(Method[] methods, Object obj) throws InvocationTargetException, IllegalAccessException {
-        for (Method method : methods) {
-            //判断是否有Bean注解
-            if (!method.isAnnotationPresent(Bean.class)) {
-                continue;
-            }
-            //根据obj中的方法获取method上的@Bean注解的方法返回值
-            Object bean = method.invoke(obj);
-
-            //判断Bean注解上是否设了BeanName
-            Bean beanAnnotation = method.getAnnotation(Bean.class);
-            String[] beanNames = beanAnnotation.value();
-
-            //获取Bean的模式范围
-            String scope = AnnotationUtils.getScopeValue(method);
-
-            if (beanNames.length == 0) {
-                register(method.getName(), bean, scope);
-                continue;
-            }
-            for (String beanName : beanNames) {
-                register(beanName, bean, scope);
-            }
-        }
-    }
+//    /**
+//     * @params: [methods, obj]
+//     * @return: void
+//     * @Description: 从传入的方法中，对方法判断是否有@Bean，有则注册Bean到beanMap中
+//     **/
+//    private void registerMethod(Method[] methods, Object obj) throws InvocationTargetException, IllegalAccessException {
+//        for (Method method : methods) {
+//            //判断是否有Bean注解
+//            if (!method.isAnnotationPresent(Bean.class)) {
+//                continue;
+//            }
+//            //根据obj中的方法获取method上的@Bean注解的方法返回值
+//            Class<?>[] methodParamTypes = method.getParameterTypes();
+//            List<Object> paramsList = new ArrayList<>();
+//            for(Class<?> methodParamType:methodParamTypes){
+//                String methodParamTypeName = methodParamType.getSimpleName();
+//                methodParamTypeName = StringUtils.firstLowerCase(methodParamTypeName);
+//                BeanInfo methodParamBean = beanMap.get(methodParamTypeName);
+//                if(methodParamBean==null){
+//                    logger.warn("@Bean注解下的方法参数未找到");
+//                    return;
+//                }
+//                paramsList.add(methodParamBean.getBean());
+//            }
+//
+//            Object[] paramsArray = paramsList.toArray();
+//
+//            Object bean = method.invoke(obj,paramsArray);
+//
+//            //判断Bean注解上是否设了BeanName
+//            Bean beanAnnotation = method.getAnnotation(Bean.class);
+//            String[] beanNames = beanAnnotation.value();
+//
+//            //获取Bean的模式范围
+//            String scope = AnnotationUtils.getScopeValue(method);
+//
+//            if (beanNames.length == 0) {
+//                register(method.getName(), bean, scope);
+//                continue;
+//            }
+//            for (String beanName : beanNames) {
+//                register(beanName, bean, scope);
+//            }
+//        }
+//    }
 
     public Map<String, BeanInfo> getBeanOfAll() {
         return beanMap;
