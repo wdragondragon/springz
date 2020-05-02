@@ -8,6 +8,7 @@ package org.jdragon.springz.core;
  */
 
 import org.jdragon.springz.core.entry.BeanInfo;
+import org.jdragon.springz.core.infuse.Infuser;
 import org.jdragon.springz.core.register.MethodRegistrar;
 import org.jdragon.springz.core.register.TypeRegistrar;
 import org.jdragon.springz.core.scan.*;

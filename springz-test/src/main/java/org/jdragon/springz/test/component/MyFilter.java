@@ -1,6 +1,6 @@
 package org.jdragon.springz.test.component;
 
-import org.jdragon.springz.core.scan.TypeFilter;
+import org.jdragon.springz.core.filter.TypeFilter;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 

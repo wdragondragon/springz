@@ -1,9 +1,10 @@
-package org.jdragon.springz.core.scan;
+package org.jdragon.springz.core.infuse;
 
 import org.jdragon.springz.core.annotation.Autowired;
 import org.jdragon.springz.core.annotation.Resource;
 import org.jdragon.springz.core.entry.BeanInfo;
 import org.jdragon.springz.core.entry.ClassInfo;
+import org.jdragon.springz.core.scan.ScanAction;
 import org.jdragon.springz.core.utils.AnnotationUtils;
 import org.jdragon.springz.utils.Bean2Utils;
 import org.jdragon.springz.utils.Log.LoggerFactory;

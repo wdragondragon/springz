@@ -8,14 +8,13 @@ import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @Author: Jdragon
  * @email: 1061917196@qq.com
  * @Date: 2020.05.02 11:39
- * @Description:
+ * @Description: 通用注册器
  */
 public abstract class Registrar {
 

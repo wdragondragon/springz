@@ -1,6 +1,8 @@
 package org.jdragon.springz.core.scan;
 
+import org.jdragon.springz.core.BaseClassesContext;
 import org.jdragon.springz.core.entry.ClassInfo;
+import org.jdragon.springz.core.filter.Filter;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.StringUtils;

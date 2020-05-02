@@ -1,4 +1,4 @@
-package org.jdragon.springz.core.scan;
+package org.jdragon.springz.core.filter;
 
 /**
  * @Author: Jdragon

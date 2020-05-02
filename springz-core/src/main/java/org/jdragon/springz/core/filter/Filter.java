@@ -1,4 +1,4 @@
-package org.jdragon.springz.core.scan;
+package org.jdragon.springz.core.filter;
 
 import org.jdragon.springz.core.entry.BasePackageInfo;
 import org.jdragon.springz.core.entry.ClassInfo;

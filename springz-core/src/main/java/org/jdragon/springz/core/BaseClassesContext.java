@@ -1,4 +1,4 @@
-package org.jdragon.springz.core.scan;
+package org.jdragon.springz.core;
 
 import org.jdragon.springz.core.annotation.Component;
 import org.jdragon.springz.core.annotation.ComponentScan;
@@ -7,6 +7,7 @@ import org.jdragon.springz.core.annotation.ComponentScans;
 import org.jdragon.springz.core.entry.ClassInfo;
 import org.jdragon.springz.core.entry.BasePackageInfo;
 import org.jdragon.springz.core.entry.FilterInfo;
+import org.jdragon.springz.core.scan.ScanAction;
 
 import java.util.*;
 
@@ -14,7 +15,7 @@ import java.util.*;
  * @Author: Jdragon
  * @email: 1061917196@qq.com
  * @Date: 2020.04.29 20:48
- * @Description:
+ * @Description: basePackage的容器，给扫描注册做准备
  */
 public class BaseClassesContext implements ScanAction {
 

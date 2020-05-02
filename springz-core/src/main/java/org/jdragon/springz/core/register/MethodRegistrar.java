@@ -17,7 +17,7 @@ import java.util.*;
  * @Author: Jdragon
  * @email: 1061917196@qq.com
  * @Date: 2020.05.02 11:27
- * @Description:
+ * @Description: 方法注册器
  */
 public class MethodRegistrar extends Registrar implements ScanAction {
 
