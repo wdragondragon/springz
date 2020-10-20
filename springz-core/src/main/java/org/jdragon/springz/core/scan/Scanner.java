@@ -1,6 +1,5 @@
 package org.jdragon.springz.core.scan;
 
-import org.jdragon.springz.core.BaseClassesContext;
 import org.jdragon.springz.core.entry.ClassInfo;
 import org.jdragon.springz.core.filter.Filter;
 import org.jdragon.springz.utils.Log.LoggerFactory;
@@ -23,7 +22,6 @@ import java.util.jar.JarFile;
 public class Scanner {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
 
 
     /**
@@ -59,25 +57,23 @@ public class Scanner {
 
     private ScanAction scanAction;
 
-    private Filter filter;
+    private List<Filter> filters = new ArrayList<>();
 
     public Scanner(String...baseClassesName) {
+        this.baseClassesName = baseClassesName;
+        String SCAN_BASE_PACKAGE1;
 
         this.classLoader = getClass().getClassLoader();
 
-        this.SCAN_BASE_PACKAGE = Objects.requireNonNull(classLoader.getResource("")).getPath();
+        try {
+            SCAN_BASE_PACKAGE1 = Objects.requireNonNull(classLoader.getResource("")).getPath();
+        } catch (Exception ignored) {
+            SCAN_BASE_PACKAGE1 = "";
+        }
 
-        init(baseClassesName);
+        this.SCAN_BASE_PACKAGE = SCAN_BASE_PACKAGE1;
+    }
 
-    }
-    public void init(String...baseClassesName){
-        this.baseClassesName = baseClassesName;
-        BaseClassesContext baseClassesContext = new BaseClassesContext();
-        setAction(baseClassesContext).doScan();
-        filter = new Filter(baseClassesContext.getBasePackageInfoMap());
-        String[]basePackagesForContext = baseClassesContext.getBasePackages(baseClassesName);
-        this.baseClassesName = basePackagesForContext;
-    }
 
     public Scanner setAction(ScanAction scanAction) {
         this.scanAction = scanAction;
@@ -85,7 +81,7 @@ public class Scanner {
     }
 
     public void doScan() {
-        for(String baseClazzName:baseClassesName) {
+        for (String baseClazzName : baseClassesName) {
             String baseClazzPackage = baseClazzName;
             //filter未初始化前扫类，后扫包
             baseClazzPackage = baseClazzPackage.replaceAll("\\" + PKG_SEPARATOR, PATH_SEPARATOR);
@@ -153,12 +149,13 @@ public class Scanner {
             try {
                 Class<?> clazz = Class.forName(className);
                 ClassInfo classInfo = new ClassInfo(key, className, clazz);
-                if(isAgree(classInfo)){
+                if (isAgree(classInfo)) {
                     scanAction.action(classInfo);
                 }
             } catch (ClassNotFoundException e) {
                 logger.warn("扫描jar时出现无法创建对象的类", className);
-            } catch(NoClassDefFoundError ignored){ }
+            } catch (NoClassDefFoundError ignored) {
+            }
         }
     }
 
@@ -193,7 +190,7 @@ public class Scanner {
                 Class<?> clazz = Class.forName(className);
 
                 ClassInfo classInfo = new ClassInfo(key, className, clazz);
-                if(isAgree(classInfo)){
+                if (isAgree(classInfo)) {
                     scanAction.action(classInfo);
                 }
             } catch (ClassNotFoundException e) {
@@ -202,7 +199,16 @@ public class Scanner {
         }
     }
 
-    private boolean isAgree(ClassInfo classInfo){
-        return filter==null||filter.isAgree(classInfo);
+    public Scanner addFilter(Filter filter) {
+        filters.add(filter);
+        return this;
+    }
+
+    private boolean isAgree(ClassInfo classInfo) {
+        for (Filter filter : filters) {
+            if(filter==null)continue;
+            if(!filter.isAgree(classInfo))return false;
+        }
+        return true;
     }
 }

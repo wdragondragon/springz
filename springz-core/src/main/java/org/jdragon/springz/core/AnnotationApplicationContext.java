@@ -8,6 +8,8 @@ package org.jdragon.springz.core;
  */
 
 import org.jdragon.springz.core.entry.BeanInfo;
+import org.jdragon.springz.core.filter.BaseFilter;
+import org.jdragon.springz.core.filter.Filter;
 import org.jdragon.springz.core.infuse.Infuser;
 import org.jdragon.springz.core.register.MethodRegistrar;
 import org.jdragon.springz.core.register.TypeRegistrar;
@@ -20,45 +22,46 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class AnnotationApplicationContext implements AnnotationResolver,AnnotationRegister{
+public class AnnotationApplicationContext {
 
     private final static Logger logger = LoggerFactory.getLogger(AnnotationApplicationContext.class);
 
-    private Map<String, BeanInfo> beanMap = new HashMap<>();
+    private final BaseClassesScanContext baseClassesScanContext = new BaseClassesScanContext();
 
-    private Scanner scanner;
+    private Map<String, BeanInfo> beanMap = new HashMap<>();
 
     public AnnotationApplicationContext(Class<?> baseClazz) {
         long start = System.currentTimeMillis();
 
+        //获取主方法的基础路径集
         String[] baseClassesName = {baseClazz.getPackage().getName()};
 
-        scanner = new Scanner(baseClassesName);
+        //获取要扫描的基础路径集
+        String[] scanBasePackages = getBaseClassesName(baseClassesName);
+
+        //根据扫描集来新建扫描器，一旦创建则确认扫描器扫描范围
+        Scanner scanner = newScan(scanBasePackages);
 
         //@Component扫描注册
-        registerType();
+        scanner.setAction(new TypeRegistrar(beanMap)).doScan();
 
         //@Bean扫描注册
-        registerMethod();
+        scanner.setAction(new MethodRegistrar(beanMap)).doScan();
 
         //注入
-        injection();
-
-        logger.info("启动所用时间",System.currentTimeMillis()-start+"ms");
-    }
-
-    public void registerMethod(){
-        scanner.setAction(new MethodRegistrar(beanMap)).doScan();
-    }
-
-    @Override
-    public void registerType() {
-        scanner.setAction(new TypeRegistrar(beanMap)).doScan();
-    }
-
-    @Override
-    public void injection() {
         scanner.setAction(new Infuser(beanMap)).doScan();
+
+        logger.info("启动所用时间", System.currentTimeMillis() - start + "ms");
+    }
+
+    public String[] getBaseClassesName(String... baseClassesName) {
+        new Scanner().setAction(baseClassesScanContext).doScan();
+        return baseClassesScanContext.getBasePackages(baseClassesName);
+    }
+
+    public Scanner newScan(String[] scanBasePackages) {
+        Filter baseFilter = new BaseFilter(baseClassesScanContext.getBasePackageInfoMap());
+        return new Scanner(scanBasePackages).addFilter(baseFilter);
     }
 
     public Map<String, BeanInfo> getBeanOfAll() {
@@ -66,20 +69,20 @@ public class AnnotationApplicationContext implements AnnotationResolver,Annotati
     }
 
     public Object getBean(String key) {
-        if(beanMap.containsKey(key)){
+        if (beanMap.containsKey(key)) {
             return beanMap.get(key).getBean();
         }
         return null;
     }
 
-    public Object getBean(Class<?> clazz) {
+    public <T> T getBean(Class<T> clazz) {
         String simple = StringUtils.firstLowerCase(clazz.getSimpleName());
         BeanInfo beanInfo = beanMap.get(simple);
-        beanInfo = beanInfo!=null?beanInfo:beanMap.get(clazz.getName());
-        if (beanInfo==null){
+        beanInfo = beanInfo != null ? beanInfo : beanMap.get(clazz.getName());
+        if (beanInfo == null || beanInfo.getBean() == null) {
             return null;
         }
-        return beanInfo.getBean();
+        return (T) beanInfo.getBean();
     }
 
 

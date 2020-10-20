@@ -17,9 +17,9 @@ import java.util.*;
  * @Date: 2020.04.29 20:48
  * @Description: basePackage的容器，给扫描注册做准备
  */
-public class BaseClassesContext implements ScanAction {
+public class BaseClassesScanContext implements ScanAction {
 
-    private Map<String,BasePackageInfo> basePackageInfoMap = new HashMap<>();
+    private final Map<String,BasePackageInfo> basePackageInfoMap = new HashMap<>();
 
     @Override
     public void action(ClassInfo classInfo) {

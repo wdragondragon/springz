@@ -1,7 +1,6 @@
 package org.jdragon.springz.test;
 
 
-
 import org.jdragon.springz.core.AnnotationApplicationContext;
 import org.jdragon.springz.core.annotation.*;
 import org.jdragon.springz.core.annotation.ComponentScan.Filter;
@@ -22,20 +21,20 @@ import java.util.Arrays;
  */
 @SpringzMain
 @ComponentScans(value = {
-        @ComponentScan(basePackageClasses = App.class,includeFilters = {
-                @Filter(type = FilterType.CUSTOM,classes = {MyFilter.class}),
+        @ComponentScan(basePackageClasses = App.class, includeFilters = {
+                @Filter(type = FilterType.CUSTOM, classes = {MyFilter.class}),
                 @Filter(type = FilterType.ANNOTATION
-                        ,classes = {SpringzMain.class, Component.class, Service.class, Repository.class, Configuration.class, Controller.class}),
+                        , classes = {SpringzMain.class, Component.class, Service.class, Repository.class, Configuration.class, Controller.class}),
         }
-        ,useDefaultFilters = false)}
+                , useDefaultFilters = false)}
 )
 //@Import(App.class)
 //@ComponentScan(basePackageClasses = App.class)
 public class App {
 
-    private static Logger logger = LoggerFactory.getLogger(App.class);
+    private static final Logger logger = LoggerFactory.getLogger(App.class);
 
-    private static AnnotationApplicationContext ctx = new AnnotationApplicationContext(App.class);
+    private static final AnnotationApplicationContext ctx = new AnnotationApplicationContext(App.class);
 
     @Autowired
     private static ComponentTest componentTest;
@@ -51,15 +50,15 @@ public class App {
     private static User user;
 
     public static void main(String[] args) {
-        logger.info("已注册bean列表",Arrays.toString(ctx.getBeanDefinitionNames()));
+        logger.info("已注册bean列表", Arrays.toString(ctx.getBeanDefinitionNames()));
 
-        User userTest = (User) ctx.getBean(User.class);
+        User userTest = ctx.getBean(User.class);
 
         User userTest1 = (User) ctx.getBean("user");
 
-        logger.trace(userTest.toString());
+        logger.info(userTest.toString());
 
-        logger.trace(userTest1.toString());
+        logger.info(userTest1.toString());
 
         componentTest.test();
 
