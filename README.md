@@ -47,13 +47,13 @@
 | @Repository,@Service,@Controller | 属于@Component，声明一个类是组件，在扫描时加入容器           | 类                                                   |
 | @Configuration                   | 属于@Component，通常与@Bean搭配使用，在该注解下的@Bean才能注册到容器中，默认使用单例模式注入 | 类                                                   |
 | @Bean                            | 声明一个方法是bean工厂，在启动时，其注解value值为beanName，返回值为bean，加入容器中，若beanName值为空，则使用方法名，默认使用单例模式注入 | 方法                                                 |
-| @Autowired                       | 可标注在字段或set方法上，自动从容器从获取与字段类型名字相同的bean，若字段使用：将bean赋给这个字段。若方法使用，则将bean赋给setXXX中XXX首字母小写后的字段名的字段。 | 字段，方法                                           |
+| @AutowiredZ                       | 可标注在字段或set方法上，自动从容器从获取与字段类型名字相同的bean，若字段使用：将bean赋给这个字段。若方法使用，则将bean赋给setXXX中XXX首字母小写后的字段名的字段。 | 字段，方法                                           |
 | @Qualifier                       | 与@Autowired搭配使用，在使用@Qualifier时，@Autowired中会使用@Qualifier中的值来代替获取字段类型名。 | 字段，方法                                           |
 | @Value                           | 给组件中的字段赋予默认值，只能赋予有String.class类型的构造的值 | 字段                                                 |
 | @Scope                           | 与@Bean或@Component搭配使用，设置组件的注入模式：单例或原型。默认是使用单例模式 | 类，方法                                             |
 | @Resource                        | 与@Autowired使用相似，但匹配的不是字段类型而是字段名称。与@Autowired搭配@Qualifier使用时无异 | 类，方法                                             |
-| @ComponentScan                   | 标注要扫什么包，并且根据什么条件进行包含与剔除               | 类                                                   |
-| @ComponentScans                  | 可以重复使用@ComponentScan                                   | 类                                                   |
+| @SpringzScan                   | 标注要扫什么包，并且根据什么条件进行包含与剔除               | 类                                                   |
+| @SpringzScans                  | 可以重复使用@ComponentScan                                   | 类                                                   |
 | @Filter                          | 在@ComponentScan内使用，指定包含或剔除的条件                 | @ComponentScan的includeFilters或excludeFilters属性内 |
 | @Import                          | 根据import的类的全类名，添加一个单例的类实例Bean             | 类                                                   |
 
@@ -67,7 +67,7 @@
 
 ```java
 @SpringzMain
-@ComponentScan(basePackageClasses = App.class)
+@SpringzScan(basePackageClasses = App.class)
 public class App {
 public static void main(String[] args) {
         AnnotationApplicationContext ctx = new AnnotationApplicationContext(App.class);
@@ -78,10 +78,10 @@ public static void main(String[] args) {
 
 注意：
 
-- 当没有@ComponentScan时，创建AnnotationApplicationContext默认会到参数class的路径开始扫描包。
+- 当没有@SpringzScan时，创建AnnotationApplicationContext默认会到参数class的路径开始扫描包。
 - 在使用@Bean对类的方法返回值进行注册时，该类本身也要交给容器管理。
-- 在使用@Autowired与@Resource对类的非静态变量注入时，该类本身也要交给容器管理。
-- 若字段上没有@Autowired注解时，@Qualifier是无效的。
+- 在使用@AutowiredZ与@Resource对类的非静态变量注入时，该类本身也要交给容器管理。
+- 若字段上没有@AutowiredZ注解时，@Qualifier是无效的。
 - @Value缺陷在于，这个被赋予默认值的字段类必须要有一个String.class类型的构造器。
 - @Configuration，@Repository，@Service，@Controller，@Component是一样的，只是用作区分不同作用的组件罢了。
 
@@ -94,3 +94,84 @@ public static void main(String[] args) {
 测试示例代码代码已在springz-test模块，拉取后可自行测试。
 
 ![测试结果](./imgs/测试结果.png)
+
+
+### 六、如何拓展Bean注册
+
+在本项目中，springz-feign为拓展core实现的远程调用接口依赖。
+
+只要实现ScanAction接口，和拥有一个`public Class(Map<String, BeanInfo> beanMap)`构造器，在本项目中这个构造器大多以继承`Registrar`后调用其构造方法实现
+
+### 七、Feign
+
+```java
+@ZFeign(baseUrl = "http://localhost:8081", basePath = "/test",depth = "result")
+public interface HttpTest {
+    //get http://localhost:8081/test/http
+    @GetMapping("/http")
+    public String http();
+
+    //get http://localhost:8081/test/http1/{id}
+    @GetMapping("/http1/{id}")
+    public String http1(@PathVariable("id") int id);
+
+    //get http://localhost:8081/test/http2?id={id}
+    @GetMapping("/http2")
+    public String http2(@RequestParam("id") int id);
+
+    //带body的get http://localhost:8081/test/http3
+    @GetMapping("/http3")
+    public String http3(@RequestBody int id);
+
+    //post http://localhost:8081/test/http4
+    @PostMapping("/http4")
+    public String http4();
+
+    //post http://localhost:8081/test/http5/{id}
+    @PostMapping("/http5/{id}")
+    public String http5(@PathVariable("id") int id);
+
+    //post http://localhost:8081/test/http6?id={id}
+    @PostMapping("/http6")
+    public String http6(@RequestParam("id") int id);
+
+    //带body的post http://localhost:8081/test/http7
+    @PostMapping("/http7")
+    public String http7(@RequestBody Http test);
+}
+
+```
+
+```java
+@SpringzMain
+@SpringzScan
+@EnableFeignSpringZ //启动springz-feign
+public class App {
+
+    private static final Logger logger = LoggerFactory.getLogger(App.class);
+
+    private static final AnnotationApplicationContext ctx = new AnnotationApplicationContext(App.class);
+    
+    @AutowiredZ
+    private static HttpTest httpTest;
+
+    public static void main(String[] args){
+        httpTest.http();
+
+        httpTest.http1(1);
+
+        httpTest.http2(1);
+
+        httpTest.http4();
+
+        httpTest.http5(1);
+
+        httpTest.http6(1);
+
+        httpTest.http7(new Http(1));
+
+        ctx.close();
+    }
+}
+```
+

@@ -25,7 +25,6 @@ import java.util.List;
 /**
  * @author 10619
  */
-@SpringzMain
 //@ComponentScans(value = {
 //        @ComponentScan(basePackageClasses = App.class, includeFilters = {
 //                @ComponentScan.ComponentFilter(type = FilterType.CUSTOM, classes = {MyFilter.class}),
@@ -36,6 +35,8 @@ import java.util.List;
 //)
 //@Import(App.class)
 //@ComponentScan(basePackage = {"org.jdragon.springz.test"})
+
+@SpringzMain
 @SpringzScan
 @EnableFeignSpringZ
 public class App {
