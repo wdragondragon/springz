@@ -84,7 +84,6 @@ public class DynaProxyHttp implements InvocationHandler {
         String str = "";
         try {
             HttpUtils httpUtils = HttpUtils.initJson();
-
             Map<String, String> map;
 
             if (robotMsgResult == null) return null;
@@ -107,7 +106,8 @@ public class DynaProxyHttp implements InvocationHandler {
             }
             return JSON.parseObject(str,type);
         } catch (Exception e) {
-            return str;
+            Class<?> typeCls = (Class<?>) type;
+            return typeCls.cast(str);
         }
     }
 

@@ -44,5 +44,8 @@ public interface HttpTest {
     //带body的post http://localhost:8081/test/http7
     @PostMapping("/http7")
     public String http7(@RequestBody Http test);
+
+    @GetMapping("/http8")
+    int http8();
 }
 

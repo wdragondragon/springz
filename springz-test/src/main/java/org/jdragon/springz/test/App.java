@@ -84,6 +84,7 @@ public class App {
         System.out.println(httpTest.http5(1));
         System.out.println(httpTest.http6(1));
         System.out.println(httpTest.http7(new Http(1)));
+        System.out.println(httpTest.http8());
 
         List<RobotPostOrder> postOrder = robot.getPostOrder();
         for (RobotPostOrder robotPostOrder : postOrder) {
