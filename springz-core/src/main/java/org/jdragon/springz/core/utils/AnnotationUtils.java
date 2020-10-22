@@ -1,10 +1,10 @@
 package org.jdragon.springz.core.utils;
 
 
-import org.jdragon.springz.core.annotation.Component;
-import org.jdragon.springz.core.annotation.Qualifier;
-import org.jdragon.springz.core.annotation.Scope;
-import org.jdragon.springz.core.entry.BeanInfo;
+
+import org.jdragon.springz.annotation.core.Qualifier;
+import org.jdragon.springz.annotation.core.Scope;
+import org.jdragon.springz.scanner.entry.BeanInfo;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -39,15 +39,15 @@ public class AnnotationUtils {
      * @params: [c]
      * @return: java.lang.String:与Component相关注解的value值
      * @Description: 判断类上有没有间接包含Component。即注解嵌套拆分
-     * 如果有包含Component，那么再看有没有value值，有的话返回这个值
+     * 如果有包含这个注解，那么再看有没有key对应的value值，有的话返回这个值
      **/
-    public static String getAnnotationValue(Class<?> c, Class<? extends Annotation> annotationClass) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public static String getAnnotationValue(Class<?> c, Class<? extends Annotation> annotationClass,String key) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Annotation[] annotations = c.getAnnotations();
 
         for (Annotation annotation : annotations) {
             Class<? extends Annotation> aClass = annotation.annotationType();
             if (aClass.isAnnotationPresent(annotationClass)|| isIncludeAnnotationType(c,annotationClass)) {
-                return getAnnotationAttribute(annotation, "value");
+                return getAnnotationAttribute(annotation, key);
             }
         }
         return null;
@@ -59,12 +59,33 @@ public class AnnotationUtils {
             Class<? extends Annotation> aClass = annotation.annotationType();
             if (aClass.isAnnotationPresent(includeType)) {
                 return true;
-            }else if(!baseList.contains(aClass.getSimpleName())){
-                return isIncludeAnnotationType(aClass,includeType);
+            }else if(!baseList.contains(aClass.getSimpleName())&&isIncludeAnnotationType(aClass,includeType)){
+                return true;
             }
         }
         return false;
     }
+
+    /**
+     * 如果有包含这个注解，有的话返回这个注解对象
+    **/
+    public static Annotation getIncludeAnnotationType(Class<?> c, Class<? extends Annotation> includeType){
+        Annotation[] annotations = c.getAnnotations();
+
+        for (Annotation annotation : annotations) {
+            Class<? extends Annotation> aClass = annotation.annotationType();
+            if (aClass.isAnnotationPresent(includeType)) {
+                return aClass.getAnnotation(includeType);
+            }else if(!baseList.contains(aClass.getSimpleName())){
+                Annotation includeAnnotationType = getIncludeAnnotationType(aClass, includeType);
+                if(includeAnnotationType!=null){
+                    return includeAnnotationType;
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * @params: [c]
      * @return: java.lang.String:与Component相关注解的value值

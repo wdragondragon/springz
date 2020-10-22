@@ -1,9 +1,11 @@
 package org.jdragon.springz.test.config;
 
 
-import org.jdragon.springz.core.annotation.*;
-import org.jdragon.springz.core.entry.BeanInfo;
-import org.jdragon.springz.test.component.ComponentTest;
+import org.jdragon.springz.annotation.core.Bean;
+import org.jdragon.springz.annotation.core.Configuration;
+import org.jdragon.springz.annotation.core.Scope;
+import org.jdragon.springz.annotation.core.Value;
+import org.jdragon.springz.scanner.entry.BeanInfo;
 import org.jdragon.springz.test.controller.UserController;
 import org.jdragon.springz.test.domain.Car;
 import org.jdragon.springz.test.domain.User;

@@ -1,9 +1,9 @@
 package org.jdragon.springz.test.component;
 
 
-import org.jdragon.springz.core.annotation.Autowired;
-import org.jdragon.springz.core.annotation.Component;
-import org.jdragon.springz.test.App;
+
+import org.jdragon.springz.annotation.core.AutowiredZ;
+import org.jdragon.springz.annotation.core.Component;
 import org.jdragon.springz.test.domain.User;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
@@ -19,10 +19,10 @@ public class ComponentTest {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired
+    @AutowiredZ
     private static User user;
 
-    @Autowired
+    @AutowiredZ
     private static User user2;
 
     public void test() {

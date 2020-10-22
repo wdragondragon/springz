@@ -1,13 +1,16 @@
 package org.jdragon.springz.core;
 
-import org.jdragon.springz.core.annotation.Component;
-import org.jdragon.springz.core.annotation.ComponentScan;
-import org.jdragon.springz.core.annotation.ComponentScan.Filter;
-import org.jdragon.springz.core.annotation.ComponentScans;
-import org.jdragon.springz.core.entry.ClassInfo;
-import org.jdragon.springz.core.entry.BasePackageInfo;
+
+import org.jdragon.springz.annotation.core.SpringzScan;
+import org.jdragon.springz.annotation.core.SpringzScan.ComponentFilter;
+import org.jdragon.springz.annotation.core.SpringzScans;
 import org.jdragon.springz.core.entry.FilterInfo;
-import org.jdragon.springz.core.scan.ScanAction;
+import org.jdragon.springz.core.scan.BasePackageInfo;
+
+import org.jdragon.springz.scanner.Filter;
+import org.jdragon.springz.scanner.ScanAction;
+import org.jdragon.springz.scanner.entry.ClassInfo;
+
 
 import java.util.*;
 
@@ -19,70 +22,75 @@ import java.util.*;
  */
 public class BaseClassesScanContext implements ScanAction {
 
-    private final Map<String,BasePackageInfo> basePackageInfoMap = new HashMap<>();
+    private final Map<String, BasePackageInfo> basePackageInfoMap = new HashMap<>();
 
     @Override
     public void action(ClassInfo classInfo) {
         //TODO 根据ClassInfo获取ComponentScan注解并生成componentScanInfo
         Class<?> clazz = classInfo.getClazz();
-
-        if(clazz.isAnnotationPresent(ComponentScans.class)){
-            for(ComponentScan componentScan:clazz.getAnnotation(ComponentScans.class).value()){
-                resolverComponentScan(componentScan);
+        if (clazz.isAnnotationPresent(SpringzScans.class)) {
+            for (SpringzScan springzScan : clazz.getAnnotation(SpringzScans.class).value()) {
+                resolverComponentScan(springzScan);
             }
-        }else if(clazz.isAnnotationPresent(ComponentScan.class)){
-            resolverComponentScan(clazz.getAnnotation(ComponentScan.class));
+        } else if (clazz.isAnnotationPresent(SpringzScan.class)) {
+            resolverComponentScan(clazz.getAnnotation(SpringzScan.class));
         }
-
     }
-    private void resolverComponentScan(ComponentScan componentScan){
-        Class<?>[] basePackageClasses = componentScan.basePackageClasses();
-        String[] basePackages = componentScan.basePackage();
-        boolean useDefaultFilters = componentScan.useDefaultFilters();
-        Filter[] excludeFilters = componentScan.excludeFilters();
-        Filter[] includeFilters = componentScan.includeFilters();
 
-        FilterInfo[] includeFiltersInfo = new FilterInfo[includeFilters.length];
-        FilterInfo[] excludeFiltersInfo = new FilterInfo[excludeFilters.length];
+    @Override
+    public Filter[] getFilters() {
+        return new Filter[0];
+    }
+
+    public void resolverComponentScan(SpringzScan springzScan) {
+        Class<?>[] basePackageClasses = springzScan.basePackageClasses();
+        String[] basePackages = springzScan.basePackage();
+        boolean useDefaultFilters = springzScan.useDefaultFilters();
+        ComponentFilter[] excludeComponentFilters = springzScan.excludeFilters();
+        ComponentFilter[] includeComponentFilters = springzScan.includeFilters();
+
+        FilterInfo[] includeFiltersInfo = new FilterInfo[includeComponentFilters.length];
+        FilterInfo[] excludeFiltersInfo = new FilterInfo[excludeComponentFilters.length];
 
         int i = 0;
-        for(Filter filter:includeFilters){
-            includeFiltersInfo[i] = new FilterInfo(filter.type(),filter.classes());
+        for (ComponentFilter componentFilter : includeComponentFilters) {
+            includeFiltersInfo[i] = new FilterInfo(componentFilter.type(), componentFilter.classes());
             i++;
         }
         i = 0;
-        for(Filter filter:excludeFilters){
-            excludeFiltersInfo[i] = new FilterInfo(filter.type(),filter.classes());
+        for (ComponentFilter componentFilter : excludeComponentFilters) {
+            excludeFiltersInfo[i] = new FilterInfo(componentFilter.type(), componentFilter.classes());
             i++;
         }
 
         BasePackageInfo basePackageInfo =
-                new BasePackageInfo(useDefaultFilters,includeFiltersInfo,excludeFiltersInfo);
-        for(Class<?> basePackageClass:basePackageClasses){
+                new BasePackageInfo(useDefaultFilters, includeFiltersInfo, excludeFiltersInfo);
+        for (Class<?> basePackageClass : basePackageClasses) {
             String basePackage = basePackageClass.getPackage().getName();
-            basePackageInfoMap.put(basePackage,basePackageInfo);
+            basePackageInfoMap.put(basePackage, basePackageInfo);
         }
-        for(String basePackage:basePackages){
-            basePackageInfoMap.put(basePackage,basePackageInfo);
+        for (String basePackage : basePackages) {
+            basePackageInfoMap.put(basePackage, basePackageInfo);
         }
     }
 
-    public Map<String, BasePackageInfo> getBasePackageInfoMap(){
+    public Map<String, BasePackageInfo> getBasePackageInfoMap() {
         return basePackageInfoMap;
     }
 
-    public String[] getBasePackages(String baseClassesName[]){
-        Set<String> basePackageSet =  basePackageInfoMap.keySet();
+    public String[] getBasePackages(String[] baseClassesName) {
+        Set<String> basePackageSet = basePackageInfoMap.keySet();
         String[] basePackages = new String[basePackageSet.size()];
-        if(basePackageSet.size()==0){
-            basePackageInfoMap.put(baseClassesName[0],new BasePackageInfo());
+        if (basePackageSet.size() == 0) {
+            basePackageInfoMap.put(baseClassesName[0], new BasePackageInfo());
             return baseClassesName;
         }
         int i = 0;
-        for(String basePackage:basePackageSet){
+        for (String basePackage : basePackageSet) {
             basePackages[i] = basePackage;
             i++;
         }
+
         return basePackages;
     }
 }

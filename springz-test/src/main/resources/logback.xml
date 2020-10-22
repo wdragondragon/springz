@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration scan="true" scanPeriol="60" debug="false">
+<configuration springzScan="true" scanPeriol="60" debug="false">
     <!--自定义颜色配置-->
     <conversionRule conversionWord="customColor" converterClass="org.jdragon.springz.test.config.LogbackConfig"/>
     <!-- ch.qos.logback.core.ConsoleAppender 控制台输出 -->
@@ -10,6 +10,7 @@
     </appender>
 
     <logger name="org.jdragon.springz" level="trace" />
+    <logger name="org.apache.http" level="error" />
 
     <!-- 日志级别 -->
     <root>

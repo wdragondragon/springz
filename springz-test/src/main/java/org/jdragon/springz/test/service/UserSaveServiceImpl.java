@@ -1,8 +1,9 @@
 package org.jdragon.springz.test.service;
 
 
-import org.jdragon.springz.core.annotation.Autowired;
-import org.jdragon.springz.core.annotation.Service;
+
+import org.jdragon.springz.annotation.core.AutowiredZ;
+import org.jdragon.springz.annotation.core.Service;
 import org.jdragon.springz.test.dao.UserDao;
 import org.jdragon.springz.test.domain.User;
 import org.jdragon.springz.utils.Log.Logger;
@@ -19,7 +20,7 @@ public class UserSaveServiceImpl implements UserSaveService {
 
     Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired
+    @AutowiredZ
     UserDao userDao;
 
     @Override

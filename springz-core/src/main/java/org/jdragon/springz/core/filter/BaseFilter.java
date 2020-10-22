@@ -1,9 +1,11 @@
 package org.jdragon.springz.core.filter;
 
-import org.jdragon.springz.core.entry.BasePackageInfo;
-import org.jdragon.springz.core.entry.ClassInfo;
+
 import org.jdragon.springz.core.entry.FilterInfo;
-import org.jdragon.springz.core.entry.FilterType;
+import org.jdragon.springz.annotation.core.FilterType;
+import org.jdragon.springz.scanner.Filter;
+import org.jdragon.springz.core.scan.BasePackageInfo;
+import org.jdragon.springz.scanner.entry.ClassInfo;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -16,7 +18,7 @@ import java.util.*;
  * @Date: 2020.04.30 08:17
  * @Description: 扫描过滤器
  */
-public class BaseFilter implements Filter{
+public class BaseFilter implements Filter {
 
     private Map<String, BasePackageInfo> basePackageInfoMap;
 

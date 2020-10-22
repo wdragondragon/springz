@@ -1,11 +1,14 @@
 package org.jdragon.springz.core.infuse;
 
-import org.jdragon.springz.core.annotation.Autowired;
-import org.jdragon.springz.core.annotation.Resource;
-import org.jdragon.springz.core.entry.BeanInfo;
-import org.jdragon.springz.core.entry.ClassInfo;
-import org.jdragon.springz.core.scan.ScanAction;
+
+import org.jdragon.springz.annotation.core.AutowiredZ;
+import org.jdragon.springz.annotation.core.Resource;
+
 import org.jdragon.springz.core.utils.AnnotationUtils;
+import org.jdragon.springz.scanner.Filter;
+import org.jdragon.springz.scanner.ScanAction;
+import org.jdragon.springz.scanner.entry.BeanInfo;
+import org.jdragon.springz.scanner.entry.ClassInfo;
 import org.jdragon.springz.utils.Bean2Utils;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 import org.jdragon.springz.utils.Log.Logger;
@@ -26,10 +29,13 @@ public class Infuser implements ScanAction {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private Map<String, BeanInfo> beanMap;
+    private final Map<String, BeanInfo> beanMap;
 
-    public Infuser(Map<String, BeanInfo> beanMap) {
+    private final Filter[] filters;
+
+    public Infuser(Map<String, BeanInfo> beanMap,Filter...filters) {
         this.beanMap = beanMap;
+        this.filters = filters;
     }
 
     /**
@@ -50,7 +56,7 @@ public class Infuser implements ScanAction {
             Field[] fields = c.getDeclaredFields();
             for (Field field : fields) {
                 //只有field中有Autowired才继续
-                if (field.isAnnotationPresent(Autowired.class)) {
+                if (field.isAnnotationPresent(AutowiredZ.class)) {
                     this.infuse(definitionName, field, getAutowiredValue(field));
                 } else if (field.isAnnotationPresent(Resource.class)) {
                     this.infuse(definitionName,field,getResourceValue(field));
@@ -60,7 +66,7 @@ public class Infuser implements ScanAction {
             Method[] methods = c.getDeclaredMethods();
             for (Method method : methods) {
                 //只有method中有Autowired或Resource才继续，并且优先使用Autowired
-                Annotation annotation = method.getAnnotation(Autowired.class);
+                Annotation annotation = method.getAnnotation(AutowiredZ.class);
                 annotation = annotation != null ? annotation : method.getAnnotation(Resource.class);
                 if (annotation == null) {
                     continue;
@@ -81,7 +87,7 @@ public class Infuser implements ScanAction {
                     throw new NoSuchFieldException(fieldName);
                 }
 
-                if (annotation instanceof Autowired) {
+                if (annotation instanceof AutowiredZ) {
                     this.infuse(definitionName, field, getAutowiredValue(field));
                 } else {
                     this.infuse(definitionName, field, getResourceValue(field));
@@ -96,6 +102,11 @@ public class Infuser implements ScanAction {
         } catch (NoSuchMethodException e) {
             logger.error("注入方法必须为setXXX", e.getMessage());
         }
+    }
+
+    @Override
+    public Filter[] getFilters() {
+        return filters;
     }
 
     /**
@@ -133,8 +144,11 @@ public class Infuser implements ScanAction {
      * 从beanMap中获取targetObject和object，将object注入到targetObject的field中
      **/
     public void infuse(String targetKey, Field field, String objectKey) throws IllegalAccessException, InstantiationException {
+        if(!beanMap.containsKey(objectKey)){
+            logger.warn("注入Bean失败","找不到ObjKey",objectKey);
+            return;
+        }
         BeanInfo iBeanInfo = beanMap.get(objectKey);
-
         Object iBean;
         if (iBeanInfo.getScope().equals(BeanInfo.SINGLETON)) {
             iBean = iBeanInfo.getBean();

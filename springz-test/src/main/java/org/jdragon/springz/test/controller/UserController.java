@@ -1,15 +1,13 @@
 package org.jdragon.springz.test.controller;
 
 
-import org.jdragon.springz.core.annotation.Autowired;
-import org.jdragon.springz.core.annotation.Controller;
-import org.jdragon.springz.core.annotation.Qualifier;
+import org.jdragon.springz.annotation.core.AutowiredZ;
+import org.jdragon.springz.annotation.core.Controller;
+import org.jdragon.springz.annotation.core.Qualifier;
 import org.jdragon.springz.test.domain.User;
 import org.jdragon.springz.test.service.UserAddService;
 import org.jdragon.springz.test.service.UserSaveService;
 import org.jdragon.springz.test.service.UserServiceImpl;
-import org.jdragon.springz.utils.Log.Logger;
-import org.jdragon.springz.utils.Log.LoggerFactory;
 
 /**
  * @Author: Jdragon
@@ -21,21 +19,21 @@ import org.jdragon.springz.utils.Log.LoggerFactory;
 @Controller
 public class UserController {
 
-    @Autowired
+    @AutowiredZ
     UserSaveService saveService;
 
-    @Autowired
+    @AutowiredZ
     UserAddService addService;
 
-    @Autowired
+    @AutowiredZ
     @Qualifier("userService")
     UserSaveService userSaveService;
 
-    @Autowired
+    @AutowiredZ
     @Qualifier("userService")
     UserAddService userAddService;
 
-    @Autowired
+    @AutowiredZ
     @Qualifier("userService")
     UserServiceImpl userService;
 

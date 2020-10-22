@@ -1,32 +1,138 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.jdragon.springz</groupId>
-  <artifactId>springz</artifactId>
-  <packaging>pom</packaging>
-  <version>1.0-SNAPSHOT</version>
-  <modules>
-    <module>springz-core</module>
-    <module>springz-utils</module>
-    <module>springz-test</module>
-  </modules>
+    <groupId>org.jdragon.springz</groupId>
+    <artifactId>springz</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0</version>
+    <modules>
+        <module>springz-core</module>
+        <module>springz-utils</module>
+        <module>springz-test</module>
+        <module>springz-feign</module>
+        <module>springz-annotation</module>
+        <module>springz-scanner</module>
+    </modules>
 
-  <name>springz</name>
-  <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
+    <name>springz</name>
+    <!-- FIXME change it to the project's website -->
+    <url>http://www.example.com</url>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
-  </properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <springz.version>1.0</springz.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jdragon.springz</groupId>
+                <artifactId>springz-utils</artifactId>
+                <version>${springz.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jdragon.springz</groupId>
+                <artifactId>springz-annotation</artifactId>
+                <version>${springz.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jdragon.springz</groupId>
+                <artifactId>springz-scanner</artifactId>
+                <version>${springz.version}</version>
+            </dependency>
 
 
-  <dependencies>
+            <dependency>
+                <groupId>org.jdragon.springz</groupId>
+                <artifactId>springz-core</artifactId>
+                <version>${springz.version}</version>
+            </dependency>
 
+            <dependency>
+                <groupId>org.jdragon.springz</groupId>
+                <artifactId>springz-feign</artifactId>
+                <version>${springz.version}</version>
+            </dependency>
 
-  </dependencies>
+            <dependency>
+                <groupId>com.jdragon</groupId>
+                <artifactId>jdragon-common</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <!--  <repositories>-->
+    <!--    <repository>-->
+    <!--      <id>jdragon-nexus-snapshots</id>-->
+    <!--      <url>http://39.96.83.89:12345/repository/maven-snapshots/</url>-->
+    <!--      <releases>-->
+    <!--        <enabled>true</enabled>-->
+    <!--      </releases>-->
+    <!--      <snapshots>-->
+    <!--        <enabled>true</enabled>-->
+    <!--        <updatePolicy>always</updatePolicy>-->
+    <!--      </snapshots>-->
+    <!--    </repository>-->
+    <!--  </repositories>-->
+
+    <distributionManagement>
+        <repository>
+            <id>jdragon-nexus-releases</id>
+            <name>Nexus Release Repository</name>
+            <url>http://39.96.83.89:12345/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>jdragon-nexus-snapshots</id>
+            <name>Nexus Snapshot Repository</name>
+            <url>http://39.96.83.89:12345/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <build>
+        <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+            <plugins>
+                <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
+                <plugin>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
+                <plugin>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.0.2</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.0</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.1</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.0.2</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.5.2</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                </plugin>
+                <!-- site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
+                <plugin>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.7.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
