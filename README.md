@@ -190,3 +190,41 @@ public class App {
 
 
 ![feign测试结果](./imgs/feign测试结果.png)
+
+
+### 从maven开始使用
+
+
+```xml
+<!--jdragon的仓库-->
+<repositories>
+    <repository>
+        <id>jdragon-nexus</id>
+        <url>http://jdragon.club:12345/repository/jdragon-repo/</url>
+    </repository>
+</repositories>
+```
+
+如果你仅仅想使用spring-core中的ioc容器，那么请使用springz-core
+
+```xml
+<!--springz core依赖-->
+<dependency>
+    <groupId>org.jdragon.springz</groupId>
+    <artifactId>springz-core</artifactId>
+    <version>1.0</version> 
+</dependency>
+```
+
+如果你想使用core+feign，那么请使用springz-feign
+
+```xml
+<!--springz feign依赖 自带core无需再导入-->
+<dependency>
+    <groupId>org.jdragon.springz</groupId>
+    <artifactId>springz-feign</artifactId>
+    <version>1.0</version> 
+</dependency>
+```
+
+

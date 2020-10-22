@@ -67,30 +67,17 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <!--  <repositories>-->
-    <!--    <repository>-->
-    <!--      <id>jdragon-nexus-snapshots</id>-->
-    <!--      <url>http://39.96.83.89:12345/repository/maven-snapshots/</url>-->
-    <!--      <releases>-->
-    <!--        <enabled>true</enabled>-->
-    <!--      </releases>-->
-    <!--      <snapshots>-->
-    <!--        <enabled>true</enabled>-->
-    <!--        <updatePolicy>always</updatePolicy>-->
-    <!--      </snapshots>-->
-    <!--    </repository>-->
-    <!--  </repositories>-->
 
     <distributionManagement>
         <repository>
-            <id>jdragon-nexus-releases</id>
-            <name>Nexus Release Repository</name>
-            <url>http://39.96.83.89:12345/repository/maven-releases/</url>
+            <id>jdragon-nexus</id>
+            <name>jdragon releases Repository</name>
+            <url>http://jdragon.club:12345/repository/jdragon-repo/</url>
         </repository>
         <snapshotRepository>
             <id>jdragon-nexus-snapshots</id>
-            <name>Nexus Snapshot Repository</name>
-            <url>http://39.96.83.89:12345/repository/maven-snapshots/</url>
+            <name>jdragon snapshots Repository</name>
+            <url>http://jdragon.club:12345/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
