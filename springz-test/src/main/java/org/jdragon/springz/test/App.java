@@ -43,7 +43,7 @@ public class App {
 
     private static final Logger logger = LoggerFactory.getLogger(App.class);
 
-//    private static final AnnotationApplicationContext ctx = new AnnotationApplicationContext(App.class);
+    //    private static final AnnotationApplicationContext ctx = new AnnotationApplicationContext(App.class);
     private static final AnnotationApplicationContext ctx = new AnnotationApplicationContext(App.class);
 
     @AutowiredZ
@@ -77,14 +77,14 @@ public class App {
         ctx.close();
     }
 
-    public static void testHttp(){
-//        httpTest.http();
-//        httpTest.http1(1);
-//        httpTest.http2(1);
-//        httpTest.http4();
-//        httpTest.http5(1);
-//        httpTest.http6(1);
-//        httpTest.http7(new Http(1));
+    public static void testHttp() {
+        System.out.println(httpTest.http());
+        System.out.println(httpTest.http1(1));
+        System.out.println(httpTest.http2(1));
+        System.out.println(httpTest.http5(1));
+        System.out.println(httpTest.http6(1));
+        System.out.println(httpTest.http7(new Http(1)));
+
         List<RobotPostOrder> postOrder = robot.getPostOrder();
         for (RobotPostOrder robotPostOrder : postOrder) {
             System.out.println(robotPostOrder);
@@ -93,7 +93,7 @@ public class App {
         System.out.println(postOrder1);
     }
 
-    public static void testBean(){
+    public static void testBean() {
         logger.info("已注册bean列表", Arrays.toString(ctx.getBeanDefinitionNames()));
 
         User userTest = ctx.getBean(User.class);

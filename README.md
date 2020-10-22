@@ -102,7 +102,19 @@ public static void main(String[] args) {
 
 只要实现ScanAction接口，和拥有一个`public Class(Map<String, BeanInfo> beanMap)`构造器，在本项目中这个构造器大多以继承`Registrar`后调用其构造方法实现
 
-### 七、Feign
+补充一个注解 `Enable***SpringZ` 上再使用`SpringzScan(basePackage=“拓展项所在包”)`
+
+下例为springz-Feign的拓展补充注解，注在启动类上即为启动被拓展功能
+
+```java
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@SpringzScan(basePackage = "org.jdragon.springz.feign")
+public @interface EnableFeignSpringZ {
+    
+}
+```
+### 七、Feign使用示例
 
 ```java
 @ZFeign(baseUrl = "http://localhost:8081", basePath = "/test",depth = "result")
@@ -175,3 +187,6 @@ public class App {
 }
 ```
 
+
+
+![feign测试结果](./imgs/feign测试结果.png)
