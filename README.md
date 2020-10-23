@@ -35,6 +35,11 @@
 
 属于第三次包扫描，对BaseClassesContext中已获取的需扫包信息进行扫描，Infuser实现ScanAction接口，在扫描过程中调用，对autowired下的注解进行注入，具体处理细节请查看代码。
 
+#### 5、生命周期
+
+顺序:@Component->@Import->@Value->拓展注解->@Bean->@AutowiredZ/@Resource
+
+
 ### 四、注解功能
 
 现有注解：
