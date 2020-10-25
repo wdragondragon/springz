@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>springz-feign</artifactId>
+        <groupId>org.jdragon.springz</groupId>
+        <version>1.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>springz-feign-core</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jdragon.springz</groupId>
+            <artifactId>springz-feign-annotation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jdragon.springz</groupId>
+            <artifactId>springz-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jdragon</groupId>
+            <artifactId>jdragon-common</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+</project>

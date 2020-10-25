@@ -2,10 +2,10 @@ package org.jdragon.springz.test;
 
 
 import com.jdragon.common.response.normal.Result;
-import org.jdragon.springz.annotation.core.*;
-import org.jdragon.springz.annotation.feign.EnableFeignSpringZ;
+import org.jdragon.springz.core.annotation.*;
 import org.jdragon.springz.core.AnnotationApplicationContext;
 
+import org.jdragon.springz.feign.annotation.EnableFeignSpringZ;
 import org.jdragon.springz.test.dao.Http;
 import org.jdragon.springz.test.domain.RobotPostOrder;
 import org.jdragon.springz.test.service.HttpTest;

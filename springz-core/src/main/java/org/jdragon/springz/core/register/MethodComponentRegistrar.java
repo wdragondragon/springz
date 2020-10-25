@@ -1,7 +1,7 @@
 package org.jdragon.springz.core.register;
 
 
-import org.jdragon.springz.annotation.core.Bean;
+import org.jdragon.springz.core.annotation.Bean;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 
 import org.jdragon.springz.core.utils.AnnotationUtils;

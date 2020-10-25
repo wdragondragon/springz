@@ -1,6 +1,6 @@
 package org.jdragon.springz.core.entry;
 
-import org.jdragon.springz.annotation.core.FilterType;
+import org.jdragon.springz.core.annotation.FilterType;
 
 /**
  * @Author: Jdragon

@@ -2,7 +2,7 @@ package org.jdragon.springz.core.filter;
 
 
 import org.jdragon.springz.core.entry.FilterInfo;
-import org.jdragon.springz.annotation.core.FilterType;
+import org.jdragon.springz.core.annotation.FilterType;
 import org.jdragon.springz.scanner.Filter;
 import org.jdragon.springz.core.scan.BasePackageInfo;
 import org.jdragon.springz.scanner.entry.ClassInfo;

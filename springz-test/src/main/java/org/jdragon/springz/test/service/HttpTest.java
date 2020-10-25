@@ -1,7 +1,6 @@
 package org.jdragon.springz.test.service;
 
-import com.jdragon.common.response.normal.Result;
-import org.jdragon.springz.annotation.feign.*;
+import org.jdragon.springz.feign.annotation.*;
 import org.jdragon.springz.test.dao.Http;
 
 

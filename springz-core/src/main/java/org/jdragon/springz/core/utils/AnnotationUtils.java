@@ -2,8 +2,8 @@ package org.jdragon.springz.core.utils;
 
 
 
-import org.jdragon.springz.annotation.core.Qualifier;
-import org.jdragon.springz.annotation.core.Scope;
+import org.jdragon.springz.core.annotation.Qualifier;
+import org.jdragon.springz.core.annotation.Scope;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 
 import java.lang.annotation.Annotation;

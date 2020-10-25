@@ -1,8 +1,8 @@
 package org.jdragon.springz.core.register;
 
 
-import org.jdragon.springz.annotation.core.Import;
-import org.jdragon.springz.annotation.core.Value;
+import org.jdragon.springz.core.annotation.Import;
+import org.jdragon.springz.core.annotation.Value;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 
 import org.jdragon.springz.core.utils.AnnotationUtils;

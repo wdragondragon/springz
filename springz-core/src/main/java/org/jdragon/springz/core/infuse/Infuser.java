@@ -1,8 +1,8 @@
 package org.jdragon.springz.core.infuse;
 
 
-import org.jdragon.springz.annotation.core.AutowiredZ;
-import org.jdragon.springz.annotation.core.Resource;
+import org.jdragon.springz.core.annotation.AutowiredZ;
+import org.jdragon.springz.core.annotation.Resource;
 
 import org.jdragon.springz.core.utils.AnnotationUtils;
 import org.jdragon.springz.scanner.Filter;

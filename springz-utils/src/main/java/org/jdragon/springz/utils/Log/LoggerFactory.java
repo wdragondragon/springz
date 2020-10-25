@@ -7,9 +7,10 @@ package org.jdragon.springz.utils.Log;
  * @Description: Log字符串创建类
  */
 public class LoggerFactory {
-    public static Logger getLogger(Class<?> clazz){
+    public static Logger getLogger(Class<?> clazz) {
         return new Logger(clazz);
     }
 
-    private LoggerFactory(){ }
+    private LoggerFactory() {
+    }
 }

@@ -1,6 +1,6 @@
 package org.jdragon.springz.core.register;
 
-import org.jdragon.springz.annotation.core.SpringzScan;
+import org.jdragon.springz.core.annotation.SpringzScan;
 import org.jdragon.springz.core.BaseClassesScanContext;
 import org.jdragon.springz.core.utils.AnnotationUtils;
 import org.jdragon.springz.scanner.Filter;

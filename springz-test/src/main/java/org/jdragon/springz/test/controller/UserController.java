@@ -1,9 +1,10 @@
 package org.jdragon.springz.test.controller;
 
 
-import org.jdragon.springz.annotation.core.AutowiredZ;
-import org.jdragon.springz.annotation.core.Controller;
-import org.jdragon.springz.annotation.core.Qualifier;
+
+import org.jdragon.springz.core.annotation.AutowiredZ;
+import org.jdragon.springz.core.annotation.Controller;
+import org.jdragon.springz.core.annotation.Qualifier;
 import org.jdragon.springz.test.domain.User;
 import org.jdragon.springz.test.service.UserAddService;
 import org.jdragon.springz.test.service.UserSaveService;

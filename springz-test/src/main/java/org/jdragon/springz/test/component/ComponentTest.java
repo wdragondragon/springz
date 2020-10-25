@@ -2,11 +2,13 @@ package org.jdragon.springz.test.component;
 
 
 
-import org.jdragon.springz.annotation.core.AutowiredZ;
-import org.jdragon.springz.annotation.core.Component;
+
+import org.jdragon.springz.core.annotation.AutowiredZ;
+import org.jdragon.springz.core.annotation.Component;
 import org.jdragon.springz.test.domain.User;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
+
 
 /**
  * @Author: Jdragon

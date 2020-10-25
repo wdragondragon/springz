@@ -1,10 +1,10 @@
 package org.jdragon.springz.test.dao;
 
 
-import org.jdragon.springz.annotation.core.AutowiredZ;
-import org.jdragon.springz.annotation.core.Qualifier;
-import org.jdragon.springz.annotation.core.Repository;
-import org.jdragon.springz.annotation.core.Resource;
+import org.jdragon.springz.core.annotation.AutowiredZ;
+import org.jdragon.springz.core.annotation.Qualifier;
+import org.jdragon.springz.core.annotation.Repository;
+import org.jdragon.springz.core.annotation.Resource;
 import org.jdragon.springz.test.domain.Car;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;

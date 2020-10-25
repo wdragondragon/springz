@@ -1,9 +1,9 @@
 package org.jdragon.springz.core;
 
 
-import org.jdragon.springz.annotation.core.SpringzScan;
-import org.jdragon.springz.annotation.core.SpringzScan.ComponentFilter;
-import org.jdragon.springz.annotation.core.SpringzScans;
+import org.jdragon.springz.core.annotation.SpringzScan;
+import org.jdragon.springz.core.annotation.SpringzScan.ComponentFilter;
+import org.jdragon.springz.core.annotation.SpringzScans;
 import org.jdragon.springz.core.entry.FilterInfo;
 import org.jdragon.springz.core.scan.BasePackageInfo;
 

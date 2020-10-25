@@ -7,7 +7,7 @@ package org.jdragon.springz.utils;
  * @Description: 字符串工具类
  */
 public class StringUtils {
-    public static String firstLowerCase(String str){
+    public static String firstLowerCase(String str) {
         return String.valueOf(str.charAt(0)).toLowerCase() + str.substring(1);
     }
 }

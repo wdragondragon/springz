@@ -56,7 +56,20 @@
 
             <dependency>
                 <groupId>org.jdragon.springz</groupId>
-                <artifactId>springz-feign</artifactId>
+                <artifactId>springz-feign-core</artifactId>
+                <version>${springz.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.jdragon.springz</groupId>
+                <artifactId>springz-feign-annotation</artifactId>
+                <version>${springz.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jdragon.springz</groupId>
+                <artifactId>springz-feign-annotation</artifactId>
                 <version>${springz.version}</version>
             </dependency>
 
