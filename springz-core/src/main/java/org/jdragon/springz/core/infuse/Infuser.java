@@ -2,10 +2,12 @@ package org.jdragon.springz.core.infuse;
 
 
 import org.jdragon.springz.core.annotation.AutowiredZ;
+import org.jdragon.springz.core.annotation.Qualifier;
 import org.jdragon.springz.core.annotation.Resource;
 
 import org.jdragon.springz.core.utils.AnnotationUtils;
 import org.jdragon.springz.scanner.Filter;
+import org.jdragon.springz.scanner.Registrar;
 import org.jdragon.springz.scanner.ScanAction;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 import org.jdragon.springz.scanner.entry.ClassInfo;
@@ -25,16 +27,13 @@ import java.util.Map;
  * @Date: 2020.04.25 17:43
  * @Description: 注入者
  */
-public class Infuser implements ScanAction {
+public class Infuser extends Registrar implements ScanAction {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final Map<String, BeanInfo> beanMap;
-
     private final Filter[] filters;
 
-    public Infuser(Map<String, BeanInfo> beanMap,Filter...filters) {
-        this.beanMap = beanMap;
+    public Infuser( Filter... filters) {
         this.filters = filters;
     }
 
@@ -59,7 +58,7 @@ public class Infuser implements ScanAction {
                 if (field.isAnnotationPresent(AutowiredZ.class)) {
                     this.infuse(definitionName, field, getAutowiredValue(field));
                 } else if (field.isAnnotationPresent(Resource.class)) {
-                    this.infuse(definitionName,field,getResourceValue(field));
+                    this.infuse(definitionName, field, getResourceValue(field));
                 }
             }
 
@@ -82,10 +81,6 @@ public class Infuser implements ScanAction {
                 fieldName = StringUtils.firstLowerCase(fieldName);
 
                 Field field = c.getDeclaredField(fieldName);
-
-                if (field == null) {
-                    throw new NoSuchFieldException(fieldName);
-                }
 
                 if (annotation instanceof AutowiredZ) {
                     this.infuse(definitionName, field, getAutowiredValue(field));
@@ -119,9 +114,11 @@ public class Infuser implements ScanAction {
 
         String autowiredValue = fieldClass.getSimpleName();
         //检测是否有qualifier注解，有则使用注解值来获取注入组件
-        String qualifierValue = AnnotationUtils.checkIncludeQualifier(field);
-        String infuseKey = qualifierValue == null ? autowiredValue : qualifierValue;
+        Qualifier qualifier = field.getAnnotation(Qualifier.class);
+        String infuseKey = qualifier == null ? autowiredValue : qualifier.value();
 
+//        String qualifierValue = AnnotationUtils.checkIncludeQualifier(field);
+//        String infuseKey = qualifierValue == null ? autowiredValue : qualifierValue;
         return StringUtils.firstLowerCase(infuseKey);
     }
 
@@ -144,8 +141,8 @@ public class Infuser implements ScanAction {
      * 从beanMap中获取targetObject和object，将object注入到targetObject的field中
      **/
     public void infuse(String targetKey, Field field, String objectKey) throws IllegalAccessException, InstantiationException {
-        if(!beanMap.containsKey(objectKey)){
-            logger.warn("注入Bean失败","找不到ObjKey",objectKey);
+        if (!beanMap.containsKey(objectKey)) {
+            logger.warn("注入Bean失败", "找不到ObjKey", objectKey);
             return;
         }
         BeanInfo iBeanInfo = beanMap.get(objectKey);

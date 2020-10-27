@@ -20,8 +20,7 @@ public class FeignRegistrar extends Registrar implements ScanAction {
 
     private static final Logger logger = LoggerFactory.getLogger(FeignRegistrar.class);
 
-    public FeignRegistrar(Map<String, BeanInfo> beanMap) {
-        super(beanMap);
+    public FeignRegistrar() {
         logger.info("加载注册器","FeignRegistrar");
     }
 

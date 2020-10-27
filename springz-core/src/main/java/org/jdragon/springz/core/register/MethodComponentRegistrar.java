@@ -8,6 +8,7 @@ import org.jdragon.springz.core.utils.AnnotationUtils;
 import org.jdragon.springz.scanner.Filter;
 import org.jdragon.springz.scanner.ScanAction;
 import org.jdragon.springz.scanner.entry.ClassInfo;
+import org.jdragon.springz.scanner.entry.WaitBeanInfo;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 import org.jdragon.springz.utils.StringUtils;
@@ -28,8 +29,8 @@ public class MethodComponentRegistrar extends ComponentRegistrar implements Scan
 
     private final Filter[] filters;
 
-    public MethodComponentRegistrar(Map<String, BeanInfo> beanMap, Filter... filters) {
-        super(beanMap);
+    public MethodComponentRegistrar(Filter... filters) {
+//        super(beanMap);
         this.filters = filters;
         logger.info("加载注册器", "MethodComponentRegistrar");
     }
@@ -81,32 +82,49 @@ public class MethodComponentRegistrar extends ComponentRegistrar implements Scan
             //根据obj中的方法获取method上的@Bean注解的方法返回值
             Class<?>[] methodParamTypes = method.getParameterTypes();
             List<Object> paramsList = new ArrayList<>();
+            List<String> needBeanName = new ArrayList<>();
+            List<String> paramsNameList = new ArrayList<>();
+
+            //先把方法需要的beanName收集
             for (Class<?> methodParamType : methodParamTypes) {
                 String methodParamTypeName = methodParamType.getSimpleName();
                 methodParamTypeName = StringUtils.firstLowerCase(methodParamTypeName);
-                BeanInfo methodParamBean = beanMap.get(methodParamTypeName);
+                paramsNameList.add(methodParamTypeName);
+            }
+            //再用收集来的beanName来对beanMpa查找，若所需的bean都存在则构造，
+            //否则就加入needBeanName中放入waitBeanMap中，等Registrar待唤醒构造
+            for (String paramName : paramsNameList) {
+                BeanInfo methodParamBean = beanMap.get(paramName);
                 if (methodParamBean == null) {
-                    logger.warn("@Bean注解下的方法参数未找到", method.getName(), methodParamTypeName);
-                    return;
+                    logger.warn("@Bean注解下的方法参数未找到，加入待唤醒队列", method.getName(), paramName);
+                    needBeanName.add(paramName);
+                } else {
+                    paramsList.add(methodParamBean.getBean());
                 }
-                paramsList.add(methodParamBean.getBean());
+            }
+
+            //获取Bean的模式范围
+            String scope = AnnotationUtils.getScopeValue(method);
+
+            //判断Bean注解上是否设了BeanName
+            Bean beanAnnotation = method.getAnnotation(Bean.class);
+
+            String[] beanNames = beanAnnotation.value();
+
+            if (beanNames.length == 0) {
+                beanNames = new String[]{method.getName()};
+            }
+
+            //若存在needBean的话，结束该bean注册。等待其他Registrar的唤醒
+            if (!needBeanName.isEmpty()) {
+                super.addWaitBean(new WaitBeanInfo(beanNames, obj, method, scope, paramsNameList, needBeanName));
+                continue;
             }
 
             Object[] paramsArray = paramsList.toArray();
 
             Object bean = method.invoke(obj, paramsArray);
 
-            //判断Bean注解上是否设了BeanName
-            Bean beanAnnotation = method.getAnnotation(Bean.class);
-            String[] beanNames = beanAnnotation.value();
-
-            //获取Bean的模式范围
-            String scope = AnnotationUtils.getScopeValue(method);
-
-            if (beanNames.length == 0) {
-                register(method.getName(), bean, scope);
-                continue;
-            }
             for (String beanName : beanNames) {
                 register(beanName, bean, scope);
             }

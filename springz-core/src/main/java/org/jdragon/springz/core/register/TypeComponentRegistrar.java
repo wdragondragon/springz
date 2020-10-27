@@ -32,10 +32,10 @@ public class TypeComponentRegistrar extends ComponentRegistrar implements ScanAc
 
     Filter[] filters;
 
-    public TypeComponentRegistrar(Map<String, BeanInfo> beanMap, Filter...filters){
-        super(beanMap);
+    public TypeComponentRegistrar(Filter... filters) {
+//        super(beanMap);
         this.filters = filters;
-        logger.info("加载注册器","TypeComponentRegistrar");
+        logger.info("加载注册器", "TypeComponentRegistrar");
     }
 
     /**
@@ -70,16 +70,16 @@ public class TypeComponentRegistrar extends ComponentRegistrar implements ScanAc
             //所以在没有设置value属性值的时候才进行接口名注册，否则使用value值注册
             if (value.isEmpty()) {
                 //把实现接口放到map容器 beanMap->InterfacesName:obj
-                registerInterfaces(c.getInterfaces(), obj,scopeValue);
-            }else{
+                registerInterfaces(c.getInterfaces(), obj, scopeValue);
+            } else {
                 value = StringUtils.firstLowerCase(value);
-                register(value, obj,scopeValue);
+                register(value, obj, scopeValue);
             }
             //将对象放到map容器 beanMap->definitionName:obj
-            register(classInfo.getDefinitionName(), obj,scopeValue);
+            register(classInfo.getDefinitionName(), obj, scopeValue);
 
             //将@Import注解中的类根据全类名注册到beanMap->className:class.getInstance
-            registerImport(c,scopeValue);
+            registerImport(c, scopeValue);
 
             //将@Value注册到对象中 Object->obj:baseField
             registerFields(c.getDeclaredFields(), obj);
@@ -87,7 +87,7 @@ public class TypeComponentRegistrar extends ComponentRegistrar implements ScanAc
         } catch (NoSuchMethodException e) {
             logger.warn("@Value注解下的变量没有String构造器", Arrays.toString(e.getStackTrace()));
         } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
-            logger.warn("@构造失败",e.getCause().toString());
+            logger.warn("@构造失败", e.getCause().toString());
             e.printStackTrace();
         }
     }
@@ -102,15 +102,15 @@ public class TypeComponentRegistrar extends ComponentRegistrar implements ScanAc
      * @return: void
      * @Description: 注册import注解
      **/
-    private void registerImport(Class<?> c,String scopeValue) throws IllegalAccessException, InstantiationException {
+    private void registerImport(Class<?> c, String scopeValue) throws IllegalAccessException, InstantiationException {
 
-        if(!c.isAnnotationPresent(Import.class)){
+        if (!c.isAnnotationPresent(Import.class)) {
             return;
         }
         Import importAnnotation = c.getAnnotation(Import.class);
         Class<?>[] importClasses = importAnnotation.value();
-        for(Class<?> importClass:importClasses){
-            beanMap.put(importClass.getName(),new BeanInfo(importClass.newInstance()));
+        for (Class<?> importClass : importClasses) {
+            beanMap.put(importClass.getName(), new BeanInfo(importClass.newInstance()));
         }
     }
 
@@ -119,7 +119,7 @@ public class TypeComponentRegistrar extends ComponentRegistrar implements ScanAc
      * @return: void
      * @Description: 从传入的接口中，对接口的名称小写后注册到beanMap中
      **/
-    private void registerInterfaces(Class<?>[] interfaces, Object obj,String scope) {
+    private void registerInterfaces(Class<?>[] interfaces, Object obj, String scope) {
         for (Class<?> anInterface : interfaces) {
             String interfaceName = StringUtils.firstLowerCase(anInterface.getSimpleName());
             //这里检测到的话代表有多个接口实现类，需要将接口组件注销
@@ -142,7 +142,7 @@ public class TypeComponentRegistrar extends ComponentRegistrar implements ScanAc
             Constructor<?> constructor = field.getType().getConstructor(String.class);
             field.setAccessible(true);
             field.set(obj, constructor.newInstance(value));
-            logger.info("注入默认属性成功", classInfo.getClassName(),value);
+            logger.info("注入默认属性成功", classInfo.getClassName(), value);
         }
     }
 }

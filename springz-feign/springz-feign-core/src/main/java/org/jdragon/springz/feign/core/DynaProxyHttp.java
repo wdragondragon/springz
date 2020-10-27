@@ -11,10 +11,10 @@ import com.alibaba.fastjson.TypeReference;
 import com.jdragon.common.http.HttpException;
 import com.jdragon.common.http.HttpUtils;
 import com.jdragon.common.json.JsonUtils;
-import org.apache.http.conn.HttpHostConnectException;
-import org.jdragon.springz.feign.annotation.*;
+import org.jdragon.springz.core.utils.AnnotationUtils;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
+import org.jdragon.springz.web.annotation.*;
 
 /**
  * jdk8动态代理
@@ -25,10 +25,10 @@ public class DynaProxyHttp implements InvocationHandler {
 
     private Class<?> object;
 
-    private String baseUrl;
+    private final String baseUrl;
 
     //深入解构
-    private String[] depth;
+    private final String[] depth;
 
 
     public DynaProxyHttp(String baseUrl, String[] depth) {
@@ -49,19 +49,22 @@ public class DynaProxyHttp implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) {
         String url = "";
         try {
-//            result = method.invoke(this.object,args);
             StringBuilder urlBuilder = new StringBuilder(baseUrl);
-            int request = 1;
-            if (method.isAnnotationPresent(GetMapping.class)) {
-                GetMapping getMapping = method.getAnnotation(GetMapping.class);
-                urlBuilder.append(getMapping.value());
-                request = 1;
-            } else if (method.isAnnotationPresent(PostMapping.class)) {
-                PostMapping postMapping = method.getAnnotation(PostMapping.class);
-                urlBuilder.append(postMapping.value());
-                request = 2;
+
+            RequestMapping requestMapping;
+            if (method.isAnnotationPresent(RequestMapping.class)) {
+                requestMapping = method.getAnnotation(RequestMapping.class);
+            } else {
+                requestMapping = (RequestMapping) AnnotationUtils.getContainedAnnotationType(method, RequestMapping.class);
             }
 
+            if (requestMapping == null) {
+                logger.warn("该feign方法没有映射请求路径", object.getName(), method.getName());
+                return null;
+            }
+            urlBuilder.append((String) AnnotationUtils.getIncludeAnnotationValue(method, RequestMapping.class, "value"));
+
+            RequestMethod request = requestMapping.method();
 
             HashMap<String, String> params = new HashMap<>();
 
@@ -86,14 +89,13 @@ public class DynaProxyHttp implements InvocationHandler {
         } catch (HttpException e) {
             logger.error("远程服务调用异常", url);
             e.printStackTrace();
-            return null;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public Object robotHandle(String url, int request, Object robotMsgResult, HashMap<String, String> params, Type type) {
+    public Object robotHandle(String url, RequestMethod request, Object robotMsgResult, HashMap<String, String> params, Type type) {
         String str = "";
         try {
             HttpUtils httpUtils = HttpUtils.initJson();
@@ -101,17 +103,24 @@ public class DynaProxyHttp implements InvocationHandler {
 
             if (robotMsgResult == null) return null;
 
-            if (request == 1) {
-                httpUtils.setParamMap(params);
-                map = httpUtils.get(url);
-            } else {
-                String s = JsonUtils.object2Str(robotMsgResult);
-                map = JSON.parseObject(s, new TypeReference<Map<String, String>>() {
-                });
-                httpUtils.setParamMap(params);
-                httpUtils.setBody(map);
-                map = httpUtils.post(url);
+            switch (request) {
+                case GET:
+                    httpUtils.setParamMap(params);
+                    map = httpUtils.get(url);
+                    break;
+                case POST:
+                    String s = JsonUtils.object2Str(robotMsgResult);
+                    map = JSON.parseObject(s, new TypeReference<Map<String, String>>() {
+                    });
+                    httpUtils.setParamMap(params);
+                    httpUtils.setBody(map);
+                    map = httpUtils.post(url);
+                    break;
+                default:
+                    logger.error("暂不支持该类请求", request.toString());
+                    return null;
             }
+
             str = checkResult(map);
             JSONObject resultJson = JSON.parseObject(str);
             for (String s : depth) {

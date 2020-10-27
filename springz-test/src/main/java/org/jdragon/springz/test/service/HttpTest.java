@@ -2,6 +2,7 @@ package org.jdragon.springz.test.service;
 
 import org.jdragon.springz.feign.annotation.*;
 import org.jdragon.springz.test.dao.Http;
+import org.jdragon.springz.web.annotation.*;
 
 
 /**

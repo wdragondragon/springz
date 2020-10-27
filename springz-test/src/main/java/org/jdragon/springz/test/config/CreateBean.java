@@ -2,14 +2,14 @@ package org.jdragon.springz.test.config;
 
 
 
-import org.jdragon.springz.core.annotation.Bean;
-import org.jdragon.springz.core.annotation.Configuration;
-import org.jdragon.springz.core.annotation.Scope;
-import org.jdragon.springz.core.annotation.Value;
+import org.apache.poi.ss.formula.functions.T;
+import org.jdragon.springz.core.annotation.*;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 import org.jdragon.springz.test.controller.UserController;
 import org.jdragon.springz.test.domain.Car;
+import org.jdragon.springz.test.domain.TestWaitBean;
 import org.jdragon.springz.test.domain.User;
+import org.jdragon.springz.test.service.HttpTest;
 
 /**
  * @Author: Jdragon
@@ -44,5 +44,17 @@ public class CreateBean {
     @Bean("carOne")
     public Car car(){
         return new Car(username);
+    }
+
+    //循环依赖
+    @Bean("httpUser")
+    public User user(TestWaitBean testWaitBean){
+        testWaitBean.print();
+        return new User(username, password, tel, birth, vip);
+    }
+    @Bean
+    public TestWaitBean testWaitBean(HttpTest httpTest){
+        httpTest.http();
+        return new TestWaitBean();
     }
 }

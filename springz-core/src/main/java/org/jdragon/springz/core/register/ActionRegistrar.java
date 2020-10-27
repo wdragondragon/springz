@@ -1,5 +1,6 @@
 package org.jdragon.springz.core.register;
 
+import org.jdragon.springz.scanner.Registrar;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 import org.jdragon.springz.scanner.Filter;
 import org.jdragon.springz.scanner.ScanAction;
@@ -18,17 +19,17 @@ import java.util.Map;
  * @Date: 2020.10.21 20:41
  * @Description:
  */
-public class ActionRegistrar implements ScanAction {
+public class ActionRegistrar extends Registrar implements ScanAction {
 
     private static final Logger logger = LoggerFactory.getLogger(ActionRegistrar.class);
 
     List<ScanAction> scanActionList;
 
-    Map<String, BeanInfo> beanInfoMap;
+//    Map<String, BeanInfo> beanInfoMap;
 
-    public ActionRegistrar(Map<String, BeanInfo> beanInfoMap, List<ScanAction> scanActionList) {
+    public ActionRegistrar(List<ScanAction> scanActionList) {
         this.scanActionList = scanActionList;
-        this.beanInfoMap = beanInfoMap;
+//        this.beanInfoMap = beanInfoMap;
         logger.info("加载注册器", "ActionRegistrar");
     }
 
@@ -39,8 +40,8 @@ public class ActionRegistrar implements ScanAction {
         if (ScanAction.class.equals(clazz)) return;
         if (!ScanAction.class.isAssignableFrom(clazz)) return;
         try {
-            Constructor constructor = clazz.getConstructor(Map.class);
-            ScanAction scanAction = (ScanAction) constructor.newInstance(beanInfoMap);
+            Constructor constructor = clazz.getConstructor();
+            ScanAction scanAction = (ScanAction) constructor.newInstance();
             scanActionList.add(scanAction);
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();

@@ -2,7 +2,7 @@ package org.jdragon.springz.test.service;
 
 import org.jdragon.springz.feign.annotation.ZFeign;
 import org.jdragon.springz.test.domain.RobotPostOrder;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.jdragon.springz.web.annotation.GetMapping;
 
 import java.util.List;
 

@@ -23,7 +23,7 @@ public class ExpandEnableRegistrar implements ScanAction {
 
     @Override
     public void action(ClassInfo classInfo) {
-        SpringzScan springzScan = (SpringzScan) AnnotationUtils.getIncludeAnnotationType(classInfo.getClazz(), SpringzScan.class);
+        SpringzScan springzScan = (SpringzScan) AnnotationUtils.getContainedAnnotationType(classInfo.getClazz(), SpringzScan.class);
         if (springzScan != null)
             scanAction.resolverComponentScan(springzScan);
     }

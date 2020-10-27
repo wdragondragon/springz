@@ -15,6 +15,7 @@
         <module>springz-feign</module>
         <module>springz-annotation</module>
         <module>springz-scanner</module>
+        <module>springz-web</module>
     </modules>
 
     <name>springz</name>
@@ -51,6 +52,18 @@
             <dependency>
                 <groupId>org.jdragon.springz</groupId>
                 <artifactId>springz-core</artifactId>
+                <version>${springz.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jdragon.springz</groupId>
+                <artifactId>springz-web-annotation</artifactId>
+                <version>${springz.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jdragon.springz</groupId>
+                <artifactId>springz-web</artifactId>
                 <version>${springz.version}</version>
             </dependency>
 

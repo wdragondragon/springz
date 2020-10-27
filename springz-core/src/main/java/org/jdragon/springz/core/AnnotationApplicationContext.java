@@ -9,6 +9,7 @@ package org.jdragon.springz.core;
 
 import org.jdragon.springz.core.register.ExpandEnableRegistrar;
 import org.jdragon.springz.core.scan.BasePackageInfo;
+import org.jdragon.springz.scanner.Registrar;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 import org.jdragon.springz.core.filter.BaseFilter;
 
@@ -19,6 +20,7 @@ import org.jdragon.springz.core.register.TypeComponentRegistrar;
 import org.jdragon.springz.scanner.Filter;
 import org.jdragon.springz.scanner.ScanAction;
 import org.jdragon.springz.scanner.Scanner;
+import org.jdragon.springz.scanner.entry.WaitBeanInfo;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.StringUtils;
@@ -30,11 +32,11 @@ public class AnnotationApplicationContext {
 
     private final static Logger logger = LoggerFactory.getLogger(AnnotationApplicationContext.class);
 
-    private final Map<String, BasePackageInfo> basePackageInfoMap = new HashMap<>();
-
     private final BaseClassesScanContext baseClassesScanContext = new BaseClassesScanContext();
 
-    private Map<String, BeanInfo> beanMap = new HashMap<>();
+    private Map<String, BeanInfo> beanMap = Registrar.getBeanMap();
+
+    private List<WaitBeanInfo> waitBeanInfoList = Registrar.getWaitBeanList();
 
     private final List<ScanAction> scanActionList = new LinkedList<>();
 
@@ -58,23 +60,25 @@ public class AnnotationApplicationContext {
 
         doScan();
 
+        printWaitBeanInfo();
+
         logger.info("启动所用时间", System.currentTimeMillis() - start + "ms");
     }
 
 
-    public void initScan() {
+    private void initScan() {
         Filter baseFilter = new BaseFilter(baseClassesScanContext.getBasePackageInfoMap());
 
-        scanActionList.add(new TypeComponentRegistrar(beanMap, baseFilter));        //@Component扫描注册
+        scanActionList.add(new TypeComponentRegistrar(baseFilter));        //@Component扫描注册
 
-        scanner.action(new ActionRegistrar(beanMap, scanActionList)).doScan(); //拓展
+        scanActionList.add(new MethodComponentRegistrar(baseFilter));        //@Bean扫描注册
 
-        scanActionList.add(new MethodComponentRegistrar(beanMap, baseFilter));        //@Bean扫描注册
+        scanner.action(new ActionRegistrar(scanActionList)).doScan(); //拓展
 
-        scanActionList.add(new Infuser(beanMap, baseFilter));        //注入
+        scanActionList.add(new Infuser(baseFilter));        //注入
     }
 
-    public void doScan() {
+    private void doScan() {
         scanActionList.forEach(scanAction -> scanner.action(scanAction).doScan());
     }
 
@@ -92,12 +96,20 @@ public class AnnotationApplicationContext {
         return baseClassesScanContext.getBasePackages(baseClassesName);
     }
 
-    public Scanner newScan(String... scanBasePackages) {
+    private Scanner newScan(String... scanBasePackages) {
         return new Scanner(scanBasePackages);
     }
 
+    private void printWaitBeanInfo() {
+        String[] names = new String[0];
+        waitBeanInfoList.forEach(waitBeanInfo -> System.arraycopy(
+                names, 0,
+                waitBeanInfo.getBeanNames(),
+                waitBeanInfo.getBeanNames().length, names.length));
+        logger.warn("最后仍未注册成功的Bean", Arrays.toString(names));
+    }
 
-    public Map<String, BeanInfo> getBeanOfAll() {
+    public Map<String, BeanInfo> getBeans() {
         return beanMap;
     }
 

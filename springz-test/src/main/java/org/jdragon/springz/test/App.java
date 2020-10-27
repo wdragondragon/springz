@@ -70,9 +70,9 @@ public class App {
 
     public static void main(String[] args) {
 
-//        testBean();
+        testBean();
 
-        testHttp();
+//        testHttp();
 
         ctx.close();
     }
@@ -118,5 +118,9 @@ public class App {
         carDao.resourceCar();
 
         carDao.qualifierCar();
+
+        User httpUser = (User)ctx.getBean("httpUser");
+
+        System.out.println(httpUser);
     }
 }
