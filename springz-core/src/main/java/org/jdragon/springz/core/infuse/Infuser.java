@@ -5,7 +5,8 @@ import org.jdragon.springz.core.annotation.AutowiredZ;
 import org.jdragon.springz.core.annotation.Qualifier;
 import org.jdragon.springz.core.annotation.Resource;
 
-import org.jdragon.springz.core.utils.AnnotationUtils;
+import org.jdragon.springz.core.aop.AopProxyPostProcessorFactory;
+import org.jdragon.springz.core.aop.BeanPostProcessor;
 import org.jdragon.springz.scanner.Filter;
 import org.jdragon.springz.scanner.Registrar;
 import org.jdragon.springz.scanner.ScanAction;
@@ -19,7 +20,6 @@ import org.jdragon.springz.utils.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.Map;
 
 /**
  * @Author: Jdragon
@@ -33,7 +33,7 @@ public class Infuser extends Registrar implements ScanAction {
 
     private final Filter[] filters;
 
-    public Infuser( Filter... filters) {
+    public Infuser(Filter... filters) {
         this.filters = filters;
     }
 
@@ -146,6 +146,7 @@ public class Infuser extends Registrar implements ScanAction {
             return;
         }
         BeanInfo iBeanInfo = beanMap.get(objectKey);
+
         Object iBean;
         if (iBeanInfo.getScope().equals(BeanInfo.SINGLETON)) {
             iBean = iBeanInfo.getBean();
@@ -153,6 +154,10 @@ public class Infuser extends Registrar implements ScanAction {
             Object oldBean = iBeanInfo.getBean();
             iBean = Bean2Utils.copy(oldBean);
         }
+
+        BeanPostProcessor beanPostProcessor = AopProxyPostProcessorFactory.get(iBean.getClass());
+
+        iBean = beanPostProcessor.postProcessAfterInitialization(iBeanInfo);
 
         field.setAccessible(true);
         //是否为静态字段

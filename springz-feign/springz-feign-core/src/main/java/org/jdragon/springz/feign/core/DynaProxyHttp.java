@@ -51,12 +51,7 @@ public class DynaProxyHttp implements InvocationHandler {
         try {
             StringBuilder urlBuilder = new StringBuilder(baseUrl);
 
-            RequestMapping requestMapping;
-            if (method.isAnnotationPresent(RequestMapping.class)) {
-                requestMapping = method.getAnnotation(RequestMapping.class);
-            } else {
-                requestMapping = (RequestMapping) AnnotationUtils.getContainedAnnotationType(method, RequestMapping.class);
-            }
+            RequestMapping requestMapping = (RequestMapping) AnnotationUtils.getAllContainedAnnotationType(method, RequestMapping.class);
 
             if (requestMapping == null) {
                 logger.warn("该feign方法没有映射请求路径", object.getName(), method.getName());

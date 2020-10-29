@@ -3,6 +3,7 @@ package org.jdragon.springz.test.config;
 
 
 import org.apache.poi.ss.formula.functions.T;
+import org.jdragon.springz.ImportTest;
 import org.jdragon.springz.core.annotation.*;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 import org.jdragon.springz.test.controller.UserController;
@@ -18,6 +19,7 @@ import org.jdragon.springz.test.service.HttpTest;
  * @Description:
  */
 @Configuration
+@Import(ImportTest.class)
 public class CreateBean {
 
     @Value("张三")

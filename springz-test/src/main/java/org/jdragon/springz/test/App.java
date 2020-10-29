@@ -68,6 +68,8 @@ public class App {
     @AutowiredZ
     private static RobotResult robotResult;
 
+
+
     public static void main(String[] args) {
 
         testBean();

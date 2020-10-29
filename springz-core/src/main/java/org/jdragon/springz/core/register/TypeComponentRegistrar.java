@@ -79,7 +79,7 @@ public class TypeComponentRegistrar extends ComponentRegistrar implements ScanAc
             register(classInfo.getDefinitionName(), obj, scopeValue);
 
             //将@Import注解中的类根据全类名注册到beanMap->className:class.getInstance
-            registerImport(c, scopeValue);
+            registerImport(c);
 
             //将@Value注册到对象中 Object->obj:baseField
             registerFields(c.getDeclaredFields(), obj);
@@ -102,15 +102,15 @@ public class TypeComponentRegistrar extends ComponentRegistrar implements ScanAc
      * @return: void
      * @Description: 注册import注解
      **/
-    private void registerImport(Class<?> c, String scopeValue) throws IllegalAccessException, InstantiationException {
-
+    private void registerImport(Class<?> c) throws IllegalAccessException, InstantiationException {
         if (!c.isAnnotationPresent(Import.class)) {
             return;
         }
         Import importAnnotation = c.getAnnotation(Import.class);
         Class<?>[] importClasses = importAnnotation.value();
         for (Class<?> importClass : importClasses) {
-            beanMap.put(importClass.getName(), new BeanInfo(importClass.newInstance()));
+            beanMap.put(StringUtils.firstLowerCase(importClass.getSimpleName()),
+                    new BeanInfo(importClass.newInstance(), importClass.getName()));
         }
     }
 

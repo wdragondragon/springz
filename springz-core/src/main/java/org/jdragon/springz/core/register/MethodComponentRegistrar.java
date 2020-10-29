@@ -96,7 +96,7 @@ public class MethodComponentRegistrar extends ComponentRegistrar implements Scan
             for (String paramName : paramsNameList) {
                 BeanInfo methodParamBean = beanMap.get(paramName);
                 if (methodParamBean == null) {
-                    logger.warn("@Bean注解下的方法参数未找到，加入待唤醒队列", method.getName(), paramName);
+                    logger.warn("@Bean注解下的方法参数未找到，加入待唤醒队列", method.getName(), "缺少"+paramName);
                     needBeanName.add(paramName);
                 } else {
                     paramsList.add(methodParamBean.getBean());

@@ -16,5 +16,13 @@
             <groupId>com.jdragon</groupId>
             <artifactId>jdragon-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.jdragon.springz</groupId>
+            <artifactId>springz-web-annotation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jdragon.springz</groupId>
+            <artifactId>springz-core</artifactId>
+        </dependency>
     </dependencies>
 </project>

@@ -10,7 +10,7 @@ import java.net.Socket;
  * @Description:
  */
 public class Dispatcher implements Runnable {
-    private Socket client;
+    private final Socket client;
     private Request req;
     private Response rep;
     private int code = 200;

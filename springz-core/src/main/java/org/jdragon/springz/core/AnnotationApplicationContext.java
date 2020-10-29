@@ -7,16 +7,12 @@ package org.jdragon.springz.core;
  * @Description: 组件管理容器类
  */
 
-import org.jdragon.springz.core.register.ExpandEnableRegistrar;
-import org.jdragon.springz.core.scan.BasePackageInfo;
+import org.jdragon.springz.core.register.*;
 import org.jdragon.springz.scanner.Registrar;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 import org.jdragon.springz.core.filter.BaseFilter;
 
 import org.jdragon.springz.core.infuse.Infuser;
-import org.jdragon.springz.core.register.ActionRegistrar;
-import org.jdragon.springz.core.register.MethodComponentRegistrar;
-import org.jdragon.springz.core.register.TypeComponentRegistrar;
 import org.jdragon.springz.scanner.Filter;
 import org.jdragon.springz.scanner.ScanAction;
 import org.jdragon.springz.scanner.Scanner;
@@ -74,6 +70,8 @@ public class AnnotationApplicationContext {
         scanActionList.add(new MethodComponentRegistrar(baseFilter));        //@Bean扫描注册
 
         scanner.action(new ActionRegistrar(scanActionList)).doScan(); //拓展
+
+        scanActionList.add(new AopRegistrar());
 
         scanActionList.add(new Infuser(baseFilter));        //注入
     }

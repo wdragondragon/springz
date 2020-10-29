@@ -11,4 +11,10 @@
 
     <artifactId>springz-web-annotation</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.jdragon.springz</groupId>
+            <artifactId>springz-annotation</artifactId>
+        </dependency>
+    </dependencies>
 </project>

@@ -78,7 +78,7 @@ public class Scanner {
 
 
     public void doScan() {
-        logger.info("扫描器启动",scanAction.getClass().getSimpleName());
+        logger.info("扫描器启动", scanAction.getClass().getSimpleName());
         for (String baseClazzName : baseClassesName) {
             String baseClazzPackage = baseClazzName;
             //filter未初始化前扫类，后扫包
@@ -88,7 +88,7 @@ public class Scanner {
             logger.info("扫描", baseClazzPackage);
 
             //更改扫描基路径，因为可能跨越不同的jar包，所获取的资源路径也不一样
-            this.scanBasePackage = resource.getPath().replace(baseClazzPackage,"");
+            this.scanBasePackage = resource.getPath().replace(baseClazzPackage, "");
 
             if (RUN_JAR.equals(runType)) {
                 this.scanJarPackage(baseClazzPackage);

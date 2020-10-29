@@ -87,10 +87,8 @@ public class AnnotationUtils {
     /**
      * @param c           需要解析的类
      * @param includeType 需要寻找的注解类型
-     * @author: Jdragon
-     * @date: 2020.10.26 下午 10:16
      * @return: 返回被包含的注解对象 返回includeType
-     * @Description: 如果有包含这个注解，有的话返回这个被包含的注解对象
+     * @Description: 如果有（间接包含,直接包含不算）这个注解，有的话返回这个被包含的注解对象
      **/
     public static Annotation getContainedAnnotationType(AnnotatedElement c, Class<? extends Annotation> includeType) {
         Annotation[] annotations = c.getAnnotations();
@@ -106,6 +104,22 @@ public class AnnotationUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * @param clazz           需要解析的类
+     * @param includeType 需要寻找的注解类型
+     * @return: 返回被包含的注解对象 返回includeType
+     * @Description: 如果有（包含，间接和直接包含都算）这个注解，有的话返回这个被包含的注解对象
+     **/
+    public static Annotation getAllContainedAnnotationType(AnnotatedElement clazz, Class<? extends Annotation> includeType) {
+        Annotation annotation;
+        if (clazz.isAnnotationPresent(includeType)) {
+            annotation = clazz.getAnnotation(includeType);
+        } else {
+            annotation = AnnotationUtils.getContainedAnnotationType(clazz, includeType);
+        }
+        return annotation;
     }
 
     /**
