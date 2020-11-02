@@ -1,27 +1,25 @@
 package org.jdragon.springz.core.register;
 
 import org.jdragon.springz.core.annotation.SpringzScan;
-import org.jdragon.springz.core.BaseClassesScanContext;
+import org.jdragon.springz.core.scan.BaseClassesScanner;
 import org.jdragon.springz.core.utils.AnnotationUtils;
 import org.jdragon.springz.scanner.Filter;
 import org.jdragon.springz.scanner.ScanAction;
 import org.jdragon.springz.scanner.entry.ClassInfo;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @Author: Jdragon
  * @email: 1061917196@qq.com
  * @Date: 2020.10.22 14:05
- * @Description:
+ * @Description: 扫描拓展功能的@Enable注解的扫描器
  */
 public class ExpandEnableRegistrar implements ScanAction {
 
-    BaseClassesScanContext scanAction;
+    BaseClassesScanner scanAction;
 
-    public ExpandEnableRegistrar(BaseClassesScanContext scanAction) {
+    public ExpandEnableRegistrar(BaseClassesScanner scanAction) {
         this.scanAction = scanAction;
     }
 
@@ -29,14 +27,12 @@ public class ExpandEnableRegistrar implements ScanAction {
     public void action(ClassInfo classInfo) {
         Class<?> clazz = classInfo.getClazz();
         for (Annotation annotation : clazz.getAnnotations()) {
-            SpringzScan springzScan = (SpringzScan)AnnotationUtils.getAllContainedAnnotationType(annotation.annotationType(), SpringzScan.class);
-            if(springzScan!=null){
+            SpringzScan springzScan = (SpringzScan) AnnotationUtils
+                    .getAllContainedAnnotationType(annotation.annotationType(), SpringzScan.class);
+            if (springzScan != null) {
                 scanAction.resolverComponentScan(springzScan);
             }
         }
-//        SpringzScan springzScan = (SpringzScan) AnnotationUtils.getContainedAnnotationType(classInfo.getClazz(), SpringzScan.class);
-//        if (springzScan != null)
-//            scanAction.resolverComponentScan(springzScan);
     }
 
     @Override

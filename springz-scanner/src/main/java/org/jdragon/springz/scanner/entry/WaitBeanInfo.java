@@ -13,7 +13,7 @@ import java.util.List;
  * @Author: Jdragon
  * @email: 1061917196@qq.com
  * @Date: 2020.10.27 12:34
- * @Description:
+ * @Description: 在第一次注册@bean时所需要的依赖组件不足时，会生成一个WaitBeanInfo加入唤醒队列
  */
 public class WaitBeanInfo {
 

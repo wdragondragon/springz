@@ -1,10 +1,10 @@
 package org.jdragon.springz.core.filter;
 
 
-import org.jdragon.springz.core.entry.FilterInfo;
+import org.jdragon.springz.core.BaseClassPackagesManager;
 import org.jdragon.springz.core.annotation.FilterType;
 import org.jdragon.springz.scanner.Filter;
-import org.jdragon.springz.core.scan.BasePackageInfo;
+import org.jdragon.springz.core.entry.BasePackageInfo;
 import org.jdragon.springz.scanner.entry.ClassInfo;
 
 import java.lang.annotation.Annotation;
@@ -20,16 +20,14 @@ import java.util.*;
  */
 public class BaseFilter implements Filter {
 
-    private Map<String, BasePackageInfo> basePackageInfoMap;
-
     /**
      * 使用默认过滤器时需要允许通过的注解类型
      */
-    private List<String> useDefault = Arrays.asList("Controller", "Service", "Component", "Configuration", "Repository", "SpringzMain");
+    private final List<String> useDefault = Arrays.asList("Controller", "Service", "Component", "Configuration", "Repository", "SpringzMain");
 
-    public BaseFilter(Map<String, BasePackageInfo> basePackageInfoMap) {
-        this.basePackageInfoMap = basePackageInfoMap;
+    public BaseFilter() {
     }
+
     /**
      * @Author: Jdragon
      * @Date: 2020.04.30 下午 5:25
@@ -38,6 +36,8 @@ public class BaseFilter implements Filter {
      * @Description: 是否同意扫描加载，代码乱，待重构
      **/
     public boolean isAgree(ClassInfo classInfo) {
+        Map<String, BasePackageInfo> basePackageInfoMap = BaseClassPackagesManager.getBasePackageInfoMap();
+
         String classPackage = classInfo.getClassName();
         Class<?> clazz = classInfo.getClazz();
         int maxLength = 0;
@@ -54,8 +54,8 @@ public class BaseFilter implements Filter {
 
         BasePackageInfo basePackageInfo = basePackageInfoMap.get(basePackageOnly);
 
-        FilterInfo[] includeFiltersInfo = basePackageInfo.getIncludeFiltersInfo();
-        FilterInfo[] excludeFiltersInfo = basePackageInfo.getExcludeFiltersInfo();
+        FilterMeta[] includeFiltersInfo = basePackageInfo.getIncludeFiltersInfo();
+        FilterMeta[] excludeFiltersInfo = basePackageInfo.getExcludeFiltersInfo();
 
         boolean useDefaultFilters = basePackageInfo.isUseDefaultFilters();
 
@@ -69,8 +69,8 @@ public class BaseFilter implements Filter {
                 }
             }
         }
-        boolean exclude = judge(clazz,excludeFiltersInfo);
-        boolean include = judge(clazz,includeFiltersInfo);
+        boolean exclude = judge(clazz, excludeFiltersInfo);
+        boolean include = judge(clazz, includeFiltersInfo);
         //当exclude不成立并且include成立时通过
         return !exclude && include;
     }
@@ -80,10 +80,10 @@ public class BaseFilter implements Filter {
      * @return: boolean
      * @Description: 判断exclude与include
      **/
-    private boolean judge(Class<?> clazz,FilterInfo[] filtersInfo){
-        for (FilterInfo filterInfo : filtersInfo) {
-            FilterType filterType = filterInfo.getType();
-            Class<?>[] filterClasses = filterInfo.getClasses();
+    private boolean judge(Class<?> clazz, FilterMeta[] filtersInfo) {
+        for (FilterMeta filterMeta : filtersInfo) {
+            FilterType filterType = filterMeta.getType();
+            Class<?>[] filterClasses = filterMeta.getClasses();
 
             if (filterType.equals(FilterType.ANNOTATION)) {
                 for (Class<?> filterClass : filterClasses) {
@@ -105,8 +105,8 @@ public class BaseFilter implements Filter {
             } else if (filterType.equals(FilterType.CUSTOM)) {
                 for (Class<?> filterClass : filterClasses) {
                     try {
-                        Method match = filterClass.getDeclaredMethod("match",Class.class);
-                        if ((boolean) match.invoke(filterClass.newInstance(),clazz)) {
+                        Method match = filterClass.getDeclaredMethod("match", Class.class);
+                        if ((boolean) match.invoke(filterClass.newInstance(), clazz)) {
                             return true;
                         }
                     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {

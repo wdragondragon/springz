@@ -1,7 +1,7 @@
 package org.jdragon.springz.aop.core;
 
 import org.jdragon.springz.aop.core.entity.PointCutInfo;
-import org.jdragon.springz.core.utils.PatternMatchUtils;
+import org.jdragon.springz.aop.core.utils.PatternMatchUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;

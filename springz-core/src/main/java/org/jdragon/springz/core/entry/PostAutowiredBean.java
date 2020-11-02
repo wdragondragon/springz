@@ -7,7 +7,7 @@ import org.jdragon.springz.scanner.entry.BeanInfo;
  * @Author: Jdragon
  * @email: 1061917196@qq.com
  * @Date: 2020.11.02 11:10
- * @Description:
+ * @Description: 主要用于处理信息的beanInfo和存放bean处理后的生成lastBean
  */
 
 public class PostAutowiredBean {

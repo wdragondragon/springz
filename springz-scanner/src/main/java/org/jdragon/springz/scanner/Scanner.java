@@ -20,18 +20,19 @@ import java.util.jar.JarFile;
  */
 public class Scanner {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private final List<ClassInfo> classInfoCache = new ArrayList<>();
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * 扫描文件后缀
      */
-    private final String Suffix_CLASS = ".class";
+    private static final String SUFFIX_CLASS = ".class";
 
-    private final String RUN_JAR = "jar";
+    private static final String RUN_JAR = "jar";
 
-    private final String RUN_FILE = "file";
+    private static final String RUN_FILE = "file";
 
 
     /**
@@ -59,17 +60,17 @@ public class Scanner {
 
     public Scanner(String... baseClassesName) {
         this.baseClassesName = baseClassesName;
-        String SCAN_BASE_PACKAGE1;
+        String SCAN_BASE_PACKAGE;
 
         this.classLoader = getClass().getClassLoader();
 
         try {
-            SCAN_BASE_PACKAGE1 = Objects.requireNonNull(classLoader.getResource("")).getPath();
+            SCAN_BASE_PACKAGE = Objects.requireNonNull(classLoader.getResource("")).getPath();
         } catch (Exception ignored) {
-            SCAN_BASE_PACKAGE1 = "";
+            SCAN_BASE_PACKAGE = "";
         }
 
-        this.scanBasePackage = SCAN_BASE_PACKAGE1;
+        this.scanBasePackage = SCAN_BASE_PACKAGE;
     }
 
 
@@ -133,7 +134,7 @@ public class Scanner {
             JarEntry jarFileEntry = jarFileEntries.nextElement();
             String jarEntryName = jarFileEntry.getName();
             //判断是否不为文件夹，且后缀是否为.class
-            if (jarEntryName.contains(jarPkg) && !jarFileEntry.isDirectory() && jarEntryName.endsWith(Suffix_CLASS)) {
+            if (jarEntryName.contains(jarPkg) && !jarFileEntry.isDirectory() && jarEntryName.endsWith(SUFFIX_CLASS)) {
                 jarClass.add(jarFileEntry);
             }
         }
@@ -167,7 +168,7 @@ public class Scanner {
                         this.scanFilePackage(pkg + PATH_SEPARATOR + fName);
                     } else {
                         //判断文件后缀是否为.class
-                        return fName.endsWith(Suffix_CLASS);
+                        return fName.endsWith(SUFFIX_CLASS);
                     }
                     return false;
                 })).orElse(new File[0]);
@@ -200,11 +201,11 @@ public class Scanner {
     }
 
     private void action() {
-        for (ClassInfo classInfo : classInfoCache) {
+        classInfoCache.forEach(classInfo -> {
             if (isAgree(classInfo)) {
                 scanAction.action(classInfo);
             }
-        }
+        });
     }
 
     private boolean isAgree(ClassInfo classInfo) {

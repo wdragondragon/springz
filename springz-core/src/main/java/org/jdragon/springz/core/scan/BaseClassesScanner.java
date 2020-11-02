@@ -1,18 +1,16 @@
-package org.jdragon.springz.core;
+package org.jdragon.springz.core.scan;
 
 
+import org.jdragon.springz.core.BaseClassPackagesManager;
 import org.jdragon.springz.core.annotation.SpringzScan;
 import org.jdragon.springz.core.annotation.SpringzScan.ComponentFilter;
 import org.jdragon.springz.core.annotation.SpringzScans;
-import org.jdragon.springz.core.entry.FilterInfo;
-import org.jdragon.springz.core.scan.BasePackageInfo;
+import org.jdragon.springz.core.filter.FilterMeta;
+import org.jdragon.springz.core.entry.BasePackageInfo;
 
 import org.jdragon.springz.scanner.Filter;
 import org.jdragon.springz.scanner.ScanAction;
 import org.jdragon.springz.scanner.entry.ClassInfo;
-
-
-import java.util.*;
 
 /**
  * @Author: Jdragon
@@ -20,9 +18,7 @@ import java.util.*;
  * @Date: 2020.04.29 20:48
  * @Description: basePackage的容器，给扫描注册做准备
  */
-public class BaseClassesScanContext implements ScanAction {
-
-    private final Map<String, BasePackageInfo> basePackageInfoMap = new HashMap<>();
+public class BaseClassesScanner implements ScanAction {
 
     @Override
     public void action(ClassInfo classInfo) {
@@ -49,17 +45,17 @@ public class BaseClassesScanContext implements ScanAction {
         ComponentFilter[] excludeComponentFilters = springzScan.excludeFilters();
         ComponentFilter[] includeComponentFilters = springzScan.includeFilters();
 
-        FilterInfo[] includeFiltersInfo = new FilterInfo[includeComponentFilters.length];
-        FilterInfo[] excludeFiltersInfo = new FilterInfo[excludeComponentFilters.length];
+        FilterMeta[] includeFiltersInfo = new FilterMeta[includeComponentFilters.length];
+        FilterMeta[] excludeFiltersInfo = new FilterMeta[excludeComponentFilters.length];
 
         int i = 0;
         for (ComponentFilter componentFilter : includeComponentFilters) {
-            includeFiltersInfo[i] = new FilterInfo(componentFilter.type(), componentFilter.classes());
+            includeFiltersInfo[i] = new FilterMeta(componentFilter.type(), componentFilter.classes());
             i++;
         }
         i = 0;
         for (ComponentFilter componentFilter : excludeComponentFilters) {
-            excludeFiltersInfo[i] = new FilterInfo(componentFilter.type(), componentFilter.classes());
+            excludeFiltersInfo[i] = new FilterMeta(componentFilter.type(), componentFilter.classes());
             i++;
         }
 
@@ -67,30 +63,10 @@ public class BaseClassesScanContext implements ScanAction {
                 new BasePackageInfo(useDefaultFilters, includeFiltersInfo, excludeFiltersInfo);
         for (Class<?> basePackageClass : basePackageClasses) {
             String basePackage = basePackageClass.getPackage().getName();
-            basePackageInfoMap.put(basePackage, basePackageInfo);
+            BaseClassPackagesManager.register(basePackage,basePackageInfo);
         }
         for (String basePackage : basePackages) {
-            basePackageInfoMap.put(basePackage, basePackageInfo);
+            BaseClassPackagesManager.register(basePackage,basePackageInfo);
         }
-    }
-
-    public Map<String, BasePackageInfo> getBasePackageInfoMap() {
-        return basePackageInfoMap;
-    }
-
-    public String[] getBasePackages(String[] baseClassesName) {
-        Set<String> basePackageSet = basePackageInfoMap.keySet();
-        String[] basePackages = new String[basePackageSet.size()];
-        if (basePackageSet.size() == 0) {
-            basePackageInfoMap.put(baseClassesName[0], new BasePackageInfo());
-            return baseClassesName;
-        }
-        int i = 0;
-        for (String basePackage : basePackageSet) {
-            basePackages[i] = basePackage;
-            i++;
-        }
-
-        return basePackages;
     }
 }

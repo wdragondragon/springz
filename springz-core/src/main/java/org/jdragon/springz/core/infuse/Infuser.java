@@ -117,9 +117,6 @@ public class Infuser extends Registrar implements ScanAction {
         //检测是否有qualifier注解，有则使用注解值来获取注入组件
         Qualifier qualifier = field.getAnnotation(Qualifier.class);
         String infuseKey = qualifier == null ? autowiredValue : qualifier.value();
-
-//        String qualifierValue = AnnotationUtils.checkIncludeQualifier(field);
-//        String infuseKey = qualifierValue == null ? autowiredValue : qualifierValue;
         return StrUtil.firstLowerCase(infuseKey);
     }
 

@@ -5,7 +5,7 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import org.jdragon.springz.aop.core.entity.JoinPoint;
 import org.jdragon.springz.aop.core.entity.PointCutInfo;
-import org.jdragon.springz.core.utils.PatternMatchUtils;
+import org.jdragon.springz.aop.core.utils.PatternMatchUtils;
 
 import java.lang.reflect.Method;
 

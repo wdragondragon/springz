@@ -1,4 +1,4 @@
-package org.jdragon.springz.core.entry;
+package org.jdragon.springz.core.filter;
 
 import org.jdragon.springz.core.annotation.FilterType;
 
@@ -6,18 +6,18 @@ import org.jdragon.springz.core.annotation.FilterType;
  * @Author: Jdragon
  * @email: 1061917196@qq.com
  * @Date: 2020.04.29 21:10
- * @Description:
+ * @Description: 用于放置扫描拦截元数据
  */
-public class FilterInfo {
+public class FilterMeta {
 
     private FilterType type;
 
     private Class<?>[] classes;
 
-    public FilterInfo() {
+    public FilterMeta() {
     }
 
-    public FilterInfo(FilterType type, Class<?>[] classes) {
+    public FilterMeta(FilterType type, Class<?>[] classes) {
         this.type = type;
         this.classes = classes;
     }

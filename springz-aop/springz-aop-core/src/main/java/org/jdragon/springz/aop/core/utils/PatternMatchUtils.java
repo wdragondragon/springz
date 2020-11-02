@@ -1,4 +1,4 @@
-package org.jdragon.springz.core.utils;
+package org.jdragon.springz.aop.core.utils;
 
 import java.lang.reflect.Method;
 
@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
  * @Author: Jdragon
  * @email: 1061917196@qq.com
  * @Date: 2020.10.27 22:47
- * @Description:
+ * @Description: 用于匹配aop中的切面表达式
  */
 public class PatternMatchUtils {
     /**
