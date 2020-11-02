@@ -28,6 +28,7 @@ public class CarDao {
     Car qualifierCar;
 
     public void resourceCar(){
+        int i = 1/0;
         logger.trace("CarDao","resourceCar:"+resourceCar);
     }
 

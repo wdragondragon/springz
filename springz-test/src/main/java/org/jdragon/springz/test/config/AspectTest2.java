@@ -1,11 +1,8 @@
 package org.jdragon.springz.test.config;
 
-import org.jdragon.springz.aop.annotation.Aop;
-import org.jdragon.springz.aop.annotation.Before;
-import org.jdragon.springz.aop.annotation.Order;
-import org.jdragon.springz.aop.annotation.Pointcut;
+import org.jdragon.springz.aop.annotation.*;
+import org.jdragon.springz.aop.core.entity.JoinPoint;
 import org.jdragon.springz.core.annotation.Component;
-import org.jdragon.springz.core.entry.MethodInvocation;
 
 /**
  * @Author: Jdragon
@@ -17,13 +14,24 @@ import org.jdragon.springz.core.entry.MethodInvocation;
 @Order(1)
 @Component
 public class AspectTest2 {
-    @Pointcut("org.jdragon.springz.test.service.HttpTest")
-    public void pointcut(){
+    @Pointcut("org.jdragon.springz.test.service.feign.HttpTest")
+    public void pointcut() {
 
     }
 
     @Before
-    public void before(MethodInvocation methodInvocation){
-        System.out.println("aspect2");
+    public void before(JoinPoint joinPoint) {
+        System.out.println("aspectTest2切面：执行方法：" + joinPoint.getTargetMethod().getName());
+    }
+
+    @After
+    public void after(JoinPoint joinPoint) {
+        System.out.println("aspectTest2切面：执行方法结果：" + joinPoint.getInvokeResult());
+
+    }
+
+    @Throw
+    public void throwable(Throwable e){
+        e.printStackTrace();
     }
 }

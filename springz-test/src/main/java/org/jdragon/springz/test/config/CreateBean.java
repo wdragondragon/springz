@@ -2,7 +2,6 @@ package org.jdragon.springz.test.config;
 
 
 
-import org.apache.poi.ss.formula.functions.T;
 import org.jdragon.springz.ImportTest;
 import org.jdragon.springz.core.annotation.*;
 import org.jdragon.springz.scanner.entry.BeanInfo;
@@ -10,7 +9,7 @@ import org.jdragon.springz.test.controller.UserController;
 import org.jdragon.springz.test.domain.Car;
 import org.jdragon.springz.test.domain.TestWaitBean;
 import org.jdragon.springz.test.domain.User;
-import org.jdragon.springz.test.service.HttpTest;
+import org.jdragon.springz.test.service.feign.HttpTest;
 
 /**
  * @Author: Jdragon
@@ -56,7 +55,9 @@ public class CreateBean {
     }
     @Bean
     public TestWaitBean testWaitBean(HttpTest httpTest){
-        httpTest.http();
+//        httpTest.http();
         return new TestWaitBean();
     }
+
+
 }

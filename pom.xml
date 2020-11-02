@@ -16,6 +16,7 @@
         <module>springz-annotation</module>
         <module>springz-scanner</module>
         <module>springz-web</module>
+        <module>springz-aop</module>
     </modules>
 
     <name>springz</name>
@@ -27,6 +28,7 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <springz.version>1.0</springz.version>
+        <jackson.version>2.10.0</jackson.version>
     </properties>
 
     <dependencyManagement>
@@ -73,13 +75,6 @@
                 <version>${springz.version}</version>
             </dependency>
 
-
-            <dependency>
-                <groupId>org.jdragon.springz</groupId>
-                <artifactId>springz-feign-annotation</artifactId>
-                <version>${springz.version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>org.jdragon.springz</groupId>
                 <artifactId>springz-feign-annotation</artifactId>
@@ -90,6 +85,30 @@
                 <groupId>com.jdragon</groupId>
                 <artifactId>jdragon-common</artifactId>
                 <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

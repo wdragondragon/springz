@@ -19,6 +19,9 @@ public @interface ZFeign {
 
     String basePath() default "";
 
+    /**
+     * @Description: 解构提取返回结果
+    **/
     String[] depth() default {};
 
     String fallback() default "";

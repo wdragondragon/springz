@@ -8,7 +8,7 @@ import java.lang.annotation.*;
  * @Date: 2020.04.25 22:04
  * @Description: 与@Autowired搭配使用，在使用@Qualifier时，@Autowired中会使用@Qualifier中的值来代替获取字段类型名。
  */
-@Target({ElementType.FIELD,ElementType.METHOD})
+@Target({ElementType.FIELD,ElementType.METHOD,ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented

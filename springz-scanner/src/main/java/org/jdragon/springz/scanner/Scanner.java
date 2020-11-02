@@ -3,7 +3,7 @@ package org.jdragon.springz.scanner;
 import org.jdragon.springz.scanner.entry.ClassInfo;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 import org.jdragon.springz.utils.Log.Logger;
-import org.jdragon.springz.utils.StringUtils;
+import org.jdragon.springz.utils.StrUtil;
 
 import java.io.File;
 import java.net.JarURLConnection;
@@ -19,6 +19,8 @@ import java.util.jar.JarFile;
  * @Description: 组件扫描注册器
  */
 public class Scanner {
+
+    private final List<ClassInfo> classInfoCache = new ArrayList<>();
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -79,23 +81,26 @@ public class Scanner {
 
     public void doScan() {
         logger.info("扫描器启动", scanAction.getClass().getSimpleName());
-        for (String baseClazzName : baseClassesName) {
-            String baseClazzPackage = baseClazzName;
-            //filter未初始化前扫类，后扫包
-            baseClazzPackage = baseClazzPackage.replaceAll("\\" + PKG_SEPARATOR, PATH_SEPARATOR);
-            URL resource = classLoader.getResource(baseClazzPackage);
-            String runType = Objects.requireNonNull(resource).getProtocol();
-            logger.info("扫描", baseClazzPackage);
+        if (classInfoCache.isEmpty()) {
+            for (String baseClazzName : baseClassesName) {
+                String baseClazzPackage = baseClazzName;
+                //filter未初始化前扫类，后扫包
+                baseClazzPackage = baseClazzPackage.replaceAll("\\" + PKG_SEPARATOR, PATH_SEPARATOR);
+                URL resource = classLoader.getResource(baseClazzPackage);
+                String runType = Objects.requireNonNull(resource).getProtocol();
+                logger.info("扫描", baseClazzPackage);
 
-            //更改扫描基路径，因为可能跨越不同的jar包，所获取的资源路径也不一样
-            this.scanBasePackage = resource.getPath().replace(baseClazzPackage, "");
+                //更改扫描基路径，因为可能跨越不同的jar包，所获取的资源路径也不一样
+                this.scanBasePackage = resource.getPath().replace(baseClazzPackage, "");
 
-            if (RUN_JAR.equals(runType)) {
-                this.scanJarPackage(baseClazzPackage);
-            } else if (RUN_FILE.equals(runType)) {
-                this.scanFilePackage(baseClazzPackage);
+                if (RUN_JAR.equals(runType)) {
+                    this.scanJarPackage(baseClazzPackage);
+                } else if (RUN_FILE.equals(runType)) {
+                    this.scanFilePackage(baseClazzPackage);
+                }
             }
         }
+        action();
     }
 
     /**
@@ -143,21 +148,12 @@ public class Scanner {
             //获取到的className是全类名，需要截取最后的文件名来作为key
             //并将名字的第一个字母转为小写(用它作为key存储map)
             String key = clazzFileName.substring(clazzFileName.lastIndexOf(PKG_SEPARATOR) + 1);
-            key = StringUtils.firstLowerCase(key);
+            key = StrUtil.firstLowerCase(key);
 
             //在上方已将文件分隔符替换成包类分隔符，可以作为全类名来获取class对象
             String className = clazzFileName;
 
-            try {
-                Class<?> clazz = Class.forName(className);
-                ClassInfo classInfo = new ClassInfo(key, className, clazz);
-                if (isAgree(classInfo)) {
-                    scanAction.action(classInfo);
-                }
-            } catch (ClassNotFoundException e) {
-                logger.warn("扫描jar时出现无法创建对象的类", className);
-            } catch (NoClassDefFoundError ignored) {
-            }
+            createClassInfo(key, className);
         }
     }
 
@@ -181,21 +177,32 @@ public class Scanner {
         for (File clazzFile : absSubFiles) {
             String clazzFileName = clazzFile.getName();
             //去除.class以后的文件名
-            clazzFileName = clazzFileName.substring(0, clazzFileName.lastIndexOf(PKG_SEPARATOR));
+            clazzFileName = clazzFileName
+                    .substring(0, clazzFileName.lastIndexOf(PKG_SEPARATOR));
             //将名字的第一个字母转为小写(用它作为key存储map)
-            String key = StringUtils.firstLowerCase(clazzFileName);
+            String key = StrUtil.firstLowerCase(clazzFileName);
             //构建一个类全名(包名.类名)
             String className = pkgPath + PKG_SEPARATOR + clazzFileName;
 
-            try {
-                Class<?> clazz = Class.forName(className);
+            createClassInfo(key, className);
+        }
+    }
 
-                ClassInfo classInfo = new ClassInfo(key, className, clazz);
-                if (isAgree(classInfo)) {
-                    scanAction.action(classInfo);
-                }
-            } catch (ClassNotFoundException e) {
-                logger.warn("扫描Jar时出现无法创建对象的类", className);
+    private void createClassInfo(String key, String className) {
+        try {
+            Class<?> clazz = Class.forName(className);
+
+            ClassInfo classInfo = new ClassInfo(key, className, clazz);
+            classInfoCache.add(classInfo);
+        } catch (ClassNotFoundException e) {
+            logger.warn("扫描Jar时出现无法创建对象的类", className);
+        }
+    }
+
+    private void action() {
+        for (ClassInfo classInfo : classInfoCache) {
+            if (isAgree(classInfo)) {
+                scanAction.action(classInfo);
             }
         }
     }

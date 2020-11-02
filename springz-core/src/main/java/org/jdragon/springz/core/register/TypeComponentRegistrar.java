@@ -11,7 +11,7 @@ import org.jdragon.springz.scanner.ScanAction;
 import org.jdragon.springz.scanner.entry.ClassInfo;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 import org.jdragon.springz.utils.Log.Logger;
-import org.jdragon.springz.utils.StringUtils;
+import org.jdragon.springz.utils.StrUtil;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -72,7 +72,7 @@ public class TypeComponentRegistrar extends ComponentRegistrar implements ScanAc
                 //把实现接口放到map容器 beanMap->InterfacesName:obj
                 registerInterfaces(c.getInterfaces(), obj, scopeValue);
             } else {
-                value = StringUtils.firstLowerCase(value);
+                value = StrUtil.firstLowerCase(value);
                 register(value, obj, scopeValue);
             }
             //将对象放到map容器 beanMap->definitionName:obj
@@ -109,7 +109,7 @@ public class TypeComponentRegistrar extends ComponentRegistrar implements ScanAc
         Import importAnnotation = c.getAnnotation(Import.class);
         Class<?>[] importClasses = importAnnotation.value();
         for (Class<?> importClass : importClasses) {
-            beanMap.put(StringUtils.firstLowerCase(importClass.getSimpleName()),
+            beanMap.put(StrUtil.firstLowerCase(importClass.getSimpleName()),
                     new BeanInfo(importClass.newInstance(), importClass.getName()));
         }
     }
@@ -121,7 +121,7 @@ public class TypeComponentRegistrar extends ComponentRegistrar implements ScanAc
      **/
     private void registerInterfaces(Class<?>[] interfaces, Object obj, String scope) {
         for (Class<?> anInterface : interfaces) {
-            String interfaceName = StringUtils.firstLowerCase(anInterface.getSimpleName());
+            String interfaceName = StrUtil.firstLowerCase(anInterface.getSimpleName());
             //这里检测到的话代表有多个接口实现类，需要将接口组件注销
             register(interfaceName, obj, scope);
         }

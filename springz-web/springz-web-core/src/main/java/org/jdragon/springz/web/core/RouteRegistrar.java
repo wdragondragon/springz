@@ -27,10 +27,11 @@ public class RouteRegistrar extends Registrar implements ScanAction {
         if (!clazz.isAnnotationPresent(RequestMapping.class)) return;
 
         RequestMapping classMapping = clazz.getAnnotation(RequestMapping.class);
-        RequestMethod classMethod = classMapping.method();
-        String classPath = classMapping.value();
+        String classUrl = classMapping.value();
         for (Method clazzMethod : clazz.getMethods()) {
             RequestMapping methodMapping = (RequestMapping) AnnotationUtils.getAllContainedAnnotationType(clazzMethod, RequestMapping.class);
+            RequestMethod[] method = methodMapping.method();
+
 
         }
     }

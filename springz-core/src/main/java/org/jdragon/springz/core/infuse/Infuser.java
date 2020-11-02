@@ -5,8 +5,9 @@ import org.jdragon.springz.core.annotation.AutowiredZ;
 import org.jdragon.springz.core.annotation.Qualifier;
 import org.jdragon.springz.core.annotation.Resource;
 
-import org.jdragon.springz.core.aop.AopProxyPostProcessorFactory;
-import org.jdragon.springz.core.aop.BeanPostProcessor;
+import org.jdragon.springz.core.postProcessor.BeanPostProcessor;
+import org.jdragon.springz.core.entry.PostAutowiredBean;
+import org.jdragon.springz.core.postProcessor.PostProcessorContext;
 import org.jdragon.springz.scanner.Filter;
 import org.jdragon.springz.scanner.Registrar;
 import org.jdragon.springz.scanner.ScanAction;
@@ -15,7 +16,7 @@ import org.jdragon.springz.scanner.entry.ClassInfo;
 import org.jdragon.springz.utils.Bean2Utils;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 import org.jdragon.springz.utils.Log.Logger;
-import org.jdragon.springz.utils.StringUtils;
+import org.jdragon.springz.utils.StrUtil;
 
 
 import java.lang.annotation.Annotation;
@@ -78,7 +79,7 @@ public class Infuser extends Registrar implements ScanAction {
                 }
 
                 String fieldName = methodName.replaceAll("set", "");
-                fieldName = StringUtils.firstLowerCase(fieldName);
+                fieldName = StrUtil.firstLowerCase(fieldName);
 
                 Field field = c.getDeclaredField(fieldName);
 
@@ -119,7 +120,7 @@ public class Infuser extends Registrar implements ScanAction {
 
 //        String qualifierValue = AnnotationUtils.checkIncludeQualifier(field);
 //        String infuseKey = qualifierValue == null ? autowiredValue : qualifierValue;
-        return StringUtils.firstLowerCase(infuseKey);
+        return StrUtil.firstLowerCase(infuseKey);
     }
 
     /**
@@ -131,7 +132,7 @@ public class Infuser extends Registrar implements ScanAction {
         Resource resource = field.getAnnotation(Resource.class);
         String resourceValue = resource.value();
         String infuseKey = resourceValue.isEmpty() ? field.getName() : resourceValue;
-        return StringUtils.firstLowerCase(infuseKey);
+        return StrUtil.firstLowerCase(infuseKey);
     }
 
     /**
@@ -147,17 +148,13 @@ public class Infuser extends Registrar implements ScanAction {
         }
         BeanInfo iBeanInfo = beanMap.get(objectKey);
 
-        Object iBean;
-        if (iBeanInfo.getScope().equals(BeanInfo.SINGLETON)) {
-            iBean = iBeanInfo.getBean();
-        } else {
-            Object oldBean = iBeanInfo.getBean();
-            iBean = Bean2Utils.copy(oldBean);
+        PostAutowiredBean postAutowiredBean = new PostAutowiredBean(iBeanInfo);
+
+        for (BeanPostProcessor beanPostProcessor : PostProcessorContext.get()) {
+            postAutowiredBean = beanPostProcessor.postProcessAfterInitialization(postAutowiredBean);
         }
 
-        BeanPostProcessor beanPostProcessor = AopProxyPostProcessorFactory.get(iBean.getClass());
-
-        iBean = beanPostProcessor.postProcessAfterInitialization(iBeanInfo);
+        Object iBean = postAutowiredBean.getLastBean();
 
         field.setAccessible(true);
         //是否为静态字段
@@ -169,4 +166,5 @@ public class Infuser extends Registrar implements ScanAction {
 
         logger.info("注入对象成功", targetKey, objectKey);
     }
+
 }

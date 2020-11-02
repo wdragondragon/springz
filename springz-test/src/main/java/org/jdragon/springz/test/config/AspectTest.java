@@ -1,11 +1,9 @@
 package org.jdragon.springz.test.config;
 
-import org.jdragon.springz.aop.annotation.Aop;
-import org.jdragon.springz.aop.annotation.Before;
-import org.jdragon.springz.aop.annotation.Order;
-import org.jdragon.springz.aop.annotation.Pointcut;
+import org.jdragon.springz.aop.annotation.*;
+import org.jdragon.springz.aop.core.entity.JoinPoint;
 import org.jdragon.springz.core.annotation.Component;
-import org.jdragon.springz.core.entry.MethodInvocation;
+
 
 /**
  * @Author: Jdragon
@@ -20,12 +18,17 @@ import org.jdragon.springz.core.entry.MethodInvocation;
 public class AspectTest {
 
     @Pointcut("org.jdragon.springz.test.service.UserAddService*")
-    public void pointcut(){
+    public void pointcut() {
 
     }
 
     @Before
-    public void before(MethodInvocation methodInvocation){
-        System.out.println("aspect");
+    public void beforeMethod(JoinPoint joinPoint) {
+        System.out.println("aspectTest切面,方法执行:" + joinPoint.getTargetMethod().getName());
+    }
+
+    @After
+    public void afterMethod(JoinPoint joinPoint) {
+        System.out.println("aspectTest切面,方法后执行得到结果:" + joinPoint.getInvokeResult());
     }
 }

@@ -40,7 +40,7 @@ public abstract class Registrar {
             return;
         }
         //将对象放到map容器
-        beanMap.put(definitionName, new BeanInfo(obj, scope,className));
+        beanMap.put(definitionName, new BeanInfo(obj, scope, className));
         if (beanMap.containsKey(definitionName)) {
             logger.info("注册bean成功", definitionName, className);
         }
@@ -80,10 +80,10 @@ public abstract class Registrar {
                 .toArray();
         Object bean = waitBeanInfo.createBean(needBean);
         if (bean == null) return;
-        for (String beanName : waitBeanInfo.getBeanNames()) {
-            register(beanName, bean, waitBeanInfo.getScope());
-            logger.warn("唤醒出列:" + beanName);
-        }
+        String beanName = waitBeanInfo.getBeanName();
+        register(beanName, bean, waitBeanInfo.getScope());
+        logger.warn("唤醒出列:" + beanName);
+
     }
 
     public static Map<String, BeanInfo> getBeanMap() {

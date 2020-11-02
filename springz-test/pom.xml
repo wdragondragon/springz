@@ -24,6 +24,11 @@
             <groupId>org.jdragon.springz</groupId>
             <artifactId>springz-feign-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.jdragon.springz</groupId>
+            <artifactId>springz-aop-core</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
     <build>
         <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->

@@ -20,16 +20,6 @@
             <groupId>org.jdragon.springz</groupId>
             <artifactId>springz-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.jdragon</groupId>
-            <artifactId>jdragon-common</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-context</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
     </dependencies>
 
 </project>

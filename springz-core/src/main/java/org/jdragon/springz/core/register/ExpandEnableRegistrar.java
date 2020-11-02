@@ -7,6 +7,10 @@ import org.jdragon.springz.scanner.Filter;
 import org.jdragon.springz.scanner.ScanAction;
 import org.jdragon.springz.scanner.entry.ClassInfo;
 
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @Author: Jdragon
  * @email: 1061917196@qq.com
@@ -17,15 +21,22 @@ public class ExpandEnableRegistrar implements ScanAction {
 
     BaseClassesScanContext scanAction;
 
-    public ExpandEnableRegistrar(BaseClassesScanContext scanAction){
+    public ExpandEnableRegistrar(BaseClassesScanContext scanAction) {
         this.scanAction = scanAction;
     }
 
     @Override
     public void action(ClassInfo classInfo) {
-        SpringzScan springzScan = (SpringzScan) AnnotationUtils.getContainedAnnotationType(classInfo.getClazz(), SpringzScan.class);
-        if (springzScan != null)
-            scanAction.resolverComponentScan(springzScan);
+        Class<?> clazz = classInfo.getClazz();
+        for (Annotation annotation : clazz.getAnnotations()) {
+            SpringzScan springzScan = (SpringzScan)AnnotationUtils.getAllContainedAnnotationType(annotation.annotationType(), SpringzScan.class);
+            if(springzScan!=null){
+                scanAction.resolverComponentScan(springzScan);
+            }
+        }
+//        SpringzScan springzScan = (SpringzScan) AnnotationUtils.getContainedAnnotationType(classInfo.getClazz(), SpringzScan.class);
+//        if (springzScan != null)
+//            scanAction.resolverComponentScan(springzScan);
     }
 
     @Override

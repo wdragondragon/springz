@@ -60,7 +60,7 @@ public class Request {
         protocol = requestMetaInfo[2];
 
 //        if ("/favicon.ico".equals(url)) return;
-
+//        String requestInfo;
         while ((requestInfo = bufferedReader.readLine()) != null && !requestInfo.isEmpty()) {
             System.out.println(requestInfo);
             int splitIndex = requestInfo.indexOf(':');

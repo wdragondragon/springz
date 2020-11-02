@@ -8,7 +8,6 @@ import org.jdragon.springz.scanner.entry.ClassInfo;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 import org.jdragon.springz.feign.annotation.ZFeign;
-import java.util.Map;
 
 /**
  * @Author: Jdragon

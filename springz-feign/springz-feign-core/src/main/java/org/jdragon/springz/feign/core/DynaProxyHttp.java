@@ -8,12 +8,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import com.jdragon.common.http.HttpException;
-import com.jdragon.common.http.HttpUtils;
-import com.jdragon.common.json.JsonUtils;
+import com.alibaba.fastjson.util.ParameterizedTypeImpl;
 import org.jdragon.springz.core.utils.AnnotationUtils;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
+import org.jdragon.springz.utils.http.HttpException;
+import org.jdragon.springz.utils.http.HttpUtils;
+import org.jdragon.springz.utils.json.JsonUtils;
 import org.jdragon.springz.web.annotation.*;
 
 /**
@@ -59,7 +60,7 @@ public class DynaProxyHttp implements InvocationHandler {
             }
             urlBuilder.append((String) AnnotationUtils.getIncludeAnnotationValue(method, RequestMapping.class, "value"));
 
-            RequestMethod request = requestMapping.method();
+            RequestMethod[] request = requestMapping.method();
 
             HashMap<String, String> params = new HashMap<>();
 
@@ -80,7 +81,7 @@ public class DynaProxyHttp implements InvocationHandler {
                     url = url.replaceAll("\\{" + pathVar + "}", value);
                 }
             }
-            return robotHandle(url, request, body, params, method.getGenericReturnType());
+            return robotHandle(url, request[0], body, params, method.getGenericReturnType());
         } catch (HttpException e) {
             logger.error("远程服务调用异常", url);
             e.printStackTrace();
@@ -90,13 +91,12 @@ public class DynaProxyHttp implements InvocationHandler {
         return null;
     }
 
-    public Object robotHandle(String url, RequestMethod request, Object robotMsgResult, HashMap<String, String> params, Type type) {
+    public Object robotHandle(String url, RequestMethod request, Object body, HashMap<String, String> params, Type type) {
         String str = "";
         try {
             HttpUtils httpUtils = HttpUtils.initJson();
             Map<String, String> map;
-
-            if (robotMsgResult == null) return null;
+            if (body == null) return null;
 
             switch (request) {
                 case GET:
@@ -104,7 +104,7 @@ public class DynaProxyHttp implements InvocationHandler {
                     map = httpUtils.get(url);
                     break;
                 case POST:
-                    String s = JsonUtils.object2Str(robotMsgResult);
+                    String s = JsonUtils.object2Str(body);
                     map = JSON.parseObject(s, new TypeReference<Map<String, String>>() {
                     });
                     httpUtils.setParamMap(params);
@@ -125,6 +125,9 @@ public class DynaProxyHttp implements InvocationHandler {
         } catch (JSONException e) {
             Class<?> typeCls = (Class<?>) type;
             return typeCls.cast(str);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

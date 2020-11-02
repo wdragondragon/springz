@@ -29,10 +29,10 @@ public class WaitBeanInfo {
 
     private final List<String> needBeanName;
 
-    private final String[] beanNames;
+    private final String beanName;
 
-    public WaitBeanInfo(String[] beanNames, Object waitBean, Method constructMethod, String scope, List<String> paramsNameList, List<String> needBeanName) {
-        this.beanNames = beanNames;
+    public WaitBeanInfo(String beanName, Object waitBean, Method constructMethod, String scope, List<String> paramsNameList, List<String> needBeanName) {
+        this.beanName = beanName;
         this.waitBean = waitBean;
         this.constructMethod = constructMethod;
         this.scope = scope;
@@ -62,8 +62,8 @@ public class WaitBeanInfo {
         return needBeanName;
     }
 
-    public String[] getBeanNames() {
-        return beanNames;
+    public String getBeanName() {
+        return beanName;
     }
 
     @Override
@@ -74,7 +74,7 @@ public class WaitBeanInfo {
                 ", scope='" + scope + '\'' +
                 ", paramsNameList=" + paramsNameList +
                 ", needBeanName=" + needBeanName +
-                ", beanNames=" + Arrays.toString(beanNames) +
+                ", beanNames=" + beanName +
                 '}';
     }
 }

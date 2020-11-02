@@ -19,7 +19,7 @@ import org.jdragon.springz.scanner.Scanner;
 import org.jdragon.springz.scanner.entry.WaitBeanInfo;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 import org.jdragon.springz.utils.Log.Logger;
-import org.jdragon.springz.utils.StringUtils;
+import org.jdragon.springz.utils.StrUtil;
 
 import java.util.*;
 
@@ -69,9 +69,9 @@ public class AnnotationApplicationContext {
 
         scanActionList.add(new MethodComponentRegistrar(baseFilter));        //@Bean扫描注册
 
-        scanner.action(new ActionRegistrar(scanActionList)).doScan(); //拓展
+        scanActionList.add(new PostProcessorRegistrar()); //加载bean初始化完成的后置处理器
 
-        scanActionList.add(new AopRegistrar());
+        scanner.action(new ActionRegistrar(scanActionList)).doScan(); //拓展注册器
 
         scanActionList.add(new Infuser(baseFilter));        //注入
     }
@@ -99,12 +99,9 @@ public class AnnotationApplicationContext {
     }
 
     private void printWaitBeanInfo() {
-        String[] names = new String[0];
-        waitBeanInfoList.forEach(waitBeanInfo -> System.arraycopy(
-                names, 0,
-                waitBeanInfo.getBeanNames(),
-                waitBeanInfo.getBeanNames().length, names.length));
-        logger.warn("最后仍未注册成功的Bean", Arrays.toString(names));
+        List<String> waitBeans = new ArrayList<>();
+        waitBeanInfoList.forEach(waitBeanInfo -> waitBeans.add(waitBeanInfo.getBeanName()));
+        logger.warn("最后仍未注册成功的Bean", waitBeans.toString());
     }
 
     public Map<String, BeanInfo> getBeans() {
@@ -119,7 +116,7 @@ public class AnnotationApplicationContext {
     }
 
     public <T> T getBean(Class<T> clazz) {
-        String simple = StringUtils.firstLowerCase(clazz.getSimpleName());
+        String simple = StrUtil.firstLowerCase(clazz.getSimpleName());
         BeanInfo beanInfo = beanMap.get(simple);
         beanInfo = beanInfo != null ? beanInfo : beanMap.get(clazz.getName());
         if (beanInfo == null || beanInfo.getBean() == null) {

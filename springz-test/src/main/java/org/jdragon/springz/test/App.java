@@ -1,26 +1,17 @@
 package org.jdragon.springz.test;
 
 
-import com.jdragon.common.response.normal.Result;
+import org.jdragon.springz.aop.annotation.EnableAopSpringZ;
 import org.jdragon.springz.core.annotation.*;
 import org.jdragon.springz.core.AnnotationApplicationContext;
 
 import org.jdragon.springz.feign.annotation.EnableFeignSpringZ;
-import org.jdragon.springz.test.dao.Http;
-import org.jdragon.springz.test.domain.RobotPostOrder;
-import org.jdragon.springz.test.service.HttpTest;
-import org.jdragon.springz.test.component.ComponentTest;
-import org.jdragon.springz.test.controller.UserController;
-import org.jdragon.springz.test.dao.CarDao;
 import org.jdragon.springz.test.domain.User;
-import org.jdragon.springz.test.service.Robot;
-import org.jdragon.springz.test.service.RobotResult;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 import org.jdragon.springz.utils.Log.Logger;
 
 
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author 10619
@@ -39,6 +30,7 @@ import java.util.List;
 @SpringzMain
 @SpringzScan
 @EnableFeignSpringZ
+@EnableAopSpringZ
 public class App {
 
     private static final Logger logger = LoggerFactory.getLogger(App.class);
@@ -47,56 +39,14 @@ public class App {
     private static final AnnotationApplicationContext ctx = new AnnotationApplicationContext(App.class);
 
     @AutowiredZ
-    private static ComponentTest componentTest;
+    private static TestBean testBean;
 
     @AutowiredZ
-    private static UserController userController;
-
-    @AutowiredZ
-    @Qualifier("carOneDao")
-    private static CarDao carDao;
-
-    @AutowiredZ
-    private static User user;
-
-    @AutowiredZ
-    private static HttpTest httpTest;
-
-    @AutowiredZ
-    private static Robot robot;
-
-    @AutowiredZ
-    private static RobotResult robotResult;
-
+    private static TestFeign testFeign;
 
 
     public static void main(String[] args) {
 
-        testBean();
-
-//        testHttp();
-
-        ctx.close();
-    }
-
-    public static void testHttp() {
-        System.out.println(httpTest.http());
-        System.out.println(httpTest.http1(1));
-        System.out.println(httpTest.http2(1));
-        System.out.println(httpTest.http5(1));
-        System.out.println(httpTest.http6(1));
-        System.out.println(httpTest.http7(new Http(1)));
-        System.out.println(httpTest.http8());
-
-        List<RobotPostOrder> postOrder = robot.getPostOrder();
-        for (RobotPostOrder robotPostOrder : postOrder) {
-            System.out.println(robotPostOrder);
-        }
-        Result<List<RobotPostOrder>> postOrder1 = robotResult.getPostOrder();
-        System.out.println(postOrder1);
-    }
-
-    public static void testBean() {
         logger.info("已注册bean列表", Arrays.toString(ctx.getBeanDefinitionNames()));
 
         User userTest = ctx.getBean(User.class);
@@ -107,22 +57,12 @@ public class App {
 
         logger.info(userTest1.toString());
 
-        componentTest.test();
+        testBean.testBean();
 
-        componentTest.scopeTest();
+        testFeign.testHttp();
 
-        userController.save(user);
-
-        userController.add(user);
-
-        userController.saveAndAdd(user);
-
-        carDao.resourceCar();
-
-        carDao.qualifierCar();
-
-        User httpUser = (User)ctx.getBean("httpUser");
-
-        System.out.println(httpUser);
+        ctx.close();
     }
+
+
 }
