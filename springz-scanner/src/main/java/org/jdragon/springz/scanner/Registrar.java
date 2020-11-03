@@ -50,9 +50,6 @@ public abstract class Registrar {
 
     private void awakeWaitBeansByDefinitionName(String definitionName) {
         List<WaitBeanInfo> needAwakeBeans = getNeedAwakeBean(definitionName);
-        if (needAwakeBeans.isEmpty()) {
-            return;
-        }
         for (WaitBeanInfo needAwakeBean : needAwakeBeans) {
             awakeWaitBean(needAwakeBean);
         }

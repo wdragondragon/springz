@@ -12,11 +12,11 @@ public class BeanInfo {
 
     public final static String PROTOTYPE = "prototype";
 
-    private Object bean;
+    private final Object bean;
 
-    private String scope;
+    private final String scope;
 
-    private String className;
+    private final String className;
 
     public BeanInfo(Object bean, String className) {
         this.bean = bean;
@@ -34,17 +34,11 @@ public class BeanInfo {
         return bean;
     }
 
-    public void setBean(Object bean) {
-        this.bean = bean;
-    }
 
     public String getScope() {
         return scope;
     }
 
-    public void setScope(String scope) {
-        this.scope = scope;
-    }
 
     public String getClassName() {
         return className;

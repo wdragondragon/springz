@@ -1,7 +1,7 @@
 package org.jdragon.springz.core.register;
 
-import org.jdragon.springz.core.postProcessor.BeanPostProcessor;
-import org.jdragon.springz.core.postProcessor.PostProcessorContext;
+import org.jdragon.springz.core.processor.BeanPostProcessor;
+import org.jdragon.springz.core.processor.PostProcessorContext;
 import org.jdragon.springz.scanner.Filter;
 import org.jdragon.springz.scanner.Registrar;
 import org.jdragon.springz.scanner.ScanAction;
@@ -27,10 +27,9 @@ public class PostProcessorRegistrar extends Registrar implements ScanAction {
         Class<?> clazz = classInfo.getClazz();
         if (!BeanPostProcessor.class.isAssignableFrom(clazz)) return;
         try {
-            Constructor constructor = clazz.getConstructor();
-            BeanPostProcessor BeanPostProcessor = (BeanPostProcessor) constructor.newInstance();
+            BeanPostProcessor BeanPostProcessor = (BeanPostProcessor) clazz.newInstance();
             PostProcessorContext.registerBeanPostProcessor(BeanPostProcessor);
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+        } catch (IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
     }

@@ -32,10 +32,9 @@ public class ActionRegistrar implements ScanAction {
         if (ScanAction.class.equals(clazz)) return;
         if (!ScanAction.class.isAssignableFrom(clazz)) return;
         try {
-            Constructor constructor = clazz.getConstructor();
-            ScanAction scanAction = (ScanAction) constructor.newInstance();
+            ScanAction scanAction = (ScanAction) clazz.newInstance();
             ScanManager.registerScanAction(scanAction);
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+        } catch (IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
     }

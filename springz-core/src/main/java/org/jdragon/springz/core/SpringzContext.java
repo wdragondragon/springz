@@ -1,12 +1,5 @@
 package org.jdragon.springz.core;
 
-/**
- * @Author: Jdragon
- * @email: 1061917196@qq.com
- * @Date: 2020.04.23 19:05
- * @Description: 组件管理容器类
- */
-
 import org.jdragon.springz.core.filter.BaseFilter;
 import org.jdragon.springz.core.infuse.Infuser;
 import org.jdragon.springz.core.register.*;
@@ -23,24 +16,31 @@ import java.util.List;
 import java.util.Map;
 
 
-public class AnnotationApplicationContext {
 
-    private final static Logger logger = LoggerFactory.getLogger(AnnotationApplicationContext.class);
+/**
+ * @Author: Jdragon
+ * @email: 1061917196@qq.com
+ * @Date: 2020.04.23 19:05
+ * @Description: 组件管理容器类
+ */
+
+public class SpringzContext {
+
+    private final static Logger logger = LoggerFactory.getLogger(SpringzContext.class);
 
     private final static Map<String, BeanInfo> beanMap = Registrar.getBeanMap();
 
     private final static List<WaitBeanInfo> waitBeanInfoList = Registrar.getWaitBeanList();
 
-    private final BaseClassesScanner baseClassesScanner = new BaseClassesScanner();
+    private final static BaseClassesScanner baseClassesScanner = new BaseClassesScanner();
 
-    private final Scanner scanner;
+    private static Scanner scanner;
 
-    public AnnotationApplicationContext(Class<?> baseClazz) {
-        //获取主方法的基础路径集
-        this(baseClazz.getPackage().getName());
+    public static void run(Class<?> baseClazz) {
+        run(baseClazz.getPackage().getName());
     }
 
-    public AnnotationApplicationContext(String... basePackageName) {
+    public static void run(String... basePackageName) {
         long start = System.currentTimeMillis();
 
         //获取要扫描的基础路径集
@@ -49,35 +49,19 @@ public class AnnotationApplicationContext {
         //根据扫描集来新建扫描器，一旦创建则确认扫描器扫描范围
         scanner = newScan(scanBasePackages);
 
-        initScan();
+        //注册在扫描时要做的行为
+        registerScanAction();
 
+        //开始扫描
         doScan();
 
+        //打印缺失依赖导致未能注册成功的Bean名字
         printWaitBeanInfo();
 
         logger.info("启动所用时间", System.currentTimeMillis() - start + "ms");
     }
 
-
-    private void initScan() {
-        Filter baseFilter = new BaseFilter();
-
-        ScanManager.registerScanAction(new TypeComponentRegistrar(baseFilter));//@Component扫描注册
-
-        ScanManager.registerScanAction(new MethodComponentRegistrar(baseFilter));  //@Bean扫描注册
-
-        ScanManager.registerScanAction(new PostProcessorRegistrar());//加载bean初始化完成的后置处理器
-
-        scanner.action(new ActionRegistrar()).doScan(); //拓展注册器
-
-        ScanManager.registerScanAction(new Infuser(baseFilter));//注入
-    }
-
-    private void doScan() {
-        ScanManager.getScanActionList().forEach(scanAction -> scanner.action(scanAction).doScan());
-    }
-
-    public String[] getBaseClassesName(String... baseClassesName) {
+    public static String[] getBaseClassesName(String... baseClassesName) {
         Scanner scanner = newScan(baseClassesName);
         scanner.action(baseClassesScanner).doScan();
         String[] basePackages = BaseClassPackagesManager.getBasePackages(baseClassesName);
@@ -91,17 +75,36 @@ public class AnnotationApplicationContext {
         return BaseClassPackagesManager.getBasePackages(baseClassesName);
     }
 
-    private Scanner newScan(String... scanBasePackages) {
+    private static Scanner newScan(String... scanBasePackages) {
         return new Scanner(scanBasePackages);
     }
 
-    private void printWaitBeanInfo() {
+    private static void registerScanAction() {
+        Filter baseFilter = new BaseFilter();
+
+        ScanManager.registerScanAction(new TypeComponentRegistrar(baseFilter));//@Component扫描注册
+
+        ScanManager.registerScanAction(new MethodComponentRegistrar(baseFilter));  //@Bean扫描注册
+
+        ScanManager.registerScanAction(new PostProcessorRegistrar());//加载bean初始化完成的后置处理器
+
+        scanner.action(new ActionRegistrar()).doScan(); //拓展注册器
+
+        ScanManager.registerScanAction(new Infuser(baseFilter));//注入
+    }
+
+    private static void doScan() {
+        ScanManager.getScanActionList().forEach(scanAction -> scanner.action(scanAction).doScan());
+    }
+
+
+    private static void printWaitBeanInfo() {
         logger.warn("最后仍未注册成功的Bean", Arrays.toString(waitBeanInfoList.stream()
                 .map(WaitBeanInfo::getBeanName)
                 .toArray(String[]::new)));
     }
 
-    public Object getBean(String key) {
+    public static Object getBean(String key) {
         if (beanMap.containsKey(key)) {
             return beanMap.get(key).getBean();
         }
@@ -109,7 +112,7 @@ public class AnnotationApplicationContext {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getBean(Class<T> clazz) {
+    public static <T> T getBean(Class<T> clazz) {
         String simple = StrUtil.firstLowerCase(clazz.getSimpleName());
         BeanInfo beanInfo = beanMap.get(simple);
         beanInfo = beanInfo != null ? beanInfo : beanMap.get(clazz.getName());
@@ -120,7 +123,7 @@ public class AnnotationApplicationContext {
     }
 
 
-    public String[] getBeanDefinitionNames() {
+    public static String[] getBeanDefinitionNames() {
         return beanMap.keySet().toArray(new String[0]);
     }
 
@@ -132,7 +135,7 @@ public class AnnotationApplicationContext {
         return waitBeanInfoList;
     }
 
-    public void close() {
+    public static void close() {
         beanMap.clear();
     }
 }

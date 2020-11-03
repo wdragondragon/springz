@@ -3,7 +3,7 @@ package org.jdragon.springz.test;
 
 import org.jdragon.springz.aop.annotation.EnableAopSpringZ;
 import org.jdragon.springz.core.annotation.*;
-import org.jdragon.springz.core.AnnotationApplicationContext;
+import org.jdragon.springz.core.SpringzContext;
 
 import org.jdragon.springz.feign.annotation.EnableFeignSpringZ;
 import org.jdragon.springz.test.domain.User;
@@ -33,11 +33,6 @@ import java.util.Arrays;
 @EnableAopSpringZ
 public class App {
 
-    private static final Logger logger = LoggerFactory.getLogger(App.class);
-
-    //    private static final AnnotationApplicationContext ctx = new AnnotationApplicationContext(App.class);
-    private static final AnnotationApplicationContext ctx = new AnnotationApplicationContext(App.class);
-
     @AutowiredZ
     private static TestBean testBean;
 
@@ -47,22 +42,12 @@ public class App {
 
     public static void main(String[] args) {
 
-        logger.info("已注册bean列表", Arrays.toString(ctx.getBeanDefinitionNames()));
-
-        User userTest = ctx.getBean(User.class);
-
-        User userTest1 = (User) ctx.getBean("user");
-
-        logger.info(userTest.toString());
-
-        logger.info(userTest1.toString());
+        SpringzContext.run(App.class);
 
         testBean.testBean();
 
         testFeign.testHttp();
 
-        ctx.close();
+        SpringzContext.close();
     }
-
-
 }

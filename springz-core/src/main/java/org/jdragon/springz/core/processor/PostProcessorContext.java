@@ -1,4 +1,4 @@
-package org.jdragon.springz.core.postProcessor;
+package org.jdragon.springz.core.processor;
 
 
 import java.util.ArrayList;

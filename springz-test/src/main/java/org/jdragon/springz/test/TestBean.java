@@ -1,6 +1,7 @@
 package org.jdragon.springz.test;
 
 import org.jdragon.springz.ImportTest;
+import org.jdragon.springz.core.SpringzContext;
 import org.jdragon.springz.core.annotation.AutowiredZ;
 import org.jdragon.springz.core.annotation.Component;
 import org.jdragon.springz.core.annotation.Qualifier;
@@ -11,6 +12,9 @@ import org.jdragon.springz.test.dao.CarDao;
 import org.jdragon.springz.test.domain.User;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 
 /**
@@ -45,6 +49,17 @@ public class TestBean {
     private User httpUser;
 
     public void testBean() {
+
+        logger.info("已注册bean列表", Arrays.toString(SpringzContext.getBeanDefinitionNames()));
+
+        User userTest = SpringzContext.getBean(User.class);
+
+        User userTest1 = (User) SpringzContext.getBean("user");
+
+        logger.info(Optional.ofNullable(userTest).orElse(new User()).toString());
+
+        logger.info(Optional.ofNullable(userTest1).orElse(new User()).toString());
+
 
         componentTest.test();
 

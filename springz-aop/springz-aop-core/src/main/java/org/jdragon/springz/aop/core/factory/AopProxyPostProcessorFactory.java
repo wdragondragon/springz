@@ -1,7 +1,7 @@
 package org.jdragon.springz.aop.core.factory;
 
 import org.jdragon.springz.core.entry.PostAutowiredBean;
-import org.jdragon.springz.core.postProcessor.BeanPostProcessor;
+import org.jdragon.springz.core.processor.BeanPostProcessor;
 
 /**
  * @Author: Jdragon

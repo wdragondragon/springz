@@ -5,15 +5,14 @@ import org.jdragon.springz.core.annotation.AutowiredZ;
 import org.jdragon.springz.core.annotation.Qualifier;
 import org.jdragon.springz.core.annotation.Resource;
 
-import org.jdragon.springz.core.postProcessor.BeanPostProcessor;
+import org.jdragon.springz.core.processor.BeanPostProcessor;
 import org.jdragon.springz.core.entry.PostAutowiredBean;
-import org.jdragon.springz.core.postProcessor.PostProcessorContext;
+import org.jdragon.springz.core.processor.PostProcessorContext;
 import org.jdragon.springz.scanner.Filter;
 import org.jdragon.springz.scanner.Registrar;
 import org.jdragon.springz.scanner.ScanAction;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 import org.jdragon.springz.scanner.entry.ClassInfo;
-import org.jdragon.springz.utils.Bean2Utils;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.StrUtil;
@@ -91,8 +90,6 @@ public class Infuser extends Registrar implements ScanAction {
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
-        } catch (InstantiationException e) {
-            logger.error("缺失空参构造器");
         } catch (NoSuchFieldException e) {
             logger.error("注入方法下的字段不存在", e.getMessage());
         } catch (NoSuchMethodException e) {
@@ -138,20 +135,14 @@ public class Infuser extends Registrar implements ScanAction {
      * @Description: 传入注入目标的targetKey，目标内需注入的field，注入对象的objectKey
      * 从beanMap中获取targetObject和object，将object注入到targetObject的field中
      **/
-    public void infuse(String targetKey, Field field, String objectKey) throws IllegalAccessException, InstantiationException {
+    public void infuse(String targetKey, Field field, String objectKey) throws IllegalAccessException {
         if (!beanMap.containsKey(objectKey)) {
             logger.warn("注入Bean失败", "找不到ObjKey", objectKey);
             return;
         }
-        BeanInfo iBeanInfo = beanMap.get(objectKey);
+        BeanInfo beanInfo = beanMap.get(objectKey);
 
-        PostAutowiredBean postAutowiredBean = new PostAutowiredBean(iBeanInfo);
-
-        for (BeanPostProcessor beanPostProcessor : PostProcessorContext.get()) {
-            postAutowiredBean = beanPostProcessor.postProcessAfterInitialization(postAutowiredBean);
-        }
-
-        Object iBean = postAutowiredBean.getLastBean();
+        Object iBean = invokePostProcessor(beanInfo);
 
         field.setAccessible(true);
         //是否为静态字段
@@ -162,6 +153,15 @@ public class Infuser extends Registrar implements ScanAction {
         }
 
         logger.info("注入对象成功", targetKey, objectKey);
+    }
+
+    public Object invokePostProcessor(BeanInfo beanInfo) {
+        PostAutowiredBean postAutowiredBean = new PostAutowiredBean(beanInfo);
+
+        for (BeanPostProcessor beanPostProcessor : PostProcessorContext.get()) {
+            postAutowiredBean = beanPostProcessor.postProcessAfterInitialization(postAutowiredBean);
+        }
+        return postAutowiredBean.getLastBean();
     }
 
 }
