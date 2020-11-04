@@ -38,4 +38,9 @@ public class PostProcessorRegistrar extends Registrar implements ScanAction {
     public Filter[] getFilters() {
         return new Filter[0];
     }
+
+    @Override
+    public Integer getOrder() {
+        return -97;
+    }
 }

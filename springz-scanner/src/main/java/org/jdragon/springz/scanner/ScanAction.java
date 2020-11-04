@@ -20,4 +20,9 @@ public interface ScanAction {
     void action(ClassInfo classInfo);
 
     Filter[] getFilters();
+
+    //返回扫描行为的优先级，默认为0
+    default Integer getOrder(){
+        return 0;
+    }
 }

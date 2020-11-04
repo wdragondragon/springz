@@ -19,9 +19,9 @@ public abstract class Registrar {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected static Map<String, BeanInfo> beanMap = new HashMap<>();
+    protected static Map<String, BeanInfo> beanMap = BeanContainer.getBeanMap();
 
-    protected static List<WaitBeanInfo> waitBeanList = new ArrayList<>();
+    protected static List<WaitBeanInfo> waitBeanList = BeanContainer.getWaitBeanList();
 
     protected ClassInfo classInfo;
 
@@ -30,8 +30,7 @@ public abstract class Registrar {
      * @return: void
      * @Description: 通用注册类，将definitionName作为key,obj作为value存到beanMap中
      **/
-    protected void register(String definitionName, Object obj, String scope) {
-        String className = classInfo.getClassName();
+    protected void register(String definitionName, String className, Object obj, String scope) {
         //检查definitionName是否存在
         if (beanMap.containsKey(definitionName)) {
             Object existObj = beanMap.get(definitionName);
@@ -46,6 +45,11 @@ public abstract class Registrar {
         }
 
         awakeWaitBeansByDefinitionName(definitionName);
+    }
+
+    protected void register(String definitionName, Object obj, String scope) {
+        String className = classInfo.getClassName();
+        register(definitionName, className, obj, scope);
     }
 
     private void awakeWaitBeansByDefinitionName(String definitionName) {
@@ -77,18 +81,11 @@ public abstract class Registrar {
                 .toArray();
         Object bean = waitBeanInfo.createBean(needBean);
         if (bean == null) return;
+
         String beanName = waitBeanInfo.getBeanName();
-        register(beanName, bean, waitBeanInfo.getScope());
+        register(beanName, waitBeanInfo.getClassName(), bean, waitBeanInfo.getScope());
         logger.warn("唤醒出列:" + beanName);
 
-    }
-
-    public static Map<String, BeanInfo> getBeanMap() {
-        return beanMap;
-    }
-
-    public static List<WaitBeanInfo> getWaitBeanList() {
-        return waitBeanList;
     }
 
     public void addWaitBean(WaitBeanInfo waitBeanInfo) {

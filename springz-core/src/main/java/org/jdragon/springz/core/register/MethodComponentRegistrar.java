@@ -123,7 +123,8 @@ public class MethodComponentRegistrar extends ComponentRegistrar implements Scan
 
             //若存在needBean的话，结束该bean注册。等待其他Registrar的唤醒
             if (!needBeanName.isEmpty()) {
-                super.addWaitBean(new WaitBeanInfo(beanName, obj, method, scope, paramsNameList, needBeanName));
+                super.addWaitBean(new WaitBeanInfo(beanName, method.getReturnType().getName(),
+                        obj, method, scope, paramsNameList, needBeanName));
                 continue;
             }
 
@@ -131,7 +132,11 @@ public class MethodComponentRegistrar extends ComponentRegistrar implements Scan
 
             Object bean = method.invoke(obj, paramsArray);
 
-            register(beanName, bean, scope);
+            register(beanName,method.getReturnType().getName(),bean, scope);
         }
+    }
+    @Override
+    public Integer getOrder() {
+        return -98;
     }
 }

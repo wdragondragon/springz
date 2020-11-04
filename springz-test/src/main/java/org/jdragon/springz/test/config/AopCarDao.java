@@ -7,6 +7,8 @@ import org.jdragon.springz.aop.annotation.Pointcut;
 import org.jdragon.springz.aop.annotation.Throw;
 import org.jdragon.springz.aop.core.entity.JoinPoint;
 import org.jdragon.springz.core.annotation.Component;
+import org.jdragon.springz.utils.Log.Logger;
+import org.jdragon.springz.utils.Log.LoggerFactory;
 
 
 import java.util.Arrays;
@@ -19,7 +21,10 @@ import java.util.Arrays;
  */
 @Aop
 @Component
-public class AspectTest3 {
+public class AopCarDao {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Pointcut(value = "org.jdragon.springz.test.dao.CarDao", method = "resource*")
     public void pointcut() {
 
@@ -27,19 +32,16 @@ public class AspectTest3 {
 
     @Before
     public void beforeMethod(JoinPoint joinPoint) {
-        System.out.println("aspectTest3切面,方法执行:" + joinPoint.getTargetMethod().getName());
+        logger.debug("CarDao切面,方法执行:" + joinPoint.getTargetMethod().getName());
     }
 
     @After
     public void afterMethod(JoinPoint joinPoint) {
-        System.out.println("aspectTest3切面,方法后执行得到结果:" + joinPoint.getInvokeResult());
+        logger.debug("CarDao切面,方法后执行得到结果:" + joinPoint.getInvokeResult());
     }
 
     @Throw
     public void throwable(Throwable throwable) {
-        System.out.println("执行异常处理");
-        System.out.println(throwable.getMessage());
-        System.out.println(throwable.getCause().toString());
-        System.out.println(Arrays.toString(throwable.getStackTrace()));
+        logger.debug("执行异常处理");
     }
 }

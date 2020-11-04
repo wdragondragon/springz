@@ -14,7 +14,7 @@ public class PostProcessorContext {
     private static final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
     static {
-        PostProcessorContext.registerBeanPostProcessor(new ScopePostProcessor());
+        PostProcessorContext.registerBeanPostProcessor(new TestPostProcessor());
     }
 
     public static List<BeanPostProcessor> get() {

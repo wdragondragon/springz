@@ -33,6 +33,8 @@ public class AopRegistrar extends Registrar implements ScanAction {
 
         if (!clazz.isAnnotationPresent(Aop.class)) return;
 
+        Aop aop = clazz.getAnnotation(Aop.class);
+
         Method[] methods = clazz.getMethods();
 
         Method afterMethod = null;
@@ -62,10 +64,7 @@ public class AopRegistrar extends Registrar implements ScanAction {
             logger.error("aop缺少切入点", clazz.getName());
             return;
         }
-
-        int order = 1;
-        if (clazz.isAnnotationPresent(Order.class))
-            order = clazz.getAnnotation(Order.class).value();
+        int order = aop.order();
 
         String definitionName = classInfo.getDefinitionName();
         BeanInfo beanInfo = beanMap.get(definitionName);

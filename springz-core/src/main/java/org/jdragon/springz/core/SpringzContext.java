@@ -12,9 +12,9 @@ import org.jdragon.springz.utils.Log.LoggerFactory;
 import org.jdragon.springz.utils.StrUtil;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-
 
 
 /**
@@ -28,9 +28,9 @@ public class SpringzContext {
 
     private final static Logger logger = LoggerFactory.getLogger(SpringzContext.class);
 
-    private final static Map<String, BeanInfo> beanMap = Registrar.getBeanMap();
+    private final static Map<String, BeanInfo> beanMap = BeanContainer.getBeanMap();
 
-    private final static List<WaitBeanInfo> waitBeanInfoList = Registrar.getWaitBeanList();
+    private final static List<WaitBeanInfo> waitBeanInfoList = BeanContainer.getWaitBeanList();
 
     private final static BaseClassesScanner baseClassesScanner = new BaseClassesScanner();
 
@@ -82,15 +82,15 @@ public class SpringzContext {
     private static void registerScanAction() {
         Filter baseFilter = new BaseFilter();
 
-        ScanManager.registerScanAction(new TypeComponentRegistrar(baseFilter));//@Component扫描注册
-
-        ScanManager.registerScanAction(new MethodComponentRegistrar(baseFilter));  //@Bean扫描注册
-
-        ScanManager.registerScanAction(new PostProcessorRegistrar());//加载bean初始化完成的后置处理器
+        ScanManager.registerScanAction(
+                new TypeComponentRegistrar(baseFilter),//@Component扫描注册
+                new MethodComponentRegistrar(baseFilter),//@Bean扫描注册
+                new PostProcessorRegistrar(),//加载bean初始化完成的后置处理器
+                new Infuser(baseFilter));//注入
 
         scanner.action(new ActionRegistrar()).doScan(); //拓展注册器
-
-        ScanManager.registerScanAction(new Infuser(baseFilter));//注入
+        //根据order优先级来排序注册先后
+        ScanManager.getScanActionList().sort(Comparator.comparing(ScanAction::getOrder));
     }
 
     private static void doScan() {

@@ -10,7 +10,7 @@ import org.jdragon.springz.utils.Bean2Utils;
  * @Date: 2020.11.02 11:39
  * @Description: 用于处理多例的bean后置处理器
  */
-public class ScopePostProcessor implements BeanPostProcessor {
+public class TestPostProcessor implements BeanPostProcessor {
     @Override
     public PostAutowiredBean postProcessAfterInitialization(PostAutowiredBean postAutowiredBean) {
 

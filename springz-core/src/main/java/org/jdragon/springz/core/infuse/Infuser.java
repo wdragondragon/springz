@@ -181,4 +181,9 @@ public class Infuser extends Registrar implements ScanAction {
     public Filter[] getFilters() {
         return filters;
     }
+
+    @Override
+    public Integer getOrder() {
+        return 100;
+    }
 }

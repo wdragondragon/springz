@@ -72,7 +72,7 @@ public class TypeComponentRegistrar extends ComponentRegistrar implements ScanAc
                 registerInterfaces(c.getInterfaces(), obj, scopeValue);
             } else {
                 value = StrUtil.firstLowerCase(value);
-                register(value, obj, scopeValue);
+                register(value,obj, scopeValue);
             }
             //将对象放到map容器 beanMap->definitionName:obj
             register(classInfo.getDefinitionName(), obj, scopeValue);
@@ -122,7 +122,7 @@ public class TypeComponentRegistrar extends ComponentRegistrar implements ScanAc
         for (Class<?> anInterface : interfaces) {
             String interfaceName = StrUtil.firstLowerCase(anInterface.getSimpleName());
             //这里检测到的话代表有多个接口实现类，需要将接口组件注销
-            register(interfaceName, obj, scope);
+            register(interfaceName,obj, scope);
         }
     }
 
@@ -143,5 +143,10 @@ public class TypeComponentRegistrar extends ComponentRegistrar implements ScanAc
             field.set(obj, constructor.newInstance(value));
             logger.info("注入默认属性成功", classInfo.getClassName(), value);
         }
+    }
+
+    @Override
+    public Integer getOrder() {
+        return -99;
     }
 }

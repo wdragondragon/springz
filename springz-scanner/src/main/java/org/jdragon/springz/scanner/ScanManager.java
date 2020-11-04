@@ -1,5 +1,6 @@
 package org.jdragon.springz.scanner;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,11 +13,15 @@ import java.util.List;
 public class ScanManager {
     private final static List<ScanAction> scanActionList = new LinkedList<>();
 
+    static {
+
+    }
+
     public static List<ScanAction> getScanActionList(){
         return scanActionList;
     }
 
-    public static void registerScanAction(ScanAction scanAction){
-        scanActionList.add(scanAction);
+    public static void registerScanAction(ScanAction...scanAction){
+        scanActionList.addAll(Arrays.asList(scanAction));
     }
 }

@@ -16,5 +16,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Aop {
 
-    String value() default "";
+    int order() default 0;
 }
