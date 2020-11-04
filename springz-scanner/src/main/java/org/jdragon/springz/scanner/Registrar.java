@@ -35,14 +35,14 @@ public abstract class Registrar {
         //检查definitionName是否存在
         if (beanMap.containsKey(definitionName)) {
             Object existObj = beanMap.get(definitionName);
-            logger.warn("已存在键名", definitionName, existObj.getClass().getName());
-            logger.warn("请解决类键名冲突", definitionName, className);
+            logger.warn("已存在键名[键名][冲突类名]", definitionName, existObj.getClass().getName());
+            logger.warn("请解决类键名冲突[键名][类名]", definitionName, className);
             return;
         }
         //将对象放到map容器
         beanMap.put(definitionName, new BeanInfo(obj, scope, className));
         if (beanMap.containsKey(definitionName)) {
-            logger.info("注册bean成功", definitionName, className);
+            logger.info("注册bean成功[键名][类名]", definitionName, className);
         }
 
         awakeWaitBeansByDefinitionName(definitionName);

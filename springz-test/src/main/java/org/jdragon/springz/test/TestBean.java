@@ -9,7 +9,9 @@ import org.jdragon.springz.test.App;
 import org.jdragon.springz.test.component.ComponentTest;
 import org.jdragon.springz.test.controller.UserController;
 import org.jdragon.springz.test.dao.CarDao;
+import org.jdragon.springz.test.dao.UserDao;
 import org.jdragon.springz.test.domain.User;
+import org.jdragon.springz.test.service.UserAddService;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 
@@ -48,6 +50,12 @@ public class TestBean {
     @Qualifier("httpUser")
     private User httpUser;
 
+    @AutowiredZ
+    private UserDao userDao;
+
+    @AutowiredZ
+    private UserAddService userAddService;
+
     public void testBean() {
 
         logger.info("已注册bean列表", Arrays.toString(SpringzContext.getBeanDefinitionNames()));
@@ -76,5 +84,9 @@ public class TestBean {
         carDao.qualifierCar();
 
         System.out.println(httpUser);
+
+
+
+        System.out.println(userDao.toString());
     }
 }

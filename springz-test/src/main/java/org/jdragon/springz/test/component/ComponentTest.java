@@ -34,6 +34,8 @@ public class ComponentTest {
     public void scopeTest(){
         user.setUsername("李四");
         user2.setUsername("黄五");
+        System.out.println(user);
+        System.out.println(user2);
         logger.trace(user.toString());
         logger.trace(user2.toString());
     }

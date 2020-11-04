@@ -17,40 +17,53 @@ public class Bean2Utils {
      * @return: java.lang.Object
      * @Description: 进行类的深拷贝
      **/
-    public static Object copy(Object source) throws IllegalAccessException, InstantiationException {
+    public static Object copy(Object source, Field... ignoreField) {
+        try {
+            Class<?> clazz = source.getClass();
+            Object o = clazz.newInstance();
+            while (clazz != Object.class) {
+                Field[] fields = clazz.getDeclaredFields();
+                for (Field field : fields) {
+                    if (Modifier.isStatic(field.getModifiers())) {
+                        continue;
+                    }
+                    boolean skip = false;
+                    for (Field ignore : ignoreField) {
+                        if (field.equals(ignore)) {
+                            skip = true;
+                            break;
+                        }
+                    }
+                    if (skip) continue;
+                    //静态字段或者指定忽略字段，要跳过copy
 
-        Class<?> clazz = source.getClass();
-        Object o = clazz.newInstance();
-        while (clazz != Object.class) {
-
-            Field[] fields = clazz.getDeclaredFields();
-            for (Field field : fields) {
-                if (Modifier.isStatic(field.getModifiers())) {
-                    continue;
+                    field.setAccessible(true);
+                    Object value = field.get(source);
+                    // 基本类型
+                    if (field.getType().isPrimitive()) {
+                        field.set(o, value);
+                    }
+                    // 数组类型  因为数组类型也是 Object 的实例, 所以写在前面
+                    else if (field.getType().isArray()) {
+                        field.set(o, operateArray(value));
+                    }
+                    // 不为null的对象
+                    else if (value != null) {
+                        field.set(o, copy(value));
+                    }
+                    field.setAccessible(false);
                 }
-                field.setAccessible(true);
-                Object value = field.get(source);
-                // 基本类型
-                if (field.getType().isPrimitive()) {
-                    field.set(o, value);
-                }
-                // 数组类型  因为数组类型也是 Object 的实例, 所以写在前面
-                else if (field.getType().isArray()) {
-                    field.set(o, operateArray(value));
-                }
-                // 不为null的对象
-                else if (value != null) {
-                    field.set(o, copy(value));
-                }
-                field.setAccessible(false);
+                clazz = clazz.getSuperclass();
             }
-            clazz = clazz.getSuperclass();
+            return o;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-        return o;
     }
 
 
-    private static Object operateArray(Object array) throws InstantiationException, IllegalAccessException {
+    private static Object operateArray(Object array) {
         // 1. 数组不为null, 2. 数组长度 >= 0
         if (array == null) {
             return null;

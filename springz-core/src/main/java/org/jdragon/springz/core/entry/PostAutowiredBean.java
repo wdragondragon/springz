@@ -21,6 +21,12 @@ public class PostAutowiredBean {
         this.lastBean = beanInfo.getBean();
     }
 
+
+    public PostAutowiredBean(BeanInfo beanInfo,Object lastBean){
+        this.beanInfo = beanInfo;
+        this.lastBean = lastBean;
+    }
+
     public void setLastBean(Object lastBean) {
         this.lastBean = lastBean;
     }

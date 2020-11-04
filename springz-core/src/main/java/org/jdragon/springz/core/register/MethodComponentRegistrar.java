@@ -104,8 +104,8 @@ public class MethodComponentRegistrar extends ComponentRegistrar implements Scan
                     methodParamTypeName = methodParamType.getAnnotation(Qualifier.class).value();
                 } else {
                     methodParamTypeName = methodParamType.getSimpleName();
-                    methodParamTypeName = StrUtil.firstLowerCase(methodParamTypeName);
                 }
+                methodParamTypeName = StrUtil.firstLowerCase(methodParamTypeName);
                 paramsNameList.add(methodParamTypeName);
             }
             //再用收集来的beanName来对beanMpa查找，若所需的bean都存在则构造，

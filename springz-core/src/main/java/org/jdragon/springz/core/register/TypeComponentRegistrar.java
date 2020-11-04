@@ -60,7 +60,6 @@ public class TypeComponentRegistrar extends ComponentRegistrar implements ScanAc
 
             //获取Bean的模式范围
             String scopeValue = AnnotationUtils.getScopeValue(c);
-
             //声明注册的对象
             Object obj = c.newInstance();
 

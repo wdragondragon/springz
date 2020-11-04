@@ -13,13 +13,14 @@ import org.jdragon.springz.scanner.Registrar;
 import org.jdragon.springz.scanner.ScanAction;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 import org.jdragon.springz.scanner.entry.ClassInfo;
+import org.jdragon.springz.utils.Bean2Utils;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.StrUtil;
 
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * @Author: Jdragon
@@ -37,6 +38,13 @@ public class Infuser extends Registrar implements ScanAction {
         this.filters = filters;
     }
 
+    //用作注入原型时构造新对象时的缓存窗口推进
+    private final Stack<Object> beanStack = new Stack<>();
+
+    //与beanStack存放的内存一致，只是用作充当索引用key来获取bean
+    private final Map<String, Object> cacheMap = new LinkedHashMap<>();
+
+
     /**
      * @Author: Jdragon
      * @Date: 2020.04.25 下午 8:15
@@ -46,117 +54,117 @@ public class Infuser extends Registrar implements ScanAction {
      **/
     @Override
     public void action(ClassInfo classInfo) {
-        try {
-            String definitionName = classInfo.getDefinitionName();
+        String definitionName = classInfo.getDefinitionName();
 
-            //反射构建对象
-            Class<?> c = classInfo.getClazz();
-
-            Field[] fields = c.getDeclaredFields();
-            for (Field field : fields) {
-                //只有field中有Autowired才继续
-                if (field.isAnnotationPresent(AutowiredZ.class)) {
-                    this.infuse(definitionName, field, getAutowiredValue(field));
-                } else if (field.isAnnotationPresent(Resource.class)) {
-                    this.infuse(definitionName, field, getResourceValue(field));
-                }
-            }
-
-            Method[] methods = c.getDeclaredMethods();
-            for (Method method : methods) {
-                //只有method中有Autowired或Resource才继续，并且优先使用Autowired
-                Annotation annotation = method.getAnnotation(AutowiredZ.class);
-                annotation = annotation != null ? annotation : method.getAnnotation(Resource.class);
-                if (annotation == null) {
-                    continue;
-                }
-
-                String methodName = method.getName();
-
-                if (methodName.indexOf("set") != 0) {
-                    throw new NoSuchMethodException(methodName);
-                }
-
-                String fieldName = methodName.replaceAll("set", "");
-                fieldName = StrUtil.firstLowerCase(fieldName);
-
-                Field field = c.getDeclaredField(fieldName);
-
-                if (annotation instanceof AutowiredZ) {
-                    this.infuse(definitionName, field, getAutowiredValue(field));
-                } else {
-                    this.infuse(definitionName, field, getResourceValue(field));
-                }
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            logger.error("注入方法下的字段不存在", e.getMessage());
-        } catch (NoSuchMethodException e) {
-            logger.error("注入方法必须为setXXX", e.getMessage());
+        if (beanMap.containsKey(definitionName)) {
+            beanStack.push(beanMap.get(definitionName).getBean());
+            this.analyze(definitionName, classInfo.getClazz());
+            this.refresh();
         }
     }
 
-    @Override
-    public Filter[] getFilters() {
-        return filters;
+
+    public void analyze(String definitionName, Class<?> c) {
+        if (!beanMap.containsKey(definitionName)) return;
+
+        Field[] fields = getAutowiredField(c);
+        for (Field field : fields) {
+            String filedKey = getAutowiredValue(field);
+            if (!beanMap.containsKey(filedKey)) {
+                logger.warn("注入Bean失败", "找不到ObjKey", filedKey);
+                continue;
+            }
+
+            Class<?> fieldType = field.getType();
+            BeanInfo infuserBeanInfo = beanMap.get(filedKey);
+            Object iBean = infuserBeanInfo.getBean();
+            //原型要重新构造bean
+            if (infuserBeanInfo.getScope().equals(BeanInfo.PROTOTYPE)) {
+                //cacheMap中存在bean，则为循环依赖，否则为字段新原型，这时才需要重新构建bean
+                if (!cacheMap.containsKey(filedKey)) {
+                    iBean = Bean2Utils.copy(iBean, this.getAutowiredField(fieldType));
+                    cacheMap.put(filedKey, iBean);
+                    beanStack.push(iBean);
+                    this.analyze(filedKey, fieldType);
+                    //执行注入完这个bean要把缓存删除
+                    beanStack.pop();
+                    cacheMap.remove(filedKey);
+                } else {
+                    iBean = cacheMap.get(filedKey);
+                }
+            }
+
+            iBean = invokePostProcessor(infuserBeanInfo, iBean);//后置处理
+
+            if (this.infuse(beanStack.peek(), field, iBean)) {
+                if (beanStack.size() == 1) {
+                    logger.info("注入bean成功[类][字段]", definitionName, filedKey);
+                }
+            } else {
+                logger.info("注入bean失败[类][字段]", definitionName, filedKey);
+            }
+        }
+    }
+
+    /**
+     * @Description: 根据类获取需要注入的字段
+     **/
+    private Field[] getAutowiredField(Class<?> c) {
+        List<Field> autoField = new ArrayList<>();
+        for (Field field : c.getDeclaredFields()) {
+            if (field.isAnnotationPresent(AutowiredZ.class) ||
+                    field.isAnnotationPresent(Resource.class)) {
+                autoField.add(field);
+            }
+        }
+        return autoField.toArray(new Field[0]);
     }
 
     /**
      * @params: [field]
      * @return: java.lang.String
-     * @Description: 根据field获取注入对象的key
+     * @Description: 获取需注入field的key
      **/
     public String getAutowiredValue(Field field) {
-        Class<?> fieldClass = field.getType();
-
-        String autowiredValue = fieldClass.getSimpleName();
-        //检测是否有qualifier注解，有则使用注解值来获取注入组件
-        Qualifier qualifier = field.getAnnotation(Qualifier.class);
-        String infuseKey = qualifier == null ? autowiredValue : qualifier.value();
-        return StrUtil.firstLowerCase(infuseKey);
-    }
-
-    /**
-     * @params: [field]
-     * @return: java.lang.String
-     * @Description: 根据field获取注入对象的key
-     **/
-    public String getResourceValue(Field field) {
-        Resource resource = field.getAnnotation(Resource.class);
-        String resourceValue = resource.value();
-        String infuseKey = resourceValue.isEmpty() ? field.getName() : resourceValue;
-        return StrUtil.firstLowerCase(infuseKey);
-    }
-
-    /**
-     * @params: [field, targetKey, objectKey]
-     * @return: void
-     * @Description: 传入注入目标的targetKey，目标内需注入的field，注入对象的objectKey
-     * 从beanMap中获取targetObject和object，将object注入到targetObject的field中
-     **/
-    public void infuse(String targetKey, Field field, String objectKey) throws IllegalAccessException {
-        if (!beanMap.containsKey(objectKey)) {
-            logger.warn("注入Bean失败", "找不到ObjKey", objectKey);
-            return;
-        }
-        BeanInfo beanInfo = beanMap.get(objectKey);
-
-        Object iBean = invokePostProcessor(beanInfo);
-
-        field.setAccessible(true);
-        //是否为静态字段
-        if (Modifier.isStatic(field.getModifiers())) {
-            field.set(null, iBean);
+        String filedKey;
+        if (field.isAnnotationPresent(AutowiredZ.class)) {
+            String autowiredValue = field.getType().getSimpleName();
+            //检测是否有qualifier注解，有则使用注解值来获取注入组件
+            Qualifier qualifier = field.getAnnotation(Qualifier.class);
+            String infuseKey = qualifier == null ? autowiredValue : qualifier.value();
+            filedKey = StrUtil.firstLowerCase(infuseKey);
         } else {
-            field.set(beanMap.get(targetKey).getBean(), iBean);
+            Resource resource = field.getAnnotation(Resource.class);
+            String resourceValue = resource.value();
+            String infuseKey = resourceValue.isEmpty() ? field.getName() : resourceValue;
+            filedKey = StrUtil.firstLowerCase(infuseKey);
         }
 
-        logger.info("注入对象成功", targetKey, objectKey);
+        return filedKey;
     }
 
-    public Object invokePostProcessor(BeanInfo beanInfo) {
-        PostAutowiredBean postAutowiredBean = new PostAutowiredBean(beanInfo);
+    /**
+     * @Description: 传入注入目标的targetKey，目标内需注入的field，注入对象的objectKey
+     **/
+    private boolean infuse(Object targetObj, Field field, Object iBean) {
+        field.setAccessible(true);
+        try {
+            //是否为静态字段
+            if (Modifier.isStatic(field.getModifiers())) {
+                field.set(null, iBean);
+            } else {
+                field.set(targetObj, iBean);
+            }
+            return true;
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    private Object invokePostProcessor(BeanInfo beanInfo, Object lastBean) {
+        PostAutowiredBean postAutowiredBean = new PostAutowiredBean(beanInfo, lastBean);
 
         for (BeanPostProcessor beanPostProcessor : PostProcessorContext.get()) {
             postAutowiredBean = beanPostProcessor.postProcessAfterInitialization(postAutowiredBean);
@@ -164,4 +172,13 @@ public class Infuser extends Registrar implements ScanAction {
         return postAutowiredBean.getLastBean();
     }
 
+    private void refresh() {
+        beanStack.clear();
+        cacheMap.clear();
+    }
+
+    @Override
+    public Filter[] getFilters() {
+        return filters;
+    }
 }

@@ -40,6 +40,9 @@ public class App {
     private static TestFeign testFeign;
 
 
+    @AutowiredZ
+    private static TestScope testScope;
+
     public static void main(String[] args) {
 
         SpringzContext.run(App.class);
@@ -47,6 +50,8 @@ public class App {
         testBean.testBean();
 
         testFeign.testHttp();
+
+        testScope.test();
 
         SpringzContext.close();
     }
