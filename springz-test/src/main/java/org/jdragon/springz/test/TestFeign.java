@@ -40,22 +40,22 @@ public class TestFeign {
     private ClGroupMap clGroupMap;
 
     public void testHttp() {
-//        System.out.println(httpTest.http());
-//        System.out.println(httpTest.http1(1));
-//        System.out.println(httpTest.http2(1));
-//        System.out.println(httpTest.http5(1));
-//        System.out.println(httpTest.http6(1));
-//        System.out.println(httpTest.http7(new Http(1)));
-//        System.out.println(httpTest.http8());
+        logger.trace(httpTest.http());
+        logger.trace(httpTest.http1(1));
+        logger.trace(httpTest.http2(1));
+        logger.trace(httpTest.http5(1));
+        logger.trace(httpTest.http6(1));
+        logger.trace(httpTest.http7(new Http(1)));
+        logger.trace(String.valueOf(httpTest.http8()));
 
         List<RobotPostOrder> postOrder = robot.getPostOrder();
         for (RobotPostOrder robotPostOrder : postOrder) {
-            System.out.println(robotPostOrder);
+            logger.trace(robotPostOrder.toString());
         }
         Result<List<RobotPostOrder>> postOrder1 = robotResult.getPostOrder();
-        System.out.println(postOrder1);
+        logger.trace(postOrder1.toString());
 
 
-        System.out.println(clGroupMap.getGroupMap());
+        logger.trace(clGroupMap.getGroupMap().toString());
     }
 }

@@ -31,16 +31,23 @@ public class TestScope {
     Sing sing3;
 
     public void test() {
+        System.out.println("单例测试");
         System.out.println(sing.toString() + sing2.toString());
+
+        System.out.println("原型嵌套单例测试");
         System.out.println(pro.sing.toString() + pro.sing2.toString());
         System.out.println(pro2.sing.toString() + pro2.sing2.toString());
         System.out.println(sing2.sing.toString() + sing.sing2.toString());
 
+        System.out.println("原型测试");
         System.out.println(pro.toString() + pro2.toString());
+
+        System.out.println("单例嵌套原型测试");
         System.out.println(sing.pro.toString() + sing.pro2.toString());
         System.out.println(sing2.pro.toString() + sing2.pro2.toString());
         System.out.println(pro2.pro.toString() + pro.pro2.toString());
 
-        System.out.println(sing3.pro.toString()+sing3.pro2.toString());
+        System.out.println("单例中的原型特性测试");
+        System.out.println(sing3.pro.toString() + sing3.pro2.toString());
     }
 }
