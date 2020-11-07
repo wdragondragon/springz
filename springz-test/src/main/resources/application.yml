@@ -1,0 +1,19 @@
+reflex:
+  customer:
+    firstName: "John"
+    lastName: "Doe"
+    age: 20
+    contactDetails:
+      - type: "mobile"
+        number: 123456789
+      - type: "landline"
+        number: 456786868
+    hobby:
+      swimming: "bad"
+      running: "good"
+    friends:
+      - firstName: "zhang"
+        lastName: "san"
+      - firstName: "li"
+        lastName: "si"
+

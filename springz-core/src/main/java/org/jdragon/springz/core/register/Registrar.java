@@ -1,6 +1,7 @@
-package org.jdragon.springz.scanner;
+package org.jdragon.springz.core.register;
 
 
+import org.jdragon.springz.scanner.BeanContainer;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 import org.jdragon.springz.scanner.entry.ClassInfo;
 import org.jdragon.springz.scanner.entry.WaitBeanInfo;
@@ -76,6 +77,8 @@ public abstract class Registrar {
     //唤醒等待注册的bean
     private void awakeWaitBean(WaitBeanInfo waitBeanInfo) {
         List<String> paramsNameList = waitBeanInfo.getParamsNameList();
+
+
         Object[] needBean = paramsNameList.stream()
                 .map(e -> beanMap.get(e).getBean())
                 .toArray();

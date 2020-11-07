@@ -1,16 +1,19 @@
 package org.jdragon.springz.core.scan;
 
 
-import org.jdragon.springz.core.BaseClassPackagesManager;
+import org.jdragon.springz.core.annotation.SpringzMain;
+import org.jdragon.springz.core.container.BaseClassPackagesContainer;
 import org.jdragon.springz.core.annotation.SpringzScan;
-import org.jdragon.springz.core.annotation.SpringzScan.ComponentFilter;
 import org.jdragon.springz.core.annotation.SpringzScans;
-import org.jdragon.springz.core.filter.FilterMeta;
 import org.jdragon.springz.core.entry.BasePackageInfo;
 
+import org.jdragon.springz.core.manager.BaseClassPackagesManager;
+import org.jdragon.springz.core.utils.AnnotationUtils;
 import org.jdragon.springz.scanner.Filter;
 import org.jdragon.springz.scanner.ScanAction;
 import org.jdragon.springz.scanner.entry.ClassInfo;
+
+import java.lang.annotation.Annotation;
 
 /**
  * @Author: Jdragon
@@ -24,12 +27,26 @@ public class BaseClassesScanner implements ScanAction {
     public void action(ClassInfo classInfo) {
         //TODO 根据ClassInfo获取ComponentScan注解并生成componentScanInfo
         Class<?> clazz = classInfo.getClazz();
+        //将springzMain加入
+        if(clazz.isAnnotationPresent(SpringzMain.class)){
+            BaseClassPackagesContainer.register(clazz.getPackage().getName(),new BasePackageInfo());
+        }
+        //扫描springzScans中的要扫描类
         if (clazz.isAnnotationPresent(SpringzScans.class)) {
             for (SpringzScan springzScan : clazz.getAnnotation(SpringzScans.class).value()) {
-                resolverComponentScan(springzScan);
+                BaseClassPackagesManager.resolverComponentScan(springzScan);
             }
         } else if (clazz.isAnnotationPresent(SpringzScan.class)) {
-            resolverComponentScan(clazz.getAnnotation(SpringzScan.class));
+            BaseClassPackagesManager.resolverComponentScan(clazz.getAnnotation(SpringzScan.class));
+        }
+
+        //扫描因扩展功能放在enable中的springzScan
+        for (Annotation annotation : clazz.getAnnotations()) {
+            SpringzScan springzScan = (SpringzScan) AnnotationUtils
+                    .getAllContainedAnnotationType(annotation.annotationType(), SpringzScan.class);
+            if (springzScan != null) {
+                BaseClassPackagesManager.resolverComponentScan(springzScan);
+            }
         }
     }
 
@@ -38,35 +55,5 @@ public class BaseClassesScanner implements ScanAction {
         return new Filter[0];
     }
 
-    public void resolverComponentScan(SpringzScan springzScan) {
-        Class<?>[] basePackageClasses = springzScan.basePackageClasses();
-        String[] basePackages = springzScan.basePackage();
-        boolean useDefaultFilters = springzScan.useDefaultFilters();
-        ComponentFilter[] excludeComponentFilters = springzScan.excludeFilters();
-        ComponentFilter[] includeComponentFilters = springzScan.includeFilters();
 
-        FilterMeta[] includeFiltersInfo = new FilterMeta[includeComponentFilters.length];
-        FilterMeta[] excludeFiltersInfo = new FilterMeta[excludeComponentFilters.length];
-
-        int i = 0;
-        for (ComponentFilter componentFilter : includeComponentFilters) {
-            includeFiltersInfo[i] = new FilterMeta(componentFilter.type(), componentFilter.classes());
-            i++;
-        }
-        i = 0;
-        for (ComponentFilter componentFilter : excludeComponentFilters) {
-            excludeFiltersInfo[i] = new FilterMeta(componentFilter.type(), componentFilter.classes());
-            i++;
-        }
-
-        BasePackageInfo basePackageInfo =
-                new BasePackageInfo(useDefaultFilters, includeFiltersInfo, excludeFiltersInfo);
-        for (Class<?> basePackageClass : basePackageClasses) {
-            String basePackage = basePackageClass.getPackage().getName();
-            BaseClassPackagesManager.register(basePackage,basePackageInfo);
-        }
-        for (String basePackage : basePackages) {
-            BaseClassPackagesManager.register(basePackage,basePackageInfo);
-        }
-    }
 }

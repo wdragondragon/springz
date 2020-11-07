@@ -1,7 +1,5 @@
 package org.jdragon.springz.core.entry;
 
-import org.jdragon.springz.core.filter.FilterMeta;
-
 /**
  * @Author: Jdragon
  * @email: 1061917196@qq.com

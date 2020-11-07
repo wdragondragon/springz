@@ -1,6 +1,7 @@
 package org.jdragon.springz.core.register;
 
 import org.jdragon.springz.core.annotation.SpringzScan;
+import org.jdragon.springz.core.manager.BaseClassPackagesManager;
 import org.jdragon.springz.core.scan.BaseClassesScanner;
 import org.jdragon.springz.core.utils.AnnotationUtils;
 import org.jdragon.springz.scanner.Filter;
@@ -16,13 +17,6 @@ import java.lang.annotation.Annotation;
  * @Description: 扫描拓展功能的@Enable注解的扫描器
  */
 public class ExpandEnableRegistrar implements ScanAction {
-
-    BaseClassesScanner scanAction;
-
-    public ExpandEnableRegistrar(BaseClassesScanner scanAction) {
-        this.scanAction = scanAction;
-    }
-
     @Override
     public void action(ClassInfo classInfo) {
         Class<?> clazz = classInfo.getClazz();
@@ -30,13 +24,13 @@ public class ExpandEnableRegistrar implements ScanAction {
             SpringzScan springzScan = (SpringzScan) AnnotationUtils
                     .getAllContainedAnnotationType(annotation.annotationType(), SpringzScan.class);
             if (springzScan != null) {
-                scanAction.resolverComponentScan(springzScan);
+                BaseClassPackagesManager.resolverComponentScan(springzScan);
             }
         }
     }
 
     @Override
     public Filter[] getFilters() {
-        return scanAction.getFilters();
+        return new Filter[0];
     }
 }

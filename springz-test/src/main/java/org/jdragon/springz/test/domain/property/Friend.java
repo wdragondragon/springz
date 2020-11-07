@@ -1,0 +1,18 @@
+package org.jdragon.springz.test.domain.property;
+
+import lombok.Data;
+
+/**
+ * @Author: Jdragon
+ * @email: 1061917196@qq.com
+ * @Date: 2020.11.07 18:52
+ * @Description:
+ */
+@Data
+public class Friend {
+
+    private String firstName;
+
+    private String lastName;
+
+}

@@ -1,7 +1,10 @@
 package org.jdragon.springz.core.register;
 
 
+import com.alibaba.fastjson.JSON;
+import org.jdragon.springz.core.container.PropertiesContainer;
 import org.jdragon.springz.core.annotation.Import;
+import org.jdragon.springz.core.annotation.Properties;
 import org.jdragon.springz.core.annotation.Value;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 
@@ -72,7 +75,7 @@ public class TypeComponentRegistrar extends ComponentRegistrar implements ScanAc
                 registerInterfaces(c.getInterfaces(), obj, scopeValue);
             } else {
                 value = StrUtil.firstLowerCase(value);
-                register(value,obj, scopeValue);
+                register(value, obj, scopeValue);
             }
             //将对象放到map容器 beanMap->definitionName:obj
             register(classInfo.getDefinitionName(), obj, scopeValue);
@@ -122,7 +125,7 @@ public class TypeComponentRegistrar extends ComponentRegistrar implements ScanAc
         for (Class<?> anInterface : interfaces) {
             String interfaceName = StrUtil.firstLowerCase(anInterface.getSimpleName());
             //这里检测到的话代表有多个接口实现类，需要将接口组件注销
-            register(interfaceName,obj, scope);
+            register(interfaceName, obj, scope);
         }
     }
 
@@ -132,16 +135,35 @@ public class TypeComponentRegistrar extends ComponentRegistrar implements ScanAc
      * @Description: 从传入的字段中，对字段判断是否有@Value，有则获取注解的值来注册bean到beanMap中
      **/
     private void registerFields(Field[] fields, Object obj) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        Class<?> clazz = classInfo.getClazz();
+
+        String prefix = "";
+        String source = "";
+        if (clazz.isAnnotationPresent(Properties.class)) {
+            Properties properties = clazz.getAnnotation(Properties.class);
+            prefix = properties.prefix();
+            source = properties.source();
+        }
+
         for (Field field : fields) {
             if (!field.isAnnotationPresent(Value.class)) {
                 continue;
             }
             Value valueAnnotation = field.getAnnotation(Value.class);
             String value = valueAnnotation.value();
-            Constructor<?> constructor = field.getType().getConstructor(String.class);
+            String valueKey = StrUtil.matchWrap(value, "\\$\\{", "}");
+
+            Object valueObj;
+            if (valueKey.isEmpty()) {
+                Constructor<?> constructor = field.getType().getConstructor(String.class);
+                valueObj = constructor.newInstance(value);
+            } else {
+                Object propertyValue = PropertiesContainer.getPropertyValue(prefix, valueKey, source);
+                valueObj = JSON.parseObject(JSON.toJSONString(propertyValue), field.getType());
+            }
             field.setAccessible(true);
-            field.set(obj, constructor.newInstance(value));
-            logger.info("注入默认属性成功", classInfo.getClassName(), value);
+            field.set(obj, valueObj);
+            logger.info("注入默认属性成功[类名][字段]", classInfo.getClassName(), field.getName() ,valueObj.toString());
         }
     }
 

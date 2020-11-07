@@ -1,19 +1,13 @@
 package org.jdragon.springz.core;
 
-import org.jdragon.springz.core.filter.BaseFilter;
-import org.jdragon.springz.core.infuse.Infuser;
-import org.jdragon.springz.core.register.*;
-import org.jdragon.springz.core.scan.BaseClassesScanner;
+import org.jdragon.springz.core.manager.BaseClassPackagesManager;
+import org.jdragon.springz.core.manager.ScanActionManager;
 import org.jdragon.springz.scanner.*;
 import org.jdragon.springz.scanner.entry.BeanInfo;
-import org.jdragon.springz.scanner.entry.WaitBeanInfo;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 import org.jdragon.springz.utils.StrUtil;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 
 
@@ -30,79 +24,32 @@ public class SpringzContext {
 
     private final static Map<String, BeanInfo> beanMap = BeanContainer.getBeanMap();
 
-    private final static List<WaitBeanInfo> waitBeanInfoList = BeanContainer.getWaitBeanList();
-
-    private final static BaseClassesScanner baseClassesScanner = new BaseClassesScanner();
-
-    private static Scanner scanner;
 
     public static void run(Class<?> baseClazz) {
         run(baseClazz.getPackage().getName());
     }
 
-    public static void run(String... basePackageName) {
+    public static void run(String basePackageName) {
         long start = System.currentTimeMillis();
 
         //获取要扫描的基础路径集
-        String[] scanBasePackages = getBaseClassesName(basePackageName);
+        String[] scanBasePackages = BaseClassPackagesManager.scanBaseClasses(basePackageName);
 
         //根据扫描集来新建扫描器，一旦创建则确认扫描器扫描范围
-        scanner = newScan(scanBasePackages);
+        ScanActionManager.initScan(scanBasePackages);
 
         //注册在扫描时要做的行为
-        registerScanAction();
+        ScanActionManager.registerScanAction();
 
         //开始扫描
-        doScan();
+        ScanActionManager.doScan();
 
-        //打印缺失依赖导致未能注册成功的Bean名字
-        printWaitBeanInfo();
+        //打印启动最终结果
+        BeanContainer.printResult();
 
         logger.info("启动所用时间", System.currentTimeMillis() - start + "ms");
     }
 
-    public static String[] getBaseClassesName(String... baseClassesName) {
-        Scanner scanner = newScan(baseClassesName);
-        scanner.action(baseClassesScanner).doScan();
-        String[] basePackages = BaseClassPackagesManager.getBasePackages(baseClassesName);
-        logger.info("基础包扫描区域：", Arrays.toString(basePackages));
-
-        //拓展enable注册器
-        scanner.action(new ExpandEnableRegistrar(baseClassesScanner)).doScan();
-        basePackages = BaseClassPackagesManager.getBasePackages(baseClassesName);
-        logger.info("全部包扫描区域：", Arrays.toString(basePackages));
-
-        return BaseClassPackagesManager.getBasePackages(baseClassesName);
-    }
-
-    private static Scanner newScan(String... scanBasePackages) {
-        return new Scanner(scanBasePackages);
-    }
-
-    private static void registerScanAction() {
-        Filter baseFilter = new BaseFilter();
-
-        ScanManager.registerScanAction(
-                new TypeComponentRegistrar(baseFilter),//@Component扫描注册
-                new MethodComponentRegistrar(baseFilter),//@Bean扫描注册
-                new PostProcessorRegistrar(),//加载bean初始化完成的后置处理器
-                new Infuser(baseFilter));//注入
-
-        scanner.action(new ActionRegistrar()).doScan(); //拓展注册器
-        //根据order优先级来排序注册先后
-        ScanManager.getScanActionList().sort(Comparator.comparing(ScanAction::getOrder));
-    }
-
-    private static void doScan() {
-        ScanManager.getScanActionList().forEach(scanAction -> scanner.action(scanAction).doScan());
-    }
-
-
-    private static void printWaitBeanInfo() {
-        logger.warn("最后仍未注册成功的Bean", Arrays.toString(waitBeanInfoList.stream()
-                .map(WaitBeanInfo::getBeanName)
-                .toArray(String[]::new)));
-    }
 
     public static Object getBean(String key) {
         if (beanMap.containsKey(key)) {
@@ -131,9 +78,6 @@ public class SpringzContext {
         return beanMap;
     }
 
-    public static List<WaitBeanInfo> getWaitBeanInfoList() {
-        return waitBeanInfoList;
-    }
 
     public static void close() {
         beanMap.clear();

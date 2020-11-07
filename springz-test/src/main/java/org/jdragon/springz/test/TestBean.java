@@ -58,8 +58,6 @@ public class TestBean {
 
     public void testBean() {
 
-        logger.info("已注册bean列表", Arrays.toString(SpringzContext.getBeanDefinitionNames()));
-
         User userTest = SpringzContext.getBean(User.class);
 
         User userTest1 = (User) SpringzContext.getBean("user");
@@ -84,8 +82,6 @@ public class TestBean {
         carDao.qualifierCar();
 
         System.out.println(httpUser);
-
-
 
         System.out.println(userDao.toString());
     }

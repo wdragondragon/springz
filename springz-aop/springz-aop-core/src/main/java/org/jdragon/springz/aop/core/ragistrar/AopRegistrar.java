@@ -6,7 +6,7 @@ import org.jdragon.springz.aop.annotation.Throw;
 import org.jdragon.springz.aop.core.AopContext;
 import org.jdragon.springz.aop.core.entity.PointCutInfo;
 import org.jdragon.springz.scanner.Filter;
-import org.jdragon.springz.scanner.Registrar;
+import org.jdragon.springz.core.register.Registrar;
 import org.jdragon.springz.scanner.ScanAction;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 import org.jdragon.springz.scanner.entry.ClassInfo;

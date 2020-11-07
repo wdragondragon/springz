@@ -1,7 +1,7 @@
 package org.jdragon.springz.feign.core;
 
 import org.jdragon.springz.scanner.Filter;
-import org.jdragon.springz.scanner.Registrar;
+import org.jdragon.springz.core.register.Registrar;
 import org.jdragon.springz.scanner.ScanAction;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 import org.jdragon.springz.scanner.entry.ClassInfo;

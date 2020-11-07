@@ -58,6 +58,4 @@ public class CreateBean {
 //        httpTest.http();
         return new TestWaitBean();
     }
-
-
 }

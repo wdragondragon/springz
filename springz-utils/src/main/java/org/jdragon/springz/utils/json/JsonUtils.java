@@ -2,9 +2,14 @@ package org.jdragon.springz.utils.json;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 import com.alibaba.fastjson.serializer.ValueFilter;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @Author: Jdragon
@@ -45,5 +50,16 @@ public class JsonUtils {
 
     public static Map<String,Object> object2Map(Object o){
         return json2Map(object2Json(o));
+    }
+
+
+    /**
+     * @author: Jdragon
+     * @Description: 使用json方式克隆
+    **/
+    public static <T> T jsonCopy(T source, Field... ignoreField) {
+        SimplePropertyPreFilter filter = new SimplePropertyPreFilter();
+        filter.getExcludes().addAll(Arrays.stream(ignoreField).map(Field::getName).collect(Collectors.toSet()));
+        return JSON.parseObject(JSON.toJSONString(source,filter), (Type) source.getClass());
     }
 }

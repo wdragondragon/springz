@@ -1,4 +1,4 @@
-package org.jdragon.springz.core.filter;
+package org.jdragon.springz.core.entry;
 
 import org.jdragon.springz.core.annotation.FilterType;
 

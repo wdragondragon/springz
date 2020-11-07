@@ -1,6 +1,9 @@
 package org.jdragon.springz.core.processor;
 
 
+import org.jdragon.springz.core.entry.PostAutowiredBean;
+import org.jdragon.springz.scanner.entry.BeanInfo;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,5 +26,18 @@ public class PostProcessorContext {
 
     public static void registerBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
         beanPostProcessors.add(beanPostProcessor);
+    }
+
+    public static Object invokePostProcessor(BeanInfo beanInfo, Object lastBean) {
+        PostAutowiredBean postAutowiredBean = new PostAutowiredBean(beanInfo, lastBean);
+
+        for (BeanPostProcessor beanPostProcessor : get()) {
+            postAutowiredBean = beanPostProcessor.postProcessAfterInitialization(postAutowiredBean);
+        }
+        return postAutowiredBean.getLastBean();
+    }
+
+    public static Object invokePostProcessor(BeanInfo beanInfo) {
+        return invokePostProcessor(beanInfo, beanInfo.getBean());
     }
 }

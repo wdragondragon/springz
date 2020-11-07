@@ -5,11 +5,9 @@ import org.jdragon.springz.core.annotation.AutowiredZ;
 import org.jdragon.springz.core.annotation.Qualifier;
 import org.jdragon.springz.core.annotation.Resource;
 
-import org.jdragon.springz.core.processor.BeanPostProcessor;
-import org.jdragon.springz.core.entry.PostAutowiredBean;
 import org.jdragon.springz.core.processor.PostProcessorContext;
 import org.jdragon.springz.scanner.Filter;
-import org.jdragon.springz.scanner.Registrar;
+import org.jdragon.springz.core.register.Registrar;
 import org.jdragon.springz.scanner.ScanAction;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 import org.jdragon.springz.scanner.entry.ClassInfo;
@@ -17,6 +15,7 @@ import org.jdragon.springz.utils.Bean2Utils;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.StrUtil;
+import org.jdragon.springz.utils.json.JsonUtils;
 
 
 import java.lang.reflect.*;
@@ -82,7 +81,7 @@ public class Infuser extends Registrar implements ScanAction {
             if (infuserBeanInfo.getScope().equals(BeanInfo.PROTOTYPE)) {
                 //cacheMap中存在bean，则为循环依赖，否则为字段新原型，这时才需要重新构建bean
                 if (!cacheMap.containsKey(filedKey)) {
-                    iBean = Bean2Utils.copy(iBean, this.getAutowiredField(fieldType));
+                    iBean = JsonUtils.jsonCopy(iBean, this.getAutowiredField(fieldType));
                     cacheMap.put(filedKey, iBean);
                     beanStack.push(iBean);
                     this.analyze(filedKey, fieldType);
@@ -94,7 +93,7 @@ public class Infuser extends Registrar implements ScanAction {
                 }
             }
 
-            iBean = invokePostProcessor(infuserBeanInfo, iBean);//后置处理
+            iBean = PostProcessorContext.invokePostProcessor(infuserBeanInfo, iBean);//后置处理
 
             if (this.infuse(beanStack.peek(), field, iBean)) {
                 if (beanStack.size() == 1) {
@@ -163,14 +162,14 @@ public class Infuser extends Registrar implements ScanAction {
     }
 
 
-    private Object invokePostProcessor(BeanInfo beanInfo, Object lastBean) {
-        PostAutowiredBean postAutowiredBean = new PostAutowiredBean(beanInfo, lastBean);
-
-        for (BeanPostProcessor beanPostProcessor : PostProcessorContext.get()) {
-            postAutowiredBean = beanPostProcessor.postProcessAfterInitialization(postAutowiredBean);
-        }
-        return postAutowiredBean.getLastBean();
-    }
+//    private Object invokePostProcessor(BeanInfo beanInfo, Object lastBean) {
+//        PostAutowiredBean postAutowiredBean = new PostAutowiredBean(beanInfo, lastBean);
+//
+//        for (BeanPostProcessor beanPostProcessor : PostProcessorContext.get()) {
+//            postAutowiredBean = beanPostProcessor.postProcessAfterInitialization(postAutowiredBean);
+//        }
+//        return postAutowiredBean.getLastBean();
+//    }
 
     private void refresh() {
         beanStack.clear();

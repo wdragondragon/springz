@@ -2,7 +2,7 @@ package org.jdragon.springz.core.register;
 
 import org.jdragon.springz.scanner.Filter;
 import org.jdragon.springz.scanner.ScanAction;
-import org.jdragon.springz.scanner.ScanManager;
+import org.jdragon.springz.core.container.ScanActionContainer;
 import org.jdragon.springz.scanner.entry.ClassInfo;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
@@ -24,11 +24,11 @@ public class ActionRegistrar implements ScanAction {
     public void action(ClassInfo classInfo) {
         //判断是否为ScanAction的子类实现
         Class<?> clazz = classInfo.getClazz();
-        if (ScanAction.class.equals(clazz)) return;
-        if (!ScanAction.class.isAssignableFrom(clazz)) return;
+        if (ScanAction.class.equals(clazz)||
+                !ScanAction.class.isAssignableFrom(clazz)) return;
         try {
             ScanAction scanAction = (ScanAction) clazz.newInstance();
-            ScanManager.registerScanAction(scanAction);
+            ScanActionContainer.registerScanAction(scanAction);
         } catch (IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }

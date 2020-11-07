@@ -1,8 +1,9 @@
 package org.jdragon.springz.core.filter;
 
 
-import org.jdragon.springz.core.BaseClassPackagesManager;
+import org.jdragon.springz.core.container.BaseClassPackagesContainer;
 import org.jdragon.springz.core.annotation.FilterType;
+import org.jdragon.springz.core.entry.FilterMeta;
 import org.jdragon.springz.scanner.Filter;
 import org.jdragon.springz.core.entry.BasePackageInfo;
 import org.jdragon.springz.scanner.entry.ClassInfo;
@@ -36,7 +37,7 @@ public class BaseFilter implements Filter {
      * @Description: 是否同意扫描加载，代码乱，待重构
      **/
     public boolean isAgree(ClassInfo classInfo) {
-        Map<String, BasePackageInfo> basePackageInfoMap = BaseClassPackagesManager.getBasePackageInfoMap();
+        Map<String, BasePackageInfo> basePackageInfoMap = BaseClassPackagesContainer.getBasePackageInfoMap();
 
         String classPackage = classInfo.getClassName();
         Class<?> clazz = classInfo.getClazz();

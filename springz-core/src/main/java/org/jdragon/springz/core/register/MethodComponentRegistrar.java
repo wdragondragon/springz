@@ -31,7 +31,6 @@ public class MethodComponentRegistrar extends ComponentRegistrar implements Scan
     private final Filter[] filters;
 
     public MethodComponentRegistrar(Filter... filters) {
-//        super(beanMap);
         this.filters = filters;
         logger.info("加载注册器", "MethodComponentRegistrar");
     }

@@ -3,14 +3,10 @@ package org.jdragon.springz.core.register;
 import org.jdragon.springz.core.processor.BeanPostProcessor;
 import org.jdragon.springz.core.processor.PostProcessorContext;
 import org.jdragon.springz.scanner.Filter;
-import org.jdragon.springz.scanner.Registrar;
 import org.jdragon.springz.scanner.ScanAction;
 import org.jdragon.springz.scanner.entry.ClassInfo;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * @Author: Jdragon

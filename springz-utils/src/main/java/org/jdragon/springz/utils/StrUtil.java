@@ -1,5 +1,10 @@
 package org.jdragon.springz.utils;
 
+import java.sql.Struct;
+import java.text.MessageFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * @Author: Jdragon
  * @email: 1061917196@qq.com
@@ -55,19 +60,19 @@ public class StrUtil {
         return Character.isWhitespace(c) || Character.isSpaceChar(c) || c == '\ufeff' || c == '\u202a';
     }
 
-    /**
-     * 指定字符串是否被包装
-     *
-     * @param str        字符串
-     * @param prefixChar 前缀
-     * @param suffixChar 后缀
-     * @return 是否被包装
-     */
-    public static boolean isWrap(CharSequence str, char prefixChar, char suffixChar) {
-        if (null == str) {
-            return false;
-        }
 
-        return str.charAt(0) == prefixChar && str.charAt(str.length() - 1) == suffixChar;
+    public static String matchWrap(String str,String prefixStr,String suffixStr){
+        String pattern = MessageFormat.format("(?={0}(.*){1})", prefixStr, suffixStr);
+        Pattern p = Pattern.compile(pattern);
+        Matcher m = p.matcher(str);
+
+        if (m.find()) {
+            return m.group(1);
+        }
+        return "";
+    }
+    public static void main(String[] args) {
+        String s = StrUtil.matchWrap("${123.5123.5123}", "\\$\\{", "}");
+        System.out.println(s);
     }
 }

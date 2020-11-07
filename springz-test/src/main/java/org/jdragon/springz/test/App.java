@@ -6,12 +6,6 @@ import org.jdragon.springz.core.annotation.*;
 import org.jdragon.springz.core.SpringzContext;
 
 import org.jdragon.springz.feign.annotation.EnableFeignSpringZ;
-import org.jdragon.springz.test.domain.User;
-import org.jdragon.springz.utils.Log.LoggerFactory;
-import org.jdragon.springz.utils.Log.Logger;
-
-
-import java.util.Arrays;
 
 /**
  * @author 10619
@@ -39,9 +33,11 @@ public class App {
     @AutowiredZ
     private static TestFeign testFeign;
 
-
     @AutowiredZ
     private static TestScope testScope;
+
+    @AutowiredZ
+    private static TestProperty testProperty;
 
     public static void main(String[] args) {
 
@@ -52,6 +48,8 @@ public class App {
         testFeign.testHttp();
 
         testScope.test();
+
+        testProperty.test();
 
         SpringzContext.close();
     }

@@ -2,13 +2,12 @@ package org.jdragon.springz.web.core;
 
 import org.jdragon.springz.core.utils.AnnotationUtils;
 import org.jdragon.springz.scanner.Filter;
-import org.jdragon.springz.scanner.Registrar;
+import org.jdragon.springz.core.register.Registrar;
 import org.jdragon.springz.scanner.ScanAction;
 import org.jdragon.springz.scanner.entry.ClassInfo;
 import org.jdragon.springz.web.annotation.RequestMapping;
 import org.jdragon.springz.web.annotation.RequestMethod;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
