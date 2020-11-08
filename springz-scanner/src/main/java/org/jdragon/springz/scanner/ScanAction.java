@@ -11,7 +11,7 @@ import java.lang.reflect.InvocationTargetException;
  * @Date: 2020.04.25 15:42
  * @Description: 策略模式进行的扫描器不同行为的复用接口
  */
-public interface ScanAction {
+public interface ScanAction extends Order{
     /**
      * 在扫描器的扫描之后进行的行为
      *
@@ -20,9 +20,4 @@ public interface ScanAction {
     void action(ClassInfo classInfo);
 
     Filter[] getFilters();
-
-    //返回扫描行为的优先级，默认为0
-    default Integer getOrder(){
-        return 0;
-    }
 }

@@ -9,6 +9,8 @@ import org.jdragon.springz.test.domain.User;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 
+import javax.annotation.PostConstruct;
+
 
 /**
  * @Author: Jdragon
@@ -19,7 +21,7 @@ import org.jdragon.springz.utils.Log.LoggerFactory;
 @Component
 public class ComponentTest {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @AutowiredZ
     private static User user;
@@ -38,5 +40,10 @@ public class ComponentTest {
         System.out.println(user2);
         logger.trace(user.toString());
         logger.trace(user2.toString());
+    }
+
+    @PostConstruct
+    public void init(){
+        logger.warn("PostConstruct");
     }
 }

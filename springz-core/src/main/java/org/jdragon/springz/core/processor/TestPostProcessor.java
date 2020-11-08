@@ -13,19 +13,7 @@ import org.jdragon.springz.utils.Bean2Utils;
 public class TestPostProcessor implements BeanPostProcessor {
     @Override
     public PostAutowiredBean postProcessAfterInitialization(PostAutowiredBean postAutowiredBean) {
-
-//        BeanInfo iBeanInfo = postAutowiredBean.getBeanInfo();
-//        Object lastBean = postAutowiredBean.getLastBean();
-//        if (iBeanInfo.getScope().equals(BeanInfo.SINGLETON)) {
-//            lastBean = iBeanInfo.getBean();
-//        } else {
-//            try {
-//                lastBean = Bean2Utils.copy(lastBean);
-//            } catch (IllegalAccessException | InstantiationException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        postAutowiredBean.setLastBean(lastBean);
+//        System.out.println("postProcessAfterInitialization");
         return postAutowiredBean;
     }
 }

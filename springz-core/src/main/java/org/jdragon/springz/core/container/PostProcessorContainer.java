@@ -1,10 +1,13 @@
-package org.jdragon.springz.core.processor;
+package org.jdragon.springz.core.container;
 
 
 import org.jdragon.springz.core.entry.PostAutowiredBean;
+import org.jdragon.springz.core.processor.BeanPostProcessor;
+import org.jdragon.springz.core.processor.TestPostProcessor;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -13,14 +16,16 @@ import java.util.List;
  * @Date: 2020.11.02 11:13
  * @Description: 后置处理器容器
  */
-public class PostProcessorContext {
+public class PostProcessorContainer {
     private static final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
     static {
-        PostProcessorContext.registerBeanPostProcessor(new TestPostProcessor());
+        PostProcessorContainer.registerBeanPostProcessor(new TestPostProcessor());
     }
 
     public static List<BeanPostProcessor> get() {
+        //根据order优先级来排序注册先后
+        beanPostProcessors.sort(Comparator.comparing(BeanPostProcessor::getOrder));
         return beanPostProcessors;
     }
 

@@ -25,9 +25,6 @@ public class ScanActionContainer {
 
     private final static List<ScanAction> scanActionList = new LinkedList<>();
 
-
-
-
     public static List<ScanAction> getScanActionList(){
         return scanActionList;
     }

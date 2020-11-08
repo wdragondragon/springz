@@ -5,19 +5,19 @@ import org.jdragon.springz.core.annotation.AutowiredZ;
 import org.jdragon.springz.core.annotation.Qualifier;
 import org.jdragon.springz.core.annotation.Resource;
 
-import org.jdragon.springz.core.processor.PostProcessorContext;
+import org.jdragon.springz.core.container.PostProcessorContainer;
 import org.jdragon.springz.scanner.Filter;
 import org.jdragon.springz.core.register.Registrar;
 import org.jdragon.springz.scanner.ScanAction;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 import org.jdragon.springz.scanner.entry.ClassInfo;
-import org.jdragon.springz.utils.Bean2Utils;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.StrUtil;
 import org.jdragon.springz.utils.json.JsonUtils;
 
 
+import javax.annotation.PostConstruct;
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -53,54 +53,75 @@ public class Infuser extends Registrar implements ScanAction {
      **/
     @Override
     public void action(ClassInfo classInfo) {
+        this.classInfo = classInfo;
         String definitionName = classInfo.getDefinitionName();
 
         if (beanMap.containsKey(definitionName)) {
-            beanStack.push(beanMap.get(definitionName).getBean());
+            if (!beanMap.containsKey(definitionName)) return;
+            Object bean = beanMap.get(definitionName).getBean();
+            beanStack.push(bean);
             this.analyze(definitionName, classInfo.getClazz());
             this.refresh();
         }
     }
 
+    private void postConstruct(Object bean) {
+        for (Method method : classInfo.getClazz().getDeclaredMethods()) {
+            if (method.isAnnotationPresent(PostConstruct.class)) {
+                try {
+                    method.invoke(bean);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
-    public void analyze(String definitionName, Class<?> c) {
-        if (!beanMap.containsKey(definitionName)) return;
-
+    private void analyze(String definitionName, Class<?> c) {
         Field[] fields = getAutowiredField(c);
         for (Field field : fields) {
-            String filedKey = getAutowiredValue(field);
-            if (!beanMap.containsKey(filedKey)) {
-                logger.warn("注入Bean失败", "找不到ObjKey", filedKey);
+            //若已经注入过了，就不需要再注入了
+            if (getFieldValue(field, beanStack.peek()) != null) {
                 continue;
             }
 
-            Class<?> fieldType = field.getType();
-            BeanInfo infuserBeanInfo = beanMap.get(filedKey);
-            Object iBean = infuserBeanInfo.getBean();
-            //原型要重新构造bean
-            if (infuserBeanInfo.getScope().equals(BeanInfo.PROTOTYPE)) {
-                //cacheMap中存在bean，则为循环依赖，否则为字段新原型，这时才需要重新构建bean
-                if (!cacheMap.containsKey(filedKey)) {
-                    iBean = JsonUtils.jsonCopy(iBean, this.getAutowiredField(fieldType));
-                    cacheMap.put(filedKey, iBean);
-                    beanStack.push(iBean);
-                    this.analyze(filedKey, fieldType);
-                    //执行注入完这个bean要把缓存删除
-                    beanStack.pop();
-                    cacheMap.remove(filedKey);
-                } else {
-                    iBean = cacheMap.get(filedKey);
-                }
+            //获取注入的组件在容器中的名称
+            String fieldKey = getAutowiredValue(field);
+            if (!beanMap.containsKey(fieldKey)) {
+                logger.warn("注入Bean失败", "找不到ObjKey", fieldKey);
+                continue;
             }
 
-            iBean = PostProcessorContext.invokePostProcessor(infuserBeanInfo, iBean);//后置处理
+            //先获取到容器中的单例bean
+            Class<?> fieldType = field.getType();
+            BeanInfo infuserBeanInfo = beanMap.get(fieldKey);
+            Object iBean = infuserBeanInfo.getBean();
+            //cacheMap中存在bean，则为循环依赖，否则为字段新原型，这时才需要重新构建bean
+            if (!cacheMap.containsKey(fieldKey)) {
+                //原型要重新构造bean
+                if (infuserBeanInfo.getScope().equals(BeanInfo.PROTOTYPE)) {
+                    iBean = JsonUtils.jsonCopy(iBean, this.getAutowiredField(fieldType));
+                }
+                cacheMap.put(fieldKey, iBean);
+                beanStack.push(iBean);
+                this.analyze(fieldKey, fieldType);
+                //执行注入完这个bean要把缓存删除
+                beanStack.pop();
+                cacheMap.remove(fieldKey);
+            } else {
+                iBean = cacheMap.get(fieldKey);
+            }
+            iBean = PostProcessorContainer.invokePostProcessor(infuserBeanInfo, iBean);//后置处理
 
             if (this.infuse(beanStack.peek(), field, iBean)) {
+                //栈中仅剩一个为目标bean
                 if (beanStack.size() == 1) {
-                    logger.info("注入bean成功[类][字段]", definitionName, filedKey);
+                    //对目标bean执行的后置处理器
+                    this.postConstruct(beanStack.peek());
+                    logger.info("注入bean成功[类][字段]", definitionName, fieldKey);
                 }
             } else {
-                logger.info("注入bean失败[类][字段]", definitionName, filedKey);
+                logger.info("注入bean失败[类][字段]", definitionName, fieldKey);
             }
         }
     }
@@ -124,7 +145,7 @@ public class Infuser extends Registrar implements ScanAction {
      * @return: java.lang.String
      * @Description: 获取需注入field的key
      **/
-    public String getAutowiredValue(Field field) {
+    private String getAutowiredValue(Field field) {
         String filedKey;
         if (field.isAnnotationPresent(AutowiredZ.class)) {
             String autowiredValue = field.getType().getSimpleName();
@@ -161,15 +182,22 @@ public class Infuser extends Registrar implements ScanAction {
         }
     }
 
-
-//    private Object invokePostProcessor(BeanInfo beanInfo, Object lastBean) {
-//        PostAutowiredBean postAutowiredBean = new PostAutowiredBean(beanInfo, lastBean);
-//
-//        for (BeanPostProcessor beanPostProcessor : PostProcessorContext.get()) {
-//            postAutowiredBean = beanPostProcessor.postProcessAfterInitialization(postAutowiredBean);
-//        }
-//        return postAutowiredBean.getLastBean();
-//    }
+    /**
+     * @Description: 从air中获取field的值
+     **/
+    private Object getFieldValue(Field field, Object air) {
+        try {
+            field.setAccessible(true);
+            if (Modifier.isStatic(field.getModifiers())) {
+                return field.get(null);
+            } else {
+                return field.get(air);
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     private void refresh() {
         beanStack.clear();
