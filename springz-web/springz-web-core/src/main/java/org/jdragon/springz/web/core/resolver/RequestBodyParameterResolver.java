@@ -1,4 +1,4 @@
-package org.jdragon.springz.web.core.paramResolver;
+package org.jdragon.springz.web.core.resolver;
 
 import com.alibaba.fastjson.JSON;
 import org.jdragon.springz.web.core.entity.MethodParam;

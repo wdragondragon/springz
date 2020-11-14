@@ -1,9 +1,8 @@
 package org.jdragon.springz.web.core.factory;
 
-import org.jdragon.springz.web.annotation.RequestMethod;
-import org.jdragon.springz.web.core.handler.GetRequestHandler;
-import org.jdragon.springz.web.core.handler.PostRequestHandler;
+import io.netty.handler.codec.http.HttpMethod;
 import org.jdragon.springz.web.core.handler.RequestHandler;
+import org.jdragon.springz.web.core.handler.Handler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,14 +15,17 @@ import java.util.Map;
  */
 public class RequestHandlerFactory {
 
-    public static final Map<RequestMethod, RequestHandler> REQUEST_HANDLERS = new HashMap<>();
+    public static final Map<HttpMethod, Handler> REQUEST_HANDLERS = new HashMap<>();
 
     static {
-        REQUEST_HANDLERS.put(RequestMethod.GET, new GetRequestHandler());
-        REQUEST_HANDLERS.put(RequestMethod.POST, new PostRequestHandler());
+        REQUEST_HANDLERS.put(HttpMethod.GET, new RequestHandler());
+        REQUEST_HANDLERS.put(HttpMethod.POST, new RequestHandler());
     }
 
-    public static RequestHandler get(RequestMethod httpMethod) {
+    public static Handler get(HttpMethod httpMethod) {
+        if (!REQUEST_HANDLERS.containsKey(httpMethod)) {
+            throw new IllegalArgumentException("不支持该类型请求:" + httpMethod.name());
+        }
         return REQUEST_HANDLERS.get(httpMethod);
     }
 }

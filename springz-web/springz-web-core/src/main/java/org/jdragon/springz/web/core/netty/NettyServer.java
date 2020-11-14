@@ -1,8 +1,5 @@
 package org.jdragon.springz.web.core.netty;
 
-import org.jdragon.springz.core.annotation.Component;
-
-import javax.annotation.PostConstruct;
 
 /**
  * @Author: Jdragon
@@ -10,14 +7,7 @@ import javax.annotation.PostConstruct;
  * @Date: 2020.11.11 08:22
  * @Description:
  */
-//@Component
 public class NettyServer {
-
-//    @PostConstruct
-//    public void start(){
-//        HttpServer httpServer = new HttpServer();
-//        httpServer.start();
-//    }
     public static void main(String[] args) {
         HttpServer httpServer = new HttpServer();
         httpServer.start();

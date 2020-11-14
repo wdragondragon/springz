@@ -1,4 +1,4 @@
-package org.jdragon.springz.web.core;
+package org.jdragon.springz.web.core.servlet;
 
 /**
  * @Author: Jdragon
@@ -9,7 +9,7 @@ package org.jdragon.springz.web.core;
 public class Webapp {
 
     public static Servlet getServlet(String url) {
-        String className= "org.jdragon.springz.web.core.LoginServlet";
+        String className= "org.jdragon.springz.web.core.servlet.LoginServlet";
         Servlet temp=null;
         Class<?> clz=null;
         try {

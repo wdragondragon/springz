@@ -64,7 +64,7 @@ public class RouteRegistrar extends Registrar implements ScanAction {
                     .invokeParams(parameters)
                     .build();
 
-            RouteMethodMapperContainer.registrar(routeInfo);
+            RouteMethodMapper.registrar(routeInfo);
         }
     }
 

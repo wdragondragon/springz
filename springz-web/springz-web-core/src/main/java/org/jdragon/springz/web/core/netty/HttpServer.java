@@ -15,6 +15,7 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.jdragon.springz.core.annotation.Component;
+import org.jdragon.springz.web.core.handler.HttpServerHandler;
 
 import javax.annotation.PostConstruct;
 

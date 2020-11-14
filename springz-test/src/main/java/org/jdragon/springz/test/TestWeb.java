@@ -7,7 +7,7 @@ import org.jdragon.springz.test.controller.UserController;
 import org.jdragon.springz.test.domain.User;
 import org.jdragon.springz.utils.MethodUtils;
 import org.jdragon.springz.web.annotation.RequestMethod;
-import org.jdragon.springz.web.core.RouteMethodMapperContainer;
+import org.jdragon.springz.web.core.RouteMethodMapper;
 import org.jdragon.springz.web.core.entity.RouteInfo;
 
 import java.lang.reflect.Method;
@@ -24,7 +24,7 @@ public class TestWeb {
     @AutowiredZ
     UserController userController;
     public void test(){
-        Map<RequestMethod, Map<String, RouteInfo>> routeMapping = RouteMethodMapperContainer.getRouteMapping();
+        Map<RequestMethod, Map<String, RouteInfo>> routeMapping = RouteMethodMapper.getRouteMapping();
 
         RouteInfo routeInfo = routeMapping.get(RequestMethod.GET).get("/user/add");
         System.out.println(routeInfo);

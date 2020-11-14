@@ -19,7 +19,7 @@ public enum RequestMethod {
     OPTIONS(HttpMethod.OPTIONS),
     TRACE(HttpMethod.TRACE);
 
-    HttpMethod httpMethod;
+    private final HttpMethod httpMethod;
 
     RequestMethod(HttpMethod httpMethod){
         this.httpMethod = httpMethod;
@@ -33,4 +33,5 @@ public enum RequestMethod {
         }
         throw new IllegalArgumentException("没有这种http请求方法");
     }
+
 }

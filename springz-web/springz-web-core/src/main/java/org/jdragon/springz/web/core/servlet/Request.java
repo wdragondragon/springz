@@ -1,4 +1,4 @@
-package org.jdragon.springz.web.core;
+package org.jdragon.springz.web.core.servlet;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

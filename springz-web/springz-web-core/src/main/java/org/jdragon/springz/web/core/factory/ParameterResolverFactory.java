@@ -3,10 +3,10 @@ package org.jdragon.springz.web.core.factory;
 import org.jdragon.springz.web.annotation.PathVariable;
 import org.jdragon.springz.web.annotation.RequestBody;
 import org.jdragon.springz.web.annotation.RequestParam;
-import org.jdragon.springz.web.core.paramResolver.ParameterResolver;
-import org.jdragon.springz.web.core.paramResolver.PathVariableParameterResolver;
-import org.jdragon.springz.web.core.paramResolver.RequestBodyParameterResolver;
-import org.jdragon.springz.web.core.paramResolver.RequestParamParameterResolver;
+import org.jdragon.springz.web.core.resolver.ParameterResolver;
+import org.jdragon.springz.web.core.resolver.PathVariableParameterResolver;
+import org.jdragon.springz.web.core.resolver.RequestBodyParameterResolver;
+import org.jdragon.springz.web.core.resolver.RequestParamParameterResolver;
 
 import java.lang.reflect.Parameter;
 

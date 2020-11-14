@@ -1,4 +1,4 @@
-package org.jdragon.springz.web.core;
+package org.jdragon.springz.web.core.servlet;
 
 /**
  * @Author: Jdragon

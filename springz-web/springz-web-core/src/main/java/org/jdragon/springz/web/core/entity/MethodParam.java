@@ -1,5 +1,6 @@
 package org.jdragon.springz.web.core.entity;
 
+import io.netty.handler.codec.http.HttpHeaders;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -16,9 +17,13 @@ import java.util.Map;
 @Data
 public class MethodParam {
 
+    private HttpHeaders header;
+
     private Map<String, List<String>> urlParamsMap;
 
     private Map<String, String> pathParamMap;
 
     private String body;
+
+
 }

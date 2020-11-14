@@ -15,7 +15,7 @@ import java.util.Map;
  * @Date: 2020.11.11 10:42
  * @Description: 用作存储请求路径与方法映射
  */
-public class RouteMethodMapperContainer {
+public class RouteMethodMapper {
 
     @Getter
     private static final Map<RequestMethod, Map<String, RouteInfo>> routeMapping = new HashMap<>();
@@ -36,6 +36,10 @@ public class RouteMethodMapperContainer {
 
     public static Map<String,RouteInfo> getRouteMapping(RequestMethod requestMethod){
         return routeMapping.get(requestMethod);
+    }
+
+    public static RouteInfo getRoute(RequestMethod requestMethod,String path){
+        return routeMapping.get(requestMethod).get(path);
     }
 
 }
