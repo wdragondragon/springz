@@ -9,6 +9,8 @@ import org.jdragon.springz.test.domain.User;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 
+import javax.annotation.PostConstruct;
+
 /**
  * @Author: Jdragon
  * @email: 1061917196@qq.com
@@ -27,5 +29,11 @@ public class UserAddServiceImpl implements UserAddService {
     public void add(User user) {
         logger.trace("UserAddService","执行add方法");
         userDao.add(user);
+    }
+
+    @Override
+    @PostConstruct
+    public void test(){
+        logger.trace("UserAddService","执行test方法");
     }
 }

@@ -5,6 +5,7 @@ import org.jdragon.springz.aop.annotation.Throw;
 
 import org.jdragon.springz.aop.core.AopContext;
 import org.jdragon.springz.aop.core.entity.PointCutInfo;
+import org.jdragon.springz.core.infuse.Infuser;
 import org.jdragon.springz.scanner.Filter;
 import org.jdragon.springz.core.register.Registrar;
 import org.jdragon.springz.scanner.ScanAction;
@@ -14,6 +15,8 @@ import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author: Jdragon
@@ -43,7 +46,7 @@ public class AopRegistrar extends Registrar implements ScanAction {
 
         Method throwableMethod = null;
 
-        Pointcut pointCut = null;
+        List<Pointcut> pointCuts = new ArrayList<>();
 
         for (Method method : methods) {
             if (method.isAnnotationPresent(After.class)) {
@@ -53,14 +56,14 @@ public class AopRegistrar extends Registrar implements ScanAction {
                 beforeMethod = method;
             }
             if (method.isAnnotationPresent(Pointcut.class)) {
-                pointCut = method.getAnnotation(Pointcut.class);
+                pointCuts.add(method.getAnnotation(Pointcut.class));
             }
             if (method.isAnnotationPresent(Throw.class)) {
                 throwableMethod = method;
             }
         }
 
-        if (pointCut == null) {
+        if (pointCuts.isEmpty()) {
             logger.error("aop缺少切入点", clazz.getName());
             return;
         }
@@ -69,16 +72,26 @@ public class AopRegistrar extends Registrar implements ScanAction {
         String definitionName = classInfo.getDefinitionName();
         BeanInfo beanInfo = beanMap.get(definitionName);
 
-        if (beanInfo == null)
+        if (beanInfo == null){
             logger.warn("切面类并未注册到容器中", definitionName);
+            return;
+        }
 
-        PointCutInfo pointCutInfo = new PointCutInfo(beanInfo.getBean(),
-                pointCut, beforeMethod, afterMethod, throwableMethod, order);
-        AopContext.addPointCut(pointCutInfo);
+        Object bean = new Infuser().createAnalyzeBean(definitionName, beanInfo.getBean().getClass());
+
+        for (Pointcut pointCut : pointCuts) {
+            PointCutInfo pointCutInfo = new PointCutInfo(bean, pointCut, beforeMethod, afterMethod, throwableMethod, order);
+            AopContext.addPointCut(pointCutInfo);
+        }
     }
 
     @Override
     public Filter[] getFilters() {
         return new Filter[0];
+    }
+
+    @Override
+    public Integer getOrder() {
+        return -98;
     }
 }

@@ -24,7 +24,7 @@ public class BaseFilter implements Filter {
     /**
      * 使用默认过滤器时需要允许通过的注解类型
      */
-    private final List<String> useDefault = Arrays.asList("Controller", "Service", "Component", "Configuration", "Repository", "SpringzMain");
+    private final List<String> useDefault = Arrays.asList("RestController","Controller", "Service", "Component", "Configuration", "Repository", "SpringzMain");
 
     public BaseFilter() {
     }

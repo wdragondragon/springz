@@ -2,6 +2,7 @@ package org.jdragon.springz.aop.core.entity;
 
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
+import org.jdragon.springz.utils.MethodUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,12 +30,7 @@ public class JoinPoint {
     private Object invokeResult;
 
     public Object proceed() {
-        try {
-            return targetMethod.invoke(targetObject, args);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return MethodUtils.invoke(targetObject, targetMethod, args);
     }
 
     public Object proceed(Method beforeMethod, Method afterMethod, Method throwableMethod) {

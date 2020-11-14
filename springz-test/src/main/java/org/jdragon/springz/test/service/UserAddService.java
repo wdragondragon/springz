@@ -16,4 +16,6 @@ public interface UserAddService {
      * @param user
      */
     void add(User user);
+
+    void test();
 }

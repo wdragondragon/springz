@@ -16,5 +16,11 @@
             <groupId>org.jdragon.springz</groupId>
             <artifactId>springz-annotation</artifactId>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.netty/netty-codec-http -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-http</artifactId>
+            <version>4.1.53.Final</version>
+        </dependency>
     </dependencies>
 </project>

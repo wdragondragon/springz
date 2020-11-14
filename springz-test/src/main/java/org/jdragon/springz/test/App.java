@@ -6,6 +6,7 @@ import org.jdragon.springz.core.annotation.*;
 import org.jdragon.springz.core.SpringzContext;
 
 import org.jdragon.springz.feign.annotation.EnableFeignSpringZ;
+import org.jdragon.springz.web.annotation.EnableWebSpringZ;
 
 /**
  * @author 10619
@@ -25,6 +26,7 @@ import org.jdragon.springz.feign.annotation.EnableFeignSpringZ;
 @SpringzScan
 @EnableFeignSpringZ
 @EnableAopSpringZ
+@EnableWebSpringZ
 public class App {
 
     @AutowiredZ
@@ -35,6 +37,9 @@ public class App {
 
     @AutowiredZ
     private static TestScope testScope;
+
+    @AutowiredZ
+    private static TestWeb testWeb;
 
     @AutowiredZ
     private static TestProperty testProperty;
@@ -50,6 +55,8 @@ public class App {
         testScope.test();
 
         testProperty.test();
+
+        testWeb.test();
 
         SpringzContext.close();
     }

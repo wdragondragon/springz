@@ -6,6 +6,8 @@ import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @Author: Jdragon
@@ -18,9 +20,9 @@ public class BeanContainer {
     private final static Logger logger = LoggerFactory.getLogger(BeanContainer.class);
 
     //已成功注册的bean
-    private static final Map<String, BeanInfo> beanMap = new HashMap<>();
+    private static final Map<String, BeanInfo> beanMap = new ConcurrentHashMap<>();
     //缺失依赖的bean
-    private static final List<WaitBeanInfo> waitBeanList = new ArrayList<>();
+    private static final List<WaitBeanInfo> waitBeanList = new CopyOnWriteArrayList<>();
 
     public static Map<String, BeanInfo> getBeanMap() {
         return beanMap;

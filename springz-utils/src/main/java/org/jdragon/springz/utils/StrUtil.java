@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
  * @Description: 字符串工具类
  */
 public class StrUtil {
+
     public static String firstLowerCase(String str) {
         return String.valueOf(str.charAt(0)).toLowerCase() + str.substring(1);
     }

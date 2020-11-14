@@ -36,8 +36,8 @@ public class ScanActionManager {
 
         ScanActionContainer.registerScanAction(
                 new TypeComponentRegistrar(baseFilter),//@Component扫描注册 -99
-                new MethodComponentRegistrar(baseFilter),//@Bean扫描注册 -98
-                new PostProcessorRegistrar(),//加载bean初始化完成的后置处理器 -97
+                new MethodComponentRegistrar(baseFilter),//@Bean扫描注册 -90
+                new PostProcessorRegistrar(),//加载bean初始化完成的后置处理器 -80
                 new Infuser(baseFilter));//注入 100
 
         scanner.action(new ActionRegistrar()).doScan(); //拓展注册器

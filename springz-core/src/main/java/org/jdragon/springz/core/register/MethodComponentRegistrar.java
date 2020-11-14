@@ -3,6 +3,7 @@ package org.jdragon.springz.core.register;
 
 import org.jdragon.springz.core.annotation.Bean;
 import org.jdragon.springz.core.annotation.Qualifier;
+import org.jdragon.springz.core.utils.BeanHelper;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 
 import org.jdragon.springz.core.utils.AnnotationUtils;
@@ -24,7 +25,7 @@ import java.util.*;
  * @Date: 2020.05.02 11:27
  * @Description: 方法注册器
  */
-public class MethodComponentRegistrar extends ComponentRegistrar implements ScanAction {
+public class MethodComponentRegistrar extends Registrar implements ScanAction {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -44,7 +45,7 @@ public class MethodComponentRegistrar extends ComponentRegistrar implements Scan
             Class<?> c = classInfo.getClazz();
 
             //返回的value是null，说明他所有注解和Component无关，就不需要注册
-            if (getComponentValue(c) == null) {
+            if (BeanHelper.getComponentValue(c) == null) {
                 return;
             }
 
@@ -55,9 +56,7 @@ public class MethodComponentRegistrar extends ComponentRegistrar implements Scan
 
             //将@Bean注解的方法，从beanMap中取出，并注入到obj中 Object->obj:beanField
             registerMethod(c.getDeclaredMethods(), obj.getBean());
-        } catch (NoSuchMethodException e) {
-            logger.warn("@Value注解下的变量没有String构造器", Arrays.toString(e.getStackTrace()));
-        } catch (InvocationTargetException | IllegalAccessException e) {
+        }  catch (InvocationTargetException | IllegalAccessException e) {
             logger.warn("@构造失败", e.getMessage());
             e.printStackTrace();
         }
@@ -136,6 +135,6 @@ public class MethodComponentRegistrar extends ComponentRegistrar implements Scan
     }
     @Override
     public Integer getOrder() {
-        return -98;
+        return -90;
     }
 }

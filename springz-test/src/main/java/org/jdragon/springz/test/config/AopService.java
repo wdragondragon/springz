@@ -25,6 +25,9 @@ public class AopService {
 
     }
 
+    @Pointcut(value = "org.jdragon.springz.test.controller.UserController",method = "add")
+    public void pointcut2(){}
+
     @Before
     public void beforeMethod(JoinPoint joinPoint) {
         logger.debug("UserAddService*切面,方法执行:" + joinPoint.getTargetMethod().getName());

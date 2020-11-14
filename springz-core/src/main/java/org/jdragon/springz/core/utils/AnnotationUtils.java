@@ -1,6 +1,7 @@
 package org.jdragon.springz.core.utils;
 
 
+import lombok.SneakyThrows;
 import org.jdragon.springz.core.annotation.Qualifier;
 import org.jdragon.springz.core.annotation.Scope;
 import org.jdragon.springz.scanner.entry.BeanInfo;
@@ -28,7 +29,8 @@ public class AnnotationUtils {
      * @Description: 获取未知注解上的value值
      **/
 
-    public static Object getAnnotationAttribute(Annotation annotation, String attribute) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    @SneakyThrows
+    public static Object getAnnotationAttribute(Annotation annotation, String attribute){
         Class<? extends Annotation> aClass = annotation.getClass();
         Method method = aClass.getDeclaredMethod(attribute);
         return method.invoke(annotation);

@@ -39,6 +39,13 @@ public class BeanInfo {
         return scope;
     }
 
+    public boolean isSingleton() {
+        return SINGLETON.equals(scope);
+    }
+
+    public boolean isPrototype() {
+        return PROTOTYPE.equals(scope);
+    }
 
     public String getClassName() {
         return className;

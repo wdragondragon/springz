@@ -37,6 +37,6 @@ public class PostProcessorRegistrar extends Registrar implements ScanAction {
 
     @Override
     public Integer getOrder() {
-        return -97;
+        return -80;
     }
 }

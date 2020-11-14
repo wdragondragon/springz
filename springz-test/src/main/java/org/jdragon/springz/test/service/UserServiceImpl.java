@@ -33,6 +33,11 @@ public class UserServiceImpl implements UserSaveService, UserAddService {
     }
 
     @Override
+    public void test() {
+
+    }
+
+    @Override
     public void save(User user) {
         logger.trace("UserService","save:执行save方法");
         userDao.save(user);

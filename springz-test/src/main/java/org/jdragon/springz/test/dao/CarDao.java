@@ -9,6 +9,8 @@ import org.jdragon.springz.test.domain.Car;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 
+import javax.annotation.PostConstruct;
+
 /**
  * @Author: Jdragon
  * @email: 1061917196@qq.com
@@ -27,6 +29,7 @@ public class CarDao {
     @Qualifier("carOne")
     Car qualifierCar;
 
+    @PostConstruct
     public void resourceCar(){
         int i = 1/0;
         logger.trace("CarDao","resourceCar:"+resourceCar);

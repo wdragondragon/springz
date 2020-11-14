@@ -1,6 +1,7 @@
 package org.jdragon.springz.core.register;
 
 
+import org.jdragon.springz.core.infuse.Infuser;
 import org.jdragon.springz.scanner.BeanContainer;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 import org.jdragon.springz.scanner.entry.ClassInfo;
@@ -20,9 +21,9 @@ public abstract class Registrar {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected static Map<String, BeanInfo> beanMap = BeanContainer.getBeanMap();
+    protected final Map<String, BeanInfo> beanMap = BeanContainer.getBeanMap();
 
-    protected static List<WaitBeanInfo> waitBeanList = BeanContainer.getWaitBeanList();
+    protected final List<WaitBeanInfo> waitBeanList = BeanContainer.getWaitBeanList();
 
     protected ClassInfo classInfo;
 
@@ -78,9 +79,10 @@ public abstract class Registrar {
     private void awakeWaitBean(WaitBeanInfo waitBeanInfo) {
         List<String> paramsNameList = waitBeanInfo.getParamsNameList();
 
+        Infuser infuser = new Infuser();
 
         Object[] needBean = paramsNameList.stream()
-                .map(e -> beanMap.get(e).getBean())
+                .map(e -> infuser.createAnalyzeBean(e, e.getClass()))
                 .toArray();
         Object bean = waitBeanInfo.createBean(needBean);
         if (bean == null) return;
@@ -88,7 +90,6 @@ public abstract class Registrar {
         String beanName = waitBeanInfo.getBeanName();
         register(beanName, waitBeanInfo.getClassName(), bean, waitBeanInfo.getScope());
         logger.warn("唤醒出列:" + beanName);
-
     }
 
     public void addWaitBean(WaitBeanInfo waitBeanInfo) {

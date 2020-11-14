@@ -1,5 +1,6 @@
 package org.jdragon.springz.aop.core;
 
+import lombok.Getter;
 import org.jdragon.springz.aop.core.entity.PointCutInfo;
 import org.jdragon.springz.aop.core.utils.PatternMatchUtils;
 
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
  * @Description:
  */
 public class AopContext {
+    @Getter
     private static final List<PointCutInfo> pointCutInfoList = new ArrayList<>();
 
     public static void addPointCut(PointCutInfo pointCutInfo) {

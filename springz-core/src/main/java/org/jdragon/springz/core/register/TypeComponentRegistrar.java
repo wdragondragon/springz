@@ -6,6 +6,7 @@ import org.jdragon.springz.core.container.PropertiesContainer;
 import org.jdragon.springz.core.annotation.Import;
 import org.jdragon.springz.core.annotation.Properties;
 import org.jdragon.springz.core.annotation.Value;
+import org.jdragon.springz.core.utils.BeanHelper;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 
 import org.jdragon.springz.core.utils.AnnotationUtils;
@@ -29,7 +30,7 @@ import java.util.*;
  * @Description: 类注册器
  */
 
-public class TypeComponentRegistrar extends ComponentRegistrar implements ScanAction {
+public class TypeComponentRegistrar extends Registrar implements ScanAction {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -54,8 +55,7 @@ public class TypeComponentRegistrar extends ComponentRegistrar implements ScanAc
 
             //反射构建对象
             Class<?> c = classInfo.getClazz();
-
-            String value = getComponentValue(c);
+            String value = BeanHelper.getComponentValue(c);
             //返回的value是null，说明他所有注解和Component无关，就不需要注册
             if (value == null) {
                 return;
