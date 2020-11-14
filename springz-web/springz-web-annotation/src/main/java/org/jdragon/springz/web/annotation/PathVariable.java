@@ -14,5 +14,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PathVariable {
-    String value();
+    String value() default "";
 }

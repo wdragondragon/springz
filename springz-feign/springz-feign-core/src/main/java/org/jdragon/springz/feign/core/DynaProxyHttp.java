@@ -119,7 +119,11 @@ public class DynaProxyHttp implements InvocationHandler {
             str = checkResult(map);
             JSONObject resultJson = JSON.parseObject(str);
             for (String s : depth) {
-                str = resultJson.getString(s);
+                if (JsonUtils.isJsonObj(str)) {
+                    str = resultJson.getString(s);
+                } else {
+                    break;
+                }
             }
             return JSON.parseObject(str, type);
         } catch (JSONException e) {

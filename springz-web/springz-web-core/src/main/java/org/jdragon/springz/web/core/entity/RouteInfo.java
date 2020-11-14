@@ -1,12 +1,15 @@
 package org.jdragon.springz.web.core.entity;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import lombok.Builder;
 import lombok.Data;
 import org.jdragon.springz.utils.MethodUtils;
+import org.jdragon.springz.utils.json.JsonUtils;
 import org.jdragon.springz.web.annotation.RequestMethod;
 import org.jdragon.springz.web.core.factory.ParameterResolverFactory;
 import org.jdragon.springz.web.core.resolver.ParameterResolver;
+import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -49,7 +52,7 @@ public class RouteInfo {
         if (bindMethod.getGenericReturnType().equals(void.class)) {
             return new byte[0];
         } else {
-            return JSON.toJSONBytes(result);
+            return JsonUtils.object2ByteIncludeNull(result);
         }
     }
 }

@@ -72,6 +72,23 @@ public class StrUtil {
         }
         return "";
     }
+
+    /**
+     * 指定字符串是否被包装
+     *
+     * @param str 字符串
+     * @param prefixChar 前缀
+     * @param suffixChar 后缀
+     * @return 是否被包装
+     */
+    public static boolean isWrap(CharSequence str, char prefixChar, char suffixChar) {
+        if (null == str) {
+            return false;
+        }
+
+        return str.charAt(0) == prefixChar && str.charAt(str.length() - 1) == suffixChar;
+    }
+
     public static void main(String[] args) {
         String s = StrUtil.matchWrap("${123.5123.5123}", "\\$\\{", "}");
         System.out.println(s);

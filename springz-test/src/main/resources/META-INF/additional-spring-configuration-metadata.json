@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "server.http.port",
+      "type": "java.lang.String",
+      "description": "Description for server.http.port."
+  }
+] }

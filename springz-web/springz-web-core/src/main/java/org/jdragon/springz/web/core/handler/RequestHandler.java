@@ -5,6 +5,7 @@ import io.netty.handler.codec.http.*;
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.Charsets;
 import org.jdragon.springz.utils.http.response.Result;
+import org.jdragon.springz.utils.json.JsonUtils;
 import org.jdragon.springz.web.annotation.RequestMethod;
 import org.jdragon.springz.web.core.RouteMethodMapper;
 import org.jdragon.springz.web.core.entity.MethodParam;
@@ -46,7 +47,10 @@ public class RequestHandler implements Handler {
             RouteInfo routeInfo = RouteMethodMapper.getRoute(requestMethod, matchingPath);
             result = routeInfo.invokeMethod(methodParam);
         } else {
-            result = JSON.toJSONBytes(Result.error());
+            Result<Object> error = Result.error();
+            error.setCode(404L);
+            error.setMessage("路径未找到");
+            result = JsonUtils.object2Byte(error);
         }
 
         return FullHttpResponseFactory.buildSuccessResponse(result);

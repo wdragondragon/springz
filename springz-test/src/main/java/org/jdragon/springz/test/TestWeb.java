@@ -26,7 +26,7 @@ public class TestWeb {
     public void test(){
         Map<RequestMethod, Map<String, RouteInfo>> routeMapping = RouteMethodMapper.getRouteMapping();
 
-        RouteInfo routeInfo = routeMapping.get(RequestMethod.GET).get("/user/add");
+        RouteInfo routeInfo = routeMapping.get(RequestMethod.POST).get("/user/add");
         System.out.println(routeInfo);
         Method bindMethod = routeInfo.getBindMethod();
 //        Object bindBean = SpringzContext.getBean(routeInfo.getBindBeanName());

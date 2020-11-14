@@ -24,6 +24,4 @@ public class MethodParam {
     private Map<String, String> pathParamMap;
 
     private String body;
-
-
 }

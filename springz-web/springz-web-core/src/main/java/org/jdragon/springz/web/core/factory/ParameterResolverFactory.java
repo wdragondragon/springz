@@ -2,11 +2,9 @@ package org.jdragon.springz.web.core.factory;
 
 import org.jdragon.springz.web.annotation.PathVariable;
 import org.jdragon.springz.web.annotation.RequestBody;
+import org.jdragon.springz.web.annotation.RequestHeader;
 import org.jdragon.springz.web.annotation.RequestParam;
-import org.jdragon.springz.web.core.resolver.ParameterResolver;
-import org.jdragon.springz.web.core.resolver.PathVariableParameterResolver;
-import org.jdragon.springz.web.core.resolver.RequestBodyParameterResolver;
-import org.jdragon.springz.web.core.resolver.RequestParamParameterResolver;
+import org.jdragon.springz.web.core.resolver.*;
 
 import java.lang.reflect.Parameter;
 
@@ -17,7 +15,6 @@ import java.lang.reflect.Parameter;
  * @Description:
  */
 public class ParameterResolverFactory {
-
     public static ParameterResolver get(Parameter parameter) {
         if (parameter.isAnnotationPresent(RequestParam.class)) {
             return new RequestParamParameterResolver();
@@ -27,6 +24,9 @@ public class ParameterResolverFactory {
         }
         if (parameter.isAnnotationPresent(RequestBody.class)) {
             return new RequestBodyParameterResolver();
+        }
+        if (parameter.isAnnotationPresent(RequestHeader.class)) {
+            return new RequestHeaderResolver();
         }
         return null;
     }

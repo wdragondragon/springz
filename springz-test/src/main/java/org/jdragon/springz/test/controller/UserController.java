@@ -2,7 +2,6 @@ package org.jdragon.springz.test.controller;
 
 
 import org.jdragon.springz.core.annotation.AutowiredZ;
-import org.jdragon.springz.core.annotation.Controller;
 import org.jdragon.springz.core.annotation.Qualifier;
 import org.jdragon.springz.test.domain.User;
 import org.jdragon.springz.test.service.UserAddService;
@@ -46,21 +45,29 @@ public class UserController {
         saveService.save(user);
     }
 
-    @GetMapping("/add")
+    @PostMapping("/add")
     public void add(@RequestBody User user) {
         addService.add(user);
     }
 
-    @GetMapping("/add/{test}")
-    public Result<String> add(@PathVariable("test") String test) {
-        System.out.println("控制器add:" + test);
-        return Result.success("控制器add:" + test);
+    @GetMapping("/add/{str}")
+    public Result<String> add(@PathVariable String str) {
+        return Result.success("控制器add:" + str);
     }
 
-    @GetMapping("/{add}/test")
-    public Result<String> add2(@PathVariable("add") String add) {
-        System.out.println("控制器add2:" + add);
+    @GetMapping("/add/test")
+    public Result<String> add2(@RequestParam String add) {
         return Result.success("控制器add2:" + add);
+    }
+
+    @PostMapping("/header/test")
+    public Result<String> header(@RequestParam String add, @RequestHeader String header, @RequestBody User user) {
+        return Result.success("控制器add:" + add + " header:" + header + " user:" + user);
+    }
+
+    @GetMapping("/get")
+    public Result<User> get() {
+        return Result.success(new User());
     }
 
     public void saveAndAdd(User user) {

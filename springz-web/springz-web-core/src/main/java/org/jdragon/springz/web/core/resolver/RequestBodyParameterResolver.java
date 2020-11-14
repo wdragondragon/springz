@@ -1,6 +1,6 @@
 package org.jdragon.springz.web.core.resolver;
 
-import com.alibaba.fastjson.JSON;
+import org.jdragon.springz.utils.json.JsonUtils;
 import org.jdragon.springz.web.core.entity.MethodParam;
 
 import java.lang.reflect.Parameter;
@@ -11,9 +11,14 @@ import java.lang.reflect.Parameter;
  * @Date: 2020.11.14 14:26
  * @Description:
  */
-public class RequestBodyParameterResolver implements ParameterResolver{
+public class RequestBodyParameterResolver implements ParameterResolver {
     @Override
     public Object resolve(MethodParam methodParam, Parameter parameter) {
-        return JSON.parseObject(methodParam.getBody(),parameter.getType());
+        String body = methodParam.getBody();
+        if (body == null || body.isEmpty()) {
+            return null;
+        } else {
+            return JsonUtils.json2Object(methodParam.getBody(), parameter.getType());
+        }
     }
 }

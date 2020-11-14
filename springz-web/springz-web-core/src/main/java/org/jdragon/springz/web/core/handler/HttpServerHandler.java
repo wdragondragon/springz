@@ -1,5 +1,6 @@
 package org.jdragon.springz.web.core.handler;
 
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
@@ -25,8 +26,14 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
         if (FAVICON_ICO.equals(fullHttpRequest.uri())) return;
         HttpMethod method = fullHttpRequest.method();
         Handler handler = RequestHandlerFactory.get(method);
-        FullHttpResponse response = handler.handle(fullHttpRequest);
-        ctx.write(response);
+        FullHttpResponse fullHttpResponse = handler.handle(fullHttpRequest);
+        boolean keepAlive = HttpUtil.isKeepAlive(fullHttpRequest);
+        if (!keepAlive) {
+            ctx.write(fullHttpResponse).addListener(ChannelFutureListener.CLOSE);
+        } else {
+            fullHttpResponse.headers().set(CONNECTION, KEEP_ALIVE);
+            ctx.write(fullHttpResponse);
+        }
     }
 
     @Override

@@ -14,7 +14,9 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.jdragon.springz.core.annotation.AutowiredZ;
 import org.jdragon.springz.core.annotation.Component;
+import org.jdragon.springz.web.core.entity.HttpProperty;
 import org.jdragon.springz.web.core.handler.HttpServerHandler;
 
 import javax.annotation.PostConstruct;
@@ -27,12 +29,13 @@ import javax.annotation.PostConstruct;
  */
 @Slf4j
 @Component
-public class HttpServer extends Thread{
+public class HttpServer extends Thread {
 
-    private static final int PORT = 8080;
+    @AutowiredZ
+    private HttpProperty httpProperty;
 
     @PostConstruct
-    public void start(){
+    public void start() {
         super.start();
     }
 
@@ -60,8 +63,8 @@ public class HttpServer extends Thread{
                                     .addLast("handler", new HttpServerHandler());
                         }
                     });
-            Channel ch = b.bind(PORT).sync().channel();
-            log.info(SystemConstants.LOG_PORT_BANNER, PORT);
+            Channel ch = b.bind(httpProperty.getPort()).sync().channel();
+            log.info(SystemConstants.LOG_PORT_BANNER, httpProperty.getPort());
             ch.closeFuture().sync();
         } catch (InterruptedException e) {
             log.error("occur com.github.jsoncat.exception when start com.github.jsoncat.server:", e);
