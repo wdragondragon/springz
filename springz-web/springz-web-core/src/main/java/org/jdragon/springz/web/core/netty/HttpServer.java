@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jdragon.springz.core.annotation.Inject;
 import org.jdragon.springz.core.annotation.Component;
 import org.jdragon.springz.web.core.entity.HttpProperty;
+import org.jdragon.springz.web.core.handler.HttpServerHandler;
 
 import javax.annotation.PostConstruct;
 
@@ -30,9 +31,6 @@ public class HttpServer extends Thread {
 
     @Inject
     private HttpProperty httpProperty;
-
-    @Inject
-    private SimpleChannelInboundHandler<FullHttpRequest> handler;
 
     @PostConstruct
     public void start() {
@@ -60,7 +58,7 @@ public class HttpServer extends Thread {
                             ch.pipeline().addLast("decoder", new HttpRequestDecoder())
                                     .addLast("encoder", new HttpResponseEncoder())
                                     .addLast("aggregator", new HttpObjectAggregator(512 * 1024))
-                                    .addLast("handler", handler);
+                                    .addLast("handler", new HttpServerHandler());
                         }
                     });
             Channel ch = b.bind(httpProperty.getPort()).sync().channel();
