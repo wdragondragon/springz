@@ -1,9 +1,7 @@
 package org.jdragon.springz.test.controller;
 
 
-import org.jdragon.springz.core.annotation.AutowiredZ;
-import org.jdragon.springz.core.annotation.Controller;
-import org.jdragon.springz.core.annotation.Qualifier;
+import org.jdragon.springz.core.annotation.Inject;
 import org.jdragon.springz.test.domain.User;
 import org.jdragon.springz.test.service.UserAddService;
 import org.jdragon.springz.test.service.UserSaveService;
@@ -19,26 +17,22 @@ import org.jdragon.springz.web.annotation.*;
  */
 
 @RestController
-//@Controller
 @RequestMapping("/user")
 public class UserController {
 
-    @AutowiredZ
+    @Inject
     UserSaveService saveService;
 
-    @AutowiredZ
+    @Inject
     UserAddService addService;
 
-    @AutowiredZ
-    @Qualifier("userService")
+    @Inject("userService")
     UserSaveService userSaveService;
 
-    @AutowiredZ
-    @Qualifier("userService")
+    @Inject("userService")
     UserAddService userAddService;
 
-    @AutowiredZ
-    @Qualifier("userService")
+    @Inject("userService")
     UserServiceImpl userService;
 
     @GetMapping("/save")

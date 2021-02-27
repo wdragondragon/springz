@@ -1,6 +1,6 @@
 package org.jdragon.springz.core.manager;
 
-import org.jdragon.springz.core.annotation.SpringzScan;
+import org.jdragon.springz.core.annotation.IocScan;
 import org.jdragon.springz.core.container.BaseClassPackagesContainer;
 import org.jdragon.springz.core.entry.BasePackageInfo;
 import org.jdragon.springz.core.entry.FilterMeta;
@@ -22,25 +22,25 @@ public class BaseClassPackagesManager {
 
     /**
      * 通过springzScan注解实例来获取需要扫描的包信息
-     * @param springzScan 注解实例
+     * @param iocScan 注解实例
      */
-    public static void resolverComponentScan(SpringzScan springzScan) {
-        Class<?>[] basePackageClasses = springzScan.basePackageClasses();
-        String[] basePackages = springzScan.basePackage();
-        boolean useDefaultFilters = springzScan.useDefaultFilters();
-        SpringzScan.ComponentFilter[] excludeComponentFilters = springzScan.excludeFilters();
-        SpringzScan.ComponentFilter[] includeComponentFilters = springzScan.includeFilters();
+    public static void resolverComponentScan(IocScan iocScan) {
+        Class<?>[] basePackageClasses = iocScan.basePackageClasses();
+        String[] basePackages = iocScan.basePackage();
+        boolean useDefaultFilters = iocScan.useDefaultFilters();
+        IocScan.ComponentFilter[] excludeComponentFilters = iocScan.excludeFilters();
+        IocScan.ComponentFilter[] includeComponentFilters = iocScan.includeFilters();
 
         FilterMeta[] includeFiltersInfo = new FilterMeta[includeComponentFilters.length];
         FilterMeta[] excludeFiltersInfo = new FilterMeta[excludeComponentFilters.length];
 
         int i = 0;
-        for (SpringzScan.ComponentFilter componentFilter : includeComponentFilters) {
+        for (IocScan.ComponentFilter componentFilter : includeComponentFilters) {
             includeFiltersInfo[i] = new FilterMeta(componentFilter.type(), componentFilter.classes());
             i++;
         }
         i = 0;
-        for (SpringzScan.ComponentFilter componentFilter : excludeComponentFilters) {
+        for (IocScan.ComponentFilter componentFilter : excludeComponentFilters) {
             excludeFiltersInfo[i] = new FilterMeta(componentFilter.type(), componentFilter.classes());
             i++;
         }

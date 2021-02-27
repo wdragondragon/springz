@@ -12,10 +12,9 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.jdragon.springz.core.annotation.AutowiredZ;
+import org.jdragon.springz.core.annotation.Inject;
 import org.jdragon.springz.core.annotation.Component;
 import org.jdragon.springz.web.core.entity.HttpProperty;
-import org.jdragon.springz.web.core.handler.HttpServerHandler;
 
 import javax.annotation.PostConstruct;
 
@@ -29,10 +28,10 @@ import javax.annotation.PostConstruct;
 @Component
 public class HttpServer extends Thread {
 
-    @AutowiredZ
+    @Inject
     private HttpProperty httpProperty;
 
-    @AutowiredZ
+    @Inject
     private SimpleChannelInboundHandler<FullHttpRequest> handler;
 
     @PostConstruct

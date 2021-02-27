@@ -1,8 +1,7 @@
 package org.jdragon.springz.core.register;
 
-import org.jdragon.springz.core.annotation.SpringzScan;
+import org.jdragon.springz.core.annotation.IocScan;
 import org.jdragon.springz.core.manager.BaseClassPackagesManager;
-import org.jdragon.springz.core.scan.BaseClassesScanner;
 import org.jdragon.springz.core.utils.AnnotationUtils;
 import org.jdragon.springz.scanner.Filter;
 import org.jdragon.springz.scanner.ScanAction;
@@ -21,10 +20,10 @@ public class ExpandEnableRegistrar implements ScanAction {
     public void action(ClassInfo classInfo) {
         Class<?> clazz = classInfo.getClazz();
         for (Annotation annotation : clazz.getAnnotations()) {
-            SpringzScan springzScan = (SpringzScan) AnnotationUtils
-                    .getAllContainedAnnotationType(annotation.annotationType(), SpringzScan.class);
-            if (springzScan != null) {
-                BaseClassPackagesManager.resolverComponentScan(springzScan);
+            IocScan iocScan = (IocScan) AnnotationUtils
+                    .getAllContainedAnnotationType(annotation.annotationType(), IocScan.class);
+            if (iocScan != null) {
+                BaseClassPackagesManager.resolverComponentScan(iocScan);
             }
         }
     }

@@ -1,11 +1,9 @@
 package org.jdragon.springz.test;
 
 import org.jdragon.springz.ImportTest;
-import org.jdragon.springz.core.SpringzContext;
-import org.jdragon.springz.core.annotation.AutowiredZ;
+import org.jdragon.springz.core.IocContext;
+import org.jdragon.springz.core.annotation.Inject;
 import org.jdragon.springz.core.annotation.Component;
-import org.jdragon.springz.core.annotation.Qualifier;
-import org.jdragon.springz.test.App;
 import org.jdragon.springz.test.component.ComponentTest;
 import org.jdragon.springz.test.controller.UserController;
 import org.jdragon.springz.test.dao.CarDao;
@@ -15,7 +13,6 @@ import org.jdragon.springz.test.service.UserAddService;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 
@@ -30,37 +27,35 @@ public class TestBean {
 
     private static final Logger logger = LoggerFactory.getLogger(App.class);
 
-    @AutowiredZ
+    @Inject
     private ComponentTest componentTest;
 
-    @AutowiredZ
+    @Inject
     private UserController userController;
 
-    @AutowiredZ
+    @Inject
     private ImportTest importTest;
 
-    @AutowiredZ
-    @Qualifier("carOneDao")
+    @Inject("carOneDao")
     private CarDao carDao;
 
-    @AutowiredZ
+    @Inject
     private User user;
 
-    @AutowiredZ
-    @Qualifier("httpUser")
+    @Inject("httpUser")
     private User httpUser;
 
-    @AutowiredZ
+    @Inject
     private UserDao userDao;
 
-    @AutowiredZ
+    @Inject
     private UserAddService userAddService;
 
     public void testBean() {
 
-        User userTest = SpringzContext.getBean(User.class);
+        User userTest = IocContext.getBean(User.class);
 
-        User userTest1 = (User) SpringzContext.getBean("user");
+        User userTest1 = (User) IocContext.getBean("user");
 
         logger.info(Optional.ofNullable(userTest).orElse(new User()).toString());
 

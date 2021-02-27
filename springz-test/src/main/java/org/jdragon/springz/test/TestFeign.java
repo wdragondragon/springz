@@ -1,7 +1,7 @@
 package org.jdragon.springz.test;
 
 
-import org.jdragon.springz.core.annotation.AutowiredZ;
+import org.jdragon.springz.core.annotation.Inject;
 import org.jdragon.springz.core.annotation.Component;
 import org.jdragon.springz.test.dao.Http;
 import org.jdragon.springz.test.domain.RobotPostOrder;
@@ -27,16 +27,16 @@ public class TestFeign {
 
     private static final Logger logger = LoggerFactory.getLogger(App.class);
 
-    @AutowiredZ
+    @Inject
     private HttpTest httpTest;
 
-    @AutowiredZ
+    @Inject
     private Robot robot;
 
-    @AutowiredZ
+    @Inject
     private RobotResult robotResult;
 
-    @AutowiredZ
+    @Inject
     private ClGroupMap clGroupMap;
 
     public void testHttp() {

@@ -1,10 +1,8 @@
 package org.jdragon.springz.core.utils;
 
 import lombok.SneakyThrows;
-import org.jdragon.springz.core.annotation.AutowiredZ;
+import org.jdragon.springz.core.annotation.Inject;
 import org.jdragon.springz.core.annotation.Component;
-import org.jdragon.springz.core.annotation.Qualifier;
-import org.jdragon.springz.core.annotation.Resource;
 import org.jdragon.springz.utils.StrUtil;
 
 import java.lang.reflect.Field;
@@ -45,7 +43,7 @@ public class BeanHelper {
     }
 
 
-    public static String getClassBeanName(Class<?> clazz){
+    public static String getClassBeanName(Class<?> clazz) {
         String proxyBeanName = getComponentValue(clazz);
         proxyBeanName = proxyBeanName.isEmpty() ? StrUtil.firstLowerCase(clazz.getSimpleName()) : proxyBeanName;
         return proxyBeanName;
@@ -58,8 +56,9 @@ public class BeanHelper {
     public static Field[] getAutowiredField(Class<?> c) {
         List<Field> autoField = new ArrayList<>();
         for (Field field : c.getDeclaredFields()) {
-            if (field.isAnnotationPresent(AutowiredZ.class) ||
-                    field.isAnnotationPresent(Resource.class)) {
+            if (field.isAnnotationPresent(Inject.class)
+//                    || field.isAnnotationPresent(Resource.class)
+            ) {
                 autoField.add(field);
             }
         }
@@ -72,21 +71,30 @@ public class BeanHelper {
      * @Description: 获取需注入field的key
      **/
     public static String getAutowiredValue(Field field) {
-        String filedKey;
-        if (field.isAnnotationPresent(AutowiredZ.class)) {
-            String autowiredValue = field.getType().getSimpleName();
-            //检测是否有qualifier注解，有则使用注解值来获取注入组件
-            Qualifier qualifier = field.getAnnotation(Qualifier.class);
-            String infuseKey = qualifier == null ? autowiredValue : qualifier.value();
-            filedKey = StrUtil.firstLowerCase(infuseKey);
-        } else {
-            Resource resource = field.getAnnotation(Resource.class);
-            String resourceValue = resource.value();
-            String infuseKey = resourceValue.isEmpty() ? field.getName() : resourceValue;
-            filedKey = StrUtil.firstLowerCase(infuseKey);
-        }
+//        String filedKey;
+//        if (field.isAnnotationPresent(Inject.class)) {
+//            String autowiredValue = field.getType().getSimpleName();
+//            //检测是否有qualifier注解，有则使用注解值来获取注入组件
+//            Qualifier qualifier = field.getAnnotation(Qualifier.class);
+//            String infuseKey = qualifier == null ? autowiredValue : qualifier.value();
+//            filedKey = StrUtil.firstLowerCase(infuseKey);
+//        } else {
+//            Resource resource = field.getAnnotation(Resource.class);
+//            String resourceValue = resource.value();
+//            String infuseKey = resourceValue.isEmpty() ? field.getName() : resourceValue;
+//            filedKey = StrUtil.firstLowerCase(infuseKey);
+//        }
+//
+//        return filedKey;
 
-        return filedKey;
+        String filedKey = "";
+        if (field.isAnnotationPresent(Inject.class)) {
+            filedKey = field.getAnnotation(Inject.class).value();
+            if (StrUtil.isBlank(filedKey)) {
+                filedKey = field.getType().getSimpleName();
+            }
+        }
+        return StrUtil.firstLowerCase(filedKey);
     }
 
     /**

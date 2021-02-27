@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration springzScan="true" scanPeriol="60" debug="false">
+<configuration iocScan="true" scanPeriol="60" debug="false">
     <!--自定义颜色配置-->
     <conversionRule conversionWord="customColor" converterClass="org.jdragon.springz.test.config.LogbackConfig"/>
     <!-- ch.qos.logback.core.ConsoleAppender 控制台输出 -->

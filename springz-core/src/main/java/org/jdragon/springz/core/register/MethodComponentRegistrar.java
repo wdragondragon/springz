@@ -2,7 +2,7 @@ package org.jdragon.springz.core.register;
 
 
 import org.jdragon.springz.core.annotation.Bean;
-import org.jdragon.springz.core.annotation.Qualifier;
+import org.jdragon.springz.core.annotation.Inject;
 import org.jdragon.springz.core.utils.BeanHelper;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 
@@ -96,10 +96,11 @@ public class MethodComponentRegistrar extends Registrar implements ScanAction {
 
             //先把方法需要的beanName收集
             for (Class<?> methodParamType : methodParamTypes) {
-                String methodParamTypeName;
-                if (methodParamType.isAnnotationPresent(Qualifier.class)) {
-                    methodParamTypeName = methodParamType.getAnnotation(Qualifier.class).value();
-                } else {
+                String methodParamTypeName = "";
+                if (methodParamType.isAnnotationPresent(Inject.class)) {
+                    methodParamTypeName = methodParamType.getAnnotation(Inject.class).value();
+                }
+                if (StrUtil.isBlank(methodParamTypeName)) {
                     methodParamTypeName = methodParamType.getSimpleName();
                 }
                 methodParamTypeName = StrUtil.firstLowerCase(methodParamTypeName);

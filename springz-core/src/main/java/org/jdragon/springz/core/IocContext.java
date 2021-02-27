@@ -18,9 +18,9 @@ import java.util.Map;
  * @Description: 组件管理容器类
  */
 
-public class SpringzContext {
+public class IocContext {
 
-    private final static Logger logger = LoggerFactory.getLogger(SpringzContext.class);
+    private final static Logger logger = LoggerFactory.getLogger(IocContext.class);
 
     private final static Map<String, BeanInfo> beanMap = BeanContainer.getBeanMap();
 

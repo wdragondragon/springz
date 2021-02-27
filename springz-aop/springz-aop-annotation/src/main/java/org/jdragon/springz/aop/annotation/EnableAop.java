@@ -1,6 +1,6 @@
 package org.jdragon.springz.aop.annotation;
 
-import org.jdragon.springz.core.annotation.SpringzScan;
+import org.jdragon.springz.core.annotation.IocScan;
 
 import java.lang.annotation.*;
 
@@ -13,6 +13,6 @@ import java.lang.annotation.*;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@SpringzScan(basePackage = "org.jdragon.springz.aop.core")
-public @interface EnableAopSpringZ {
+@IocScan(basePackage = "org.jdragon.springz.aop.core")
+public @interface EnableAop {
 }

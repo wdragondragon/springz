@@ -1,7 +1,7 @@
 package org.jdragon.springz.test;
 
-import org.jdragon.springz.core.SpringzContext;
-import org.jdragon.springz.core.annotation.AutowiredZ;
+import org.jdragon.springz.core.IocContext;
+import org.jdragon.springz.core.annotation.Inject;
 import org.jdragon.springz.core.annotation.Component;
 import org.jdragon.springz.test.controller.UserController;
 import org.jdragon.springz.test.domain.User;
@@ -21,7 +21,7 @@ import java.util.Map;
  */
 @Component
 public class TestWeb {
-    @AutowiredZ
+    @Inject
     UserController userController;
     public void test(){
         Map<RequestMethod, Map<String, RouteInfo>> routeMapping = RouteMethodMapper.getRouteMapping();
@@ -31,7 +31,7 @@ public class TestWeb {
         Method bindMethod = routeInfo.getBindMethod();
 //        Object bindBean = SpringzContext.getBean(routeInfo.getBindBeanName());
         Object bindBean = routeInfo.getBindObj();
-        MethodUtils.invoke(bindBean,bindMethod, SpringzContext.getBean(User.class));
+        MethodUtils.invoke(bindBean,bindMethod, IocContext.getBean(User.class));
 //        userController.add(SpringzContext.getBean(User.class));
     }
 }

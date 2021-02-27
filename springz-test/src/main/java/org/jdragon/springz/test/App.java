@@ -1,12 +1,12 @@
 package org.jdragon.springz.test;
 
 
-import org.jdragon.springz.aop.annotation.EnableAopSpringZ;
+import org.jdragon.springz.aop.annotation.EnableAop;
 import org.jdragon.springz.core.annotation.*;
-import org.jdragon.springz.core.SpringzContext;
+import org.jdragon.springz.core.IocContext;
 
-import org.jdragon.springz.feign.annotation.EnableFeignSpringZ;
-import org.jdragon.springz.web.annotation.EnableWebSpringZ;
+import org.jdragon.springz.feign.annotation.EnableFeign;
+import org.jdragon.springz.web.annotation.EnableWeb;
 
 /**
  * @author 10619
@@ -22,31 +22,31 @@ import org.jdragon.springz.web.annotation.EnableWebSpringZ;
 //@Import(App.class)
 //@ComponentScan(basePackage = {"org.jdragon.springz.test"})
 
-@SpringzMain
-@SpringzScan
-@EnableAopSpringZ
-@EnableWebSpringZ
-@EnableFeignSpringZ
+@IocMain
+@IocScan
+@EnableAop
+@EnableWeb
+@EnableFeign
 public class App {
 
-    @AutowiredZ
+    @Inject
     private static TestBean testBean;
 
-    @AutowiredZ
+    @Inject
     private static TestFeign testFeign;
 
-    @AutowiredZ
+    @Inject
     private static TestScope testScope;
 
-    @AutowiredZ
+    @Inject
     private static TestWeb testWeb;
 
-    @AutowiredZ
+    @Inject
     private static TestProperty testProperty;
 
     public static void main(String[] args) {
 
-        SpringzContext.run(App.class);
+        IocContext.run(App.class);
 
         testBean.testBean();
 
@@ -58,6 +58,6 @@ public class App {
 
         testWeb.test();
 
-        SpringzContext.close();
+        IocContext.close();
     }
 }

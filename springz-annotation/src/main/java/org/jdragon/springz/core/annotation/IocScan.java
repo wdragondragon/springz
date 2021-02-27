@@ -10,8 +10,8 @@ import java.lang.annotation.*;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Repeatable(SpringzScans.class)
-public @interface SpringzScan {
+@Repeatable(IocScans.class)
+public @interface IocScan {
     /**
      * 包名扫描
      */

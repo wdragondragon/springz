@@ -2,13 +2,11 @@ package org.jdragon.springz.core.utils;
 
 
 import lombok.SneakyThrows;
-import org.jdragon.springz.core.annotation.Qualifier;
 import org.jdragon.springz.core.annotation.Scope;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -147,13 +145,14 @@ public class AnnotationUtils {
      * @return: java.lang.String
      * @Description:
      **/
-    public static String checkIncludeQualifier(AnnotatedElement element) {
-        //检测是否有qualifier注解，有则使用注解值来获取注入组件
-        String qualifierValue = null;
-        if (element.isAnnotationPresent(Qualifier.class)) {
-            Qualifier qualifier = element.getDeclaredAnnotation(Qualifier.class);
-            qualifierValue = qualifier.value();
-        }
-        return qualifierValue;
-    }
+    //delete 2021-02-27 改为inject注入
+//    public static String checkIncludeQualifier(AnnotatedElement element) {
+//        //检测是否有qualifier注解，有则使用注解值来获取注入组件
+//        String qualifierValue = null;
+//        if (element.isAnnotationPresent(Qualifier.class)) {
+//            Qualifier qualifier = element.getDeclaredAnnotation(Qualifier.class);
+//            qualifierValue = qualifier.value();
+//        }
+//        return qualifierValue;
+//    }
 }

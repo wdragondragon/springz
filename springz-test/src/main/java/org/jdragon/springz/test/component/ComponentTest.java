@@ -3,7 +3,7 @@ package org.jdragon.springz.test.component;
 
 
 
-import org.jdragon.springz.core.annotation.AutowiredZ;
+import org.jdragon.springz.core.annotation.Inject;
 import org.jdragon.springz.core.annotation.Component;
 import org.jdragon.springz.test.domain.User;
 import org.jdragon.springz.utils.Log.Logger;
@@ -23,10 +23,10 @@ public class ComponentTest {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @AutowiredZ
+    @Inject
     private static User user;
 
-    @AutowiredZ
+    @Inject
     private static User user2;
 
     public void test() {

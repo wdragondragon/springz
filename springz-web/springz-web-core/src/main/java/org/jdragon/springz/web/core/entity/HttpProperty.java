@@ -1,7 +1,7 @@
 package org.jdragon.springz.web.core.entity;
 
 import lombok.Data;
-import org.jdragon.springz.core.annotation.AutowiredZ;
+import org.jdragon.springz.core.annotation.Inject;
 import org.jdragon.springz.core.annotation.Component;
 import org.jdragon.springz.core.annotation.Properties;
 import org.jdragon.springz.core.annotation.Value;
@@ -18,7 +18,7 @@ import org.jdragon.springz.core.annotation.Value;
 @Properties(prefix = "server.http")
 public class HttpProperty {
 
-    @AutowiredZ
+    @Inject
     private static HttpProperty Instance;
 
     @Value("${port}")

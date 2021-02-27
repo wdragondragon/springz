@@ -48,7 +48,6 @@ public class Infuser implements ScanAction {
      **/
     @Override
     public void action(ClassInfo classInfo) {
-        System.out.println(classInfo.getClassName());
         String definitionName = classInfo.getDefinitionName();
 
         if (beanMap.containsKey(definitionName)) {

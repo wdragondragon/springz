@@ -1,6 +1,6 @@
 package org.jdragon.springz.web.annotation;
 
-import org.jdragon.springz.core.annotation.SpringzScan;
+import org.jdragon.springz.core.annotation.IocScan;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,6 +15,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@SpringzScan(basePackage = "org.jdragon.springz.web.core")
-public @interface EnableWebSpringZ {
+@IocScan(basePackage = "org.jdragon.springz.web.core")
+public @interface EnableWeb {
 }

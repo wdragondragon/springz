@@ -1,6 +1,6 @@
 package org.jdragon.springz.test;
 
-import org.jdragon.springz.core.annotation.AutowiredZ;
+import org.jdragon.springz.core.annotation.Inject;
 import org.jdragon.springz.core.annotation.Component;
 import org.jdragon.springz.test.domain.property.ConsumerProperty;
 import org.jdragon.springz.test.domain.property.Consumer;
@@ -18,10 +18,10 @@ public class TestProperty {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @AutowiredZ
+    @Inject
     private ConsumerProperty consumerProperty;
 
-    @AutowiredZ
+    @Inject
     private Consumer consumer;
 
     public void test(){

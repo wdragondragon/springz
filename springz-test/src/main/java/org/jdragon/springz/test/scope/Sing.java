@@ -1,9 +1,7 @@
 package org.jdragon.springz.test.scope;
 
-import org.jdragon.springz.core.annotation.AutowiredZ;
+import org.jdragon.springz.core.annotation.Inject;
 import org.jdragon.springz.core.annotation.Component;
-import org.jdragon.springz.core.annotation.Scope;
-import org.jdragon.springz.scanner.entry.BeanInfo;
 
 /**
  * @Author: Jdragon
@@ -14,12 +12,12 @@ import org.jdragon.springz.scanner.entry.BeanInfo;
 @Component
 
 public class Sing {
-    @AutowiredZ
+    @Inject
     public Pro pro;
 
-    @AutowiredZ
+    @Inject
     public Pro2 pro2;
 
-    @AutowiredZ
+    @Inject
     public Sing2 sing2;
 }

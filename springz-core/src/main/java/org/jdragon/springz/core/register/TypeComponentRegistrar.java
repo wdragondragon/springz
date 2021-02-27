@@ -54,7 +54,6 @@ public class TypeComponentRegistrar extends Registrar implements ScanAction {
         try {
 
             this.classInfo = classInfo;
-
             //反射构建对象
             Class<?> c = classInfo.getClazz();
             String value = BeanHelper.getComponentValue(c);
@@ -120,7 +119,8 @@ public class TypeComponentRegistrar extends Registrar implements ScanAction {
         Import importAnnotation = c.getAnnotation(Import.class);
         Class<?>[] importClasses = importAnnotation.value();
         for (Class<?> importClass : importClasses) {
-            super.register(importClass, importClass.newInstance(), BeanInfo.SINGLETON);
+            super.register(importClass, StrUtil.firstLowerCase(importClass.getSimpleName())
+                    ,importClass.newInstance(), BeanInfo.SINGLETON);
             //delete 2020-02-27
 //            beanMap.put(StrUtil.firstLowerCase(importClass.getSimpleName()),
 //                    new BeanInfo(importClass.newInstance(), importClass.getName()));

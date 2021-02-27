@@ -1,6 +1,6 @@
 package org.jdragon.springz.test.scope;
 
-import org.jdragon.springz.core.annotation.AutowiredZ;
+import org.jdragon.springz.core.annotation.Inject;
 import org.jdragon.springz.core.annotation.Component;
 
 /**
@@ -11,12 +11,12 @@ import org.jdragon.springz.core.annotation.Component;
  */
 @Component
 public class Sing2 {
-    @AutowiredZ
+    @Inject
     public Pro pro;
 
-    @AutowiredZ
+    @Inject
     public Pro2 pro2;
 
-    @AutowiredZ
+    @Inject
     public Sing sing;
 }
