@@ -24,9 +24,9 @@ import org.jdragon.springz.web.annotation.EnableWebSpringZ;
 
 @SpringzMain
 @SpringzScan
-@EnableFeignSpringZ
 @EnableAopSpringZ
 @EnableWebSpringZ
+@EnableFeignSpringZ
 public class App {
 
     @AutowiredZ
@@ -50,7 +50,7 @@ public class App {
 
         testBean.testBean();
 
-        testFeign.testHttp();
+//        testFeign.testHttp();
 
         testScope.test();
 

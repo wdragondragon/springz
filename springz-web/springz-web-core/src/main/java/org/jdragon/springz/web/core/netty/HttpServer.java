@@ -1,13 +1,11 @@
 package org.jdragon.springz.web.core.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
@@ -33,6 +31,9 @@ public class HttpServer extends Thread {
 
     @AutowiredZ
     private HttpProperty httpProperty;
+
+    @AutowiredZ
+    private SimpleChannelInboundHandler<FullHttpRequest> handler;
 
     @PostConstruct
     public void start() {
@@ -60,7 +61,7 @@ public class HttpServer extends Thread {
                             ch.pipeline().addLast("decoder", new HttpRequestDecoder())
                                     .addLast("encoder", new HttpResponseEncoder())
                                     .addLast("aggregator", new HttpObjectAggregator(512 * 1024))
-                                    .addLast("handler", new HttpServerHandler());
+                                    .addLast("handler", handler);
                         }
                     });
             Channel ch = b.bind(httpProperty.getPort()).sync().channel();

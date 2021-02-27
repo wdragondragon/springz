@@ -20,6 +20,10 @@ public class BaseClassPackagesManager {
 
     private final static Logger logger = LoggerFactory.getLogger(BaseClassPackagesManager.class);
 
+    /**
+     * 通过springzScan注解实例来获取需要扫描的包信息
+     * @param springzScan 注解实例
+     */
     public static void resolverComponentScan(SpringzScan springzScan) {
         Class<?>[] basePackageClasses = springzScan.basePackageClasses();
         String[] basePackages = springzScan.basePackage();

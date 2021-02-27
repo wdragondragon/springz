@@ -42,7 +42,7 @@ public class AnnotationUtils {
      * @Description: 判断类上有没有间接包含Component。即注解嵌套拆分
      * 如果有包含这个注解，那么再看有没有key对应的value值，有的话返回这个值
      **/
-    public static Object getIncludeAnnotationValue(AnnotatedElement c, Class<? extends Annotation> annotationClass, String key) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public static Object getIncludeAnnotationValue(AnnotatedElement c, Class<? extends Annotation> annotationClass, String key) {
         Annotation includeAnnotationType = getIncludeAnnotationType(c, annotationClass);
         if (includeAnnotationType != null) {
             return getAnnotationAttribute(includeAnnotationType, key);

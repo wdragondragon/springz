@@ -25,10 +25,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.jdragon</groupId>
-            <artifactId>jdragon-common</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.jdragon.springz</groupId>
             <artifactId>springz-web-annotation</artifactId>
         </dependency>
@@ -41,5 +37,13 @@
             <artifactId>netty-all</artifactId>
             <version>4.1.53.Final</version>
         </dependency>
+
+        <!--freemarker-->
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.23</version>
+        </dependency>
+
     </dependencies>
 </project>

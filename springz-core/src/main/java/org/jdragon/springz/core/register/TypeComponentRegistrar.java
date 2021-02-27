@@ -36,6 +36,8 @@ public class TypeComponentRegistrar extends Registrar implements ScanAction {
 
     Filter[] filters;
 
+    private ClassInfo classInfo;
+
     public TypeComponentRegistrar(Filter... filters) {
 //        super(beanMap);
         this.filters = filters;
@@ -72,13 +74,20 @@ public class TypeComponentRegistrar extends Registrar implements ScanAction {
             //所以在没有设置value属性值的时候才进行接口名注册，否则使用value值注册
             if (value.isEmpty()) {
                 //把实现接口放到map容器 beanMap->InterfacesName:obj
-                registerInterfaces(c.getInterfaces(), obj, scopeValue);
+//                registerInterfaces(c.getInterfaces(), obj, scopeValue);
+                register(classInfo, obj, scopeValue);
             } else {
                 value = StrUtil.firstLowerCase(value);
-                register(value, obj, scopeValue);
+                register(classInfo, value, obj, scopeValue);
             }
-            //将对象放到map容器 beanMap->definitionName:obj
-            register(classInfo.getDefinitionName(), obj, scopeValue);
+            /*
+              将对象放到map容器 beanMap->definitionName:obj
+              因为已在以下方法中将classInfo.getDefinitionName()注册
+              @see Registrar#register(ClassInfo, Object, String)
+              @see Registrar#register(ClassInfo, String, Object, String)
+
+              delete 2021-02-27 register(classInfo.getDefinitionName(), obj, scopeValue);
+             */
 
             //将@Import注解中的类根据全类名注册到beanMap->className:class.getInstance
             registerImport(c);
@@ -111,8 +120,10 @@ public class TypeComponentRegistrar extends Registrar implements ScanAction {
         Import importAnnotation = c.getAnnotation(Import.class);
         Class<?>[] importClasses = importAnnotation.value();
         for (Class<?> importClass : importClasses) {
-            beanMap.put(StrUtil.firstLowerCase(importClass.getSimpleName()),
-                    new BeanInfo(importClass.newInstance(), importClass.getName()));
+            super.register(importClass, importClass.newInstance(), BeanInfo.SINGLETON);
+            //delete 2020-02-27
+//            beanMap.put(StrUtil.firstLowerCase(importClass.getSimpleName()),
+//                    new BeanInfo(importClass.newInstance(), importClass.getName()));
         }
     }
 
@@ -121,13 +132,13 @@ public class TypeComponentRegistrar extends Registrar implements ScanAction {
      * @return: void
      * @Description: 从传入的接口中，对接口的名称小写后注册到beanMap中
      **/
-    private void registerInterfaces(Class<?>[] interfaces, Object obj, String scope) {
-        for (Class<?> anInterface : interfaces) {
-            String interfaceName = StrUtil.firstLowerCase(anInterface.getSimpleName());
-            //这里检测到的话代表有多个接口实现类，需要将接口组件注销
-            register(interfaceName, obj, scope);
-        }
-    }
+//    private void registerInterfaces(Class<?>[] interfaces, Object obj, String scope) {
+//        for (Class<?> anInterface : interfaces) {
+//            String interfaceName = StrUtil.firstLowerCase(anInterface.getSimpleName());
+//            //这里检测到的话代表有多个接口实现类，需要将接口组件注销
+//            register(interfaceName, obj, scope);
+//        }
+//    }
 
     /**
      * @params: [fields, obj]
@@ -161,9 +172,10 @@ public class TypeComponentRegistrar extends Registrar implements ScanAction {
                 Object propertyValue = PropertiesContainer.getPropertyValue(prefix, valueKey, source);
                 valueObj = JSON.parseObject(JSON.toJSONString(propertyValue), field.getType());
             }
+            if (valueObj == null) continue;
             field.setAccessible(true);
             field.set(obj, valueObj);
-            logger.info("注入默认属性成功[类名][字段]", classInfo.getClassName(), field.getName() ,valueObj.toString());
+            logger.info("注入默认属性成功[类名][字段]", classInfo.getClassName(), field.getName(), valueObj.toString());
         }
     }
 

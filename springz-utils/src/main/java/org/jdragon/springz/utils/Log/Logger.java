@@ -40,6 +40,7 @@ public class Logger {
     }
 
     public static String build(String tag, String... messages) {
+        if(tag == null) return "";
         String linkTag = "===>";
         String separator = ":=:";
         StringBuilder template = new StringBuilder(tag);

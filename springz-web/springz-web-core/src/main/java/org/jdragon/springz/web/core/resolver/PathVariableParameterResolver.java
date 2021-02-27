@@ -1,6 +1,6 @@
 package org.jdragon.springz.web.core.resolver;
 
-import com.alibaba.fastjson.JSON;
+import org.jdragon.springz.utils.json.JsonUtils;
 import org.jdragon.springz.web.annotation.PathVariable;
 import org.jdragon.springz.web.core.entity.MethodParam;
 
@@ -23,7 +23,7 @@ public class PathVariableParameterResolver implements ParameterResolver {
         }
         Map<String, String> pathParamMap = methodParam.getPathParamMap();
         if (pathParamMap.containsKey(pathParameter)) {
-            return JSON.parseObject(pathParamMap.get(pathParameter), parameter.getType());
+            return JsonUtils.str2Object(pathParamMap.get(pathParameter), parameter.getType());
         } else {
             throw new IllegalArgumentException("The specified parameter " + pathParameter + " can not be null!");
         }

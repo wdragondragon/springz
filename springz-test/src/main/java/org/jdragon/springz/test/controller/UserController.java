@@ -2,6 +2,7 @@ package org.jdragon.springz.test.controller;
 
 
 import org.jdragon.springz.core.annotation.AutowiredZ;
+import org.jdragon.springz.core.annotation.Controller;
 import org.jdragon.springz.core.annotation.Qualifier;
 import org.jdragon.springz.test.domain.User;
 import org.jdragon.springz.test.service.UserAddService;
@@ -18,7 +19,7 @@ import org.jdragon.springz.web.annotation.*;
  */
 
 @RestController
-//    @Controller
+//@Controller
 @RequestMapping("/user")
 public class UserController {
 
@@ -60,9 +61,9 @@ public class UserController {
         return Result.success("控制器add2:" + add);
     }
 
-    @PostMapping("/header/test")
-    public Result<String> header(@RequestParam String add, @RequestHeader String header, @RequestBody User user) {
-        return Result.success("控制器add:" + add + " header:" + header + " user:" + user);
+    @PostMapping("/header/test/{path}")
+    public Result<String> header(@RequestParam String add, @PathVariable String path, @RequestHeader String header, @RequestBody User user) {
+        return Result.success("控制器add:" + add + " path:" + path + " header:" + header + " user:" + user);
     }
 
     @GetMapping("/get")

@@ -1,6 +1,5 @@
 package org.jdragon.springz.web.core.handler;
 
-import com.alibaba.fastjson.JSON;
 import io.netty.handler.codec.http.*;
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.Charsets;
@@ -9,11 +8,13 @@ import org.jdragon.springz.utils.json.JsonUtils;
 import org.jdragon.springz.web.annotation.RequestMethod;
 import org.jdragon.springz.web.core.RouteMethodMapper;
 import org.jdragon.springz.web.core.entity.MethodParam;
+import org.jdragon.springz.web.core.entity.ResponseData;
 import org.jdragon.springz.web.core.entity.RouteInfo;
 import org.jdragon.springz.web.core.factory.FullHttpResponseFactory;
+import org.jdragon.springz.web.core.netty.ContentType;
+import org.jdragon.springz.web.core.utils.AnalyzeParamInvoke;
 import org.jdragon.springz.web.core.utils.UrlHelper;
 
-import java.util.Map;
 
 /**
  * @Author: Jdragon
@@ -33,7 +34,7 @@ public class RequestHandler implements Handler {
 
         String matchingPath = UrlHelper.getMatchingPath(requestMethod, path);
 
-        byte[] result;
+        ResponseData responseData;
         //空则确认不匹配
         if (matchingPath != null) {
             //封装请求参数
@@ -45,14 +46,14 @@ public class RequestHandler implements Handler {
                     body);
 
             RouteInfo routeInfo = RouteMethodMapper.getRoute(requestMethod, matchingPath);
-            result = routeInfo.invokeMethod(methodParam);
+            responseData = AnalyzeParamInvoke.get().invokeMethod(routeInfo,methodParam);
         } else {
             Result<Object> error = Result.error();
             error.setCode(404L);
             error.setMessage("路径未找到");
-            result = JsonUtils.object2Byte(error);
+            responseData = new ResponseData(JsonUtils.object2Byte(error), ContentType.APPLICATION_JSON);
         }
 
-        return FullHttpResponseFactory.buildSuccessResponse(result);
+        return FullHttpResponseFactory.buildSuccessResponse(responseData);
     }
 }

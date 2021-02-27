@@ -11,7 +11,7 @@ public class CodeLength {
 
     public static void main(String[] args) throws IOException {
 //        String path  = "C:\\Users\\10619\\IdeaProjects\\otherPro\\haofangerp";
-        String path = "C:\\Users\\10619\\IdeaProjects\\springz";
+        String path = "C:\\Users\\10619\\IdeaProjects\\bmsk\\data-collection-platform-1";
         folderMethod2(path);
         strLength = strAll.length();
         System.out.println("一共" + n + "个类");

@@ -1,6 +1,7 @@
 package org.jdragon.springz.utils.json;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
@@ -9,7 +10,9 @@ import org.jdragon.springz.utils.StrUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -35,6 +38,19 @@ public class JsonUtils {
 
     public static JSON object2Json(Object t) {
         return (JSON) JSON.toJSON(t);
+    }
+
+    public static <T> T object2Object(Object object,Class<T> t){
+        return JSON.parseObject(JSONObject.toJSONString(object),t);
+    }
+
+    public static <T> List<T> listMap2Obj(List<Map<?,?>> listMap, Class<T> t){
+        List<T> list = new ArrayList<>(8);
+        for (Map<?, ?> map : listMap) {
+            T t1 = object2Object(map, t);
+            list.add(t1);
+        }
+        return list;
     }
 
     public static String object2Str(Object t) {

@@ -30,7 +30,7 @@ public class AopRegistrar extends Registrar implements ScanAction {
 
     @Override
     public void action(ClassInfo classInfo) {
-        this.classInfo = classInfo;
+//        this.classInfo = classInfo;
 
         Class<?> clazz = classInfo.getClazz();
 

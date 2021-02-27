@@ -1,20 +1,13 @@
 package org.jdragon.springz.web.core.entity;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import lombok.Builder;
 import lombok.Data;
-import org.jdragon.springz.utils.MethodUtils;
-import org.jdragon.springz.utils.json.JsonUtils;
+
 import org.jdragon.springz.web.annotation.RequestMethod;
-import org.jdragon.springz.web.core.factory.ParameterResolverFactory;
-import org.jdragon.springz.web.core.resolver.ParameterResolver;
-import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @Author: Jdragon
@@ -23,7 +16,6 @@ import java.util.List;
  * @Description:
  */
 @Data
-@Builder
 public class RouteInfo {
 
     private RequestMethod[] requestMethod;
@@ -38,21 +30,18 @@ public class RouteInfo {
 
     private Parameter[] invokeParams;
 
-    public byte[] invokeMethod(MethodParam methodParam) {
-        List<Object> values = new ArrayList<>();
-        for (Parameter parameter : invokeParams) {
-            ParameterResolver parameterResolver = ParameterResolverFactory.get(parameter);
-            if (parameterResolver == null) {
-                throw new IllegalArgumentException("参数缺少web注解");
-            }
-            Object resolve = parameterResolver.resolve(methodParam, parameter);
-            values.add(resolve);
-        }
-        Object result = MethodUtils.invoke(bindObj, bindMethod, values.toArray());
-        if (bindMethod.getGenericReturnType().equals(void.class)) {
-            return new byte[0];
-        } else {
-            return JsonUtils.object2ByteIncludeNull(result);
-        }
+    //使用使用数据模式，这取决于方法是否经过视图解析器返回视图
+    private boolean useDataMode;
+
+    @Builder
+    public RouteInfo(RequestMethod[] requestMethod, String requestUrl, String bindBeanName,
+                     Object bindObj, Method bindMethod, Parameter[] invokeParams, boolean useDataMode) {
+        this.requestMethod = requestMethod;
+        this.requestUrl = requestUrl;
+        this.bindBeanName = bindBeanName;
+        this.bindObj = bindObj;
+        this.bindMethod = bindMethod;
+        this.invokeParams = invokeParams;
+        this.useDataMode = useDataMode;
     }
 }

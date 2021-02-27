@@ -1,6 +1,8 @@
 server:
   http:
     port: 8090
+    prefix: /template/
+    suffix: html
 
 reflex:
   customer:

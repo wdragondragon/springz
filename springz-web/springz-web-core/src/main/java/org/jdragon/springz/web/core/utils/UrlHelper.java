@@ -15,6 +15,13 @@ import java.util.Map;
  * @Description:
  */
 public class UrlHelper {
+
+    /**
+     * 根据请求路径和请求方法来确定是否有匹配的路由，有则返回路由路径
+     * @param requestMethod 请求方法
+     * @param path 请求路径
+     * @return
+     */
     public static String getMatchingPath(RequestMethod requestMethod, String path) {
         Map<String, RouteInfo> stringRouteInfoMap = RouteMethodMapper.getRouteMapping(requestMethod);
         if (stringRouteInfoMap.containsKey(path)) {
@@ -51,6 +58,12 @@ public class UrlHelper {
         return null;
     }
 
+    /**
+     * 根据请求路径和路由路径来获取path参数map
+     * @param requestPath 实际的请求路径
+     * @param routePath 通过路由获取的路由路径
+     * @return path参数
+     */
     public static Map<String, String> analyzePathParams(String requestPath, String routePath) {
         Map<String, String> pathParams = new HashMap<>();
         String[] requestPathSplit = requestPath.split("/");

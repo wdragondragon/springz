@@ -6,6 +6,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 import io.netty.util.AsciiString;
 import lombok.extern.slf4j.Slf4j;
+import org.jdragon.springz.core.annotation.Component;
 import org.jdragon.springz.web.core.factory.RequestHandlerFactory;
 
 /**
@@ -15,6 +16,7 @@ import org.jdragon.springz.web.core.factory.RequestHandlerFactory;
  * @Description:
  */
 @Slf4j
+@Component
 public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     private static final String FAVICON_ICO = "/favicon.ico";
     private static final AsciiString CONNECTION = AsciiString.cached("Connection");

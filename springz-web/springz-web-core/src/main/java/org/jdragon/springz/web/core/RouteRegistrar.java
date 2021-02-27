@@ -7,8 +7,10 @@ import org.jdragon.springz.core.utils.BeanHelper;
 import org.jdragon.springz.scanner.Filter;
 import org.jdragon.springz.scanner.ScanAction;
 import org.jdragon.springz.scanner.entry.ClassInfo;
+import org.jdragon.springz.web.annotation.RequestBody;
 import org.jdragon.springz.web.annotation.RequestMapping;
 import org.jdragon.springz.web.annotation.RequestMethod;
+import org.jdragon.springz.web.annotation.ResponseBody;
 import org.jdragon.springz.web.core.entity.RouteInfo;
 
 import java.lang.annotation.Annotation;
@@ -26,16 +28,18 @@ public class RouteRegistrar extends Registrar implements ScanAction {
 
     @Override
     public void action(ClassInfo classInfo) {
-        this.classInfo = classInfo;
+//        this.classInfo = classInfo;
         Class<?> clazz = classInfo.getClazz();
 
         if (!clazz.isAnnotationPresent(RequestMapping.class)) return;
 
         String proxyBeanName = BeanHelper.getClassBeanName(clazz);
         if (!beanMap.containsKey(proxyBeanName)) return;
-        Object bean = new Infuser().createAnalyzeBean(proxyBeanName,clazz);
+        Object bean = new Infuser().createAnalyzeBean(proxyBeanName, clazz);
 
         RequestMapping classMapping = clazz.getAnnotation(RequestMapping.class);
+        boolean classIncludeResponseBody = AnnotationUtils.isIncludeAnnotationType(clazz, ResponseBody.class);
+
         String classUrl = classMapping.value();
         for (Method clazzMethod : clazz.getMethods()) {
             RequestMapping requestMapping;
@@ -51,6 +55,9 @@ public class RouteRegistrar extends Registrar implements ScanAction {
                 continue;
             }
 
+            //是否包含requestBody
+            boolean methodIncludeResponseBody = classIncludeResponseBody || clazzMethod.isAnnotationPresent(ResponseBody.class);
+
             RequestMethod[] requestMethods = requestMapping.method();
 
             Parameter[] parameters = clazzMethod.getParameters();
@@ -62,6 +69,7 @@ public class RouteRegistrar extends Registrar implements ScanAction {
                     .bindMethod(clazzMethod)
                     .requestMethod(requestMethods)
                     .invokeParams(parameters)
+                    .useDataMode(methodIncludeResponseBody)
                     .build();
 
             RouteMethodMapper.registrar(routeInfo);

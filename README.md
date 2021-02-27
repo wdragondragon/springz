@@ -6,12 +6,13 @@
 
 ### 二、角色交代
 
-- AnnotationApplicationContext：放置各种工作者与已注册组件beanMap的容器。
+- SpringzContext：放置各种工作者与已注册组件beanMap的容器。
 - Scanner：扫描者，对传入的basePackage开始往下扫描注解，并在第一次扫描的时候进行缓存scanCache。
 - Registrar：注册登记者：在扫描者扫出有关注册注解时(bean或Component)，由注册登记者来处理解释这些注解。
 - Infuser：注入者：在扫描者扫出有关注入注解时(Autowired)，由注入者来将组件注入到相应的注解下。
 - Filter：过滤者，对@Filter中的条件进行判断这个包是否需要扫描。
-- BaseClassesContext：经过@Filter过滤后需要扫描的类的信息的存放容器。
+- *Container：各种类型的容器。
+- *Manager：对Container进行管理。
 
 ### 三、行为步骤
 

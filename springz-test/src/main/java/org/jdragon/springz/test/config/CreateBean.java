@@ -55,7 +55,7 @@ public class CreateBean {
     }
     @Bean
     public TestWaitBean testWaitBean(HttpTest httpTest){
-        httpTest.http();
+//        httpTest.http();
         return new TestWaitBean();
     }
 }

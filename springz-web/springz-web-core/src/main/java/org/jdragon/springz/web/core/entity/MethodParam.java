@@ -4,6 +4,7 @@ import io.netty.handler.codec.http.HttpHeaders;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +14,6 @@ import java.util.Map;
  * @Date: 2020.11.14 14:20
  * @Description: 将pathParam,urlParam,body封装
  */
-@AllArgsConstructor
 @Data
 public class MethodParam {
 
@@ -24,4 +24,13 @@ public class MethodParam {
     private Map<String, String> pathParamMap;
 
     private String body;
+
+    private final Map<String,Object> viewParam = new HashMap<>();
+
+    public MethodParam(HttpHeaders header, Map<String, List<String>> urlParamsMap, Map<String, String> pathParamMap, String body) {
+        this.header = header;
+        this.urlParamsMap = urlParamsMap;
+        this.pathParamMap = pathParamMap;
+        this.body = body;
+    }
 }

@@ -20,13 +20,11 @@ public class FeignRegistrar extends Registrar implements ScanAction {
     private static final Logger logger = LoggerFactory.getLogger(FeignRegistrar.class);
 
     public FeignRegistrar() {
-        logger.info("加载注册器","FeignRegistrar");
+        logger.info("加载注册器", "FeignRegistrar");
     }
 
     @Override
     public void action(ClassInfo classInfo) {
-        this.classInfo = classInfo;
-
         Class<?> clazz = classInfo.getClazz();
         if (!clazz.isAnnotationPresent(ZFeign.class)) {
             return;
@@ -37,8 +35,11 @@ public class FeignRegistrar extends Registrar implements ScanAction {
         String basePath = zFeign.basePath();
         String url = baseUrl + basePath;
 
-        Object o = new DynaProxyHttp(url,zFeign.depth()).bindInterface(clazz);
-        register(classInfo.getDefinitionName(),o, BeanInfo.SINGLETON);
+        Object o = new DynaProxyHttp(url, zFeign.depth()).bindInterface(clazz);
+
+
+
+        register(classInfo, o, BeanInfo.SINGLETON);
     }
 
     @Override

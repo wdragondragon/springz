@@ -39,7 +39,6 @@ public class MethodComponentRegistrar extends Registrar implements ScanAction {
     @Override
     public void action(ClassInfo classInfo) {
         try {
-            this.classInfo = classInfo;
 
             //反射构建对象
             Class<?> c = classInfo.getClazz();
@@ -56,7 +55,7 @@ public class MethodComponentRegistrar extends Registrar implements ScanAction {
 
             //将@Bean注解的方法，从beanMap中取出，并注入到obj中 Object->obj:beanField
             registerMethod(c.getDeclaredMethods(), obj.getBean());
-        }  catch (InvocationTargetException | IllegalAccessException e) {
+        } catch (InvocationTargetException | IllegalAccessException e) {
             logger.warn("@构造失败", e.getMessage());
             e.printStackTrace();
         }
@@ -130,9 +129,10 @@ public class MethodComponentRegistrar extends Registrar implements ScanAction {
 
             Object bean = method.invoke(obj, paramsArray);
 
-            register(beanName,method.getReturnType().getName(),bean, scope);
+            register(method.getReturnType(), beanName, bean, scope);
         }
     }
+
     @Override
     public Integer getOrder() {
         return -90;
