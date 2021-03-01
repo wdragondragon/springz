@@ -1,8 +1,11 @@
 package org.jdragon.springz.core.register;
 
 
+import com.alibaba.fastjson.JSON;
 import org.jdragon.springz.core.annotation.Bean;
 import org.jdragon.springz.core.annotation.Inject;
+import org.jdragon.springz.core.annotation.Properties;
+import org.jdragon.springz.core.processor.PropertyPostProcessor;
 import org.jdragon.springz.core.utils.BeanHelper;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 
@@ -15,6 +18,8 @@ import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 import org.jdragon.springz.utils.StrUtil;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -41,10 +46,10 @@ public class MethodComponentRegistrar extends Registrar implements ScanAction {
         try {
 
             //反射构建对象
-            Class<?> c = classInfo.getClazz();
+            Class<?> clazz = classInfo.getClazz();
 
             //返回的value是null，说明他所有注解和Component无关，就不需要注册
-            if (BeanHelper.getComponentValue(c) == null) {
+            if (BeanHelper.getComponentValue(clazz) == null) {
                 return;
             }
 
@@ -54,9 +59,13 @@ public class MethodComponentRegistrar extends Registrar implements ScanAction {
             }
 
             //将@Bean注解的方法，从beanMap中取出，并注入到obj中 Object->obj:beanField
-            registerMethod(c.getDeclaredMethods(), obj.getBean());
+            registerMethod(clazz.getDeclaredMethods(), obj.getBean());
+
         } catch (InvocationTargetException | IllegalAccessException e) {
             logger.warn("@构造失败", e.getMessage());
+            e.printStackTrace();
+        } catch (NoSuchMethodException | InstantiationException e) {
+            logger.warn("registerMethod", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -71,7 +80,7 @@ public class MethodComponentRegistrar extends Registrar implements ScanAction {
      * @return: void
      * @Description: 从传入的方法中，对方法判断是否有@Bean，有则注册Bean到beanMap中
      **/
-    private void registerMethod(Method[] methods, Object obj) throws InvocationTargetException, IllegalAccessException {
+    private void registerMethod(Method[] methods, Object obj) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
         for (Method method : methods) {
             //判断是否有Bean注解
             if (!method.isAnnotationPresent(Bean.class)) {
@@ -118,12 +127,16 @@ public class MethodComponentRegistrar extends Registrar implements ScanAction {
                 }
             }
 
-
             //若存在needBean的话，结束该bean注册。等待其他Registrar的唤醒
             if (!needBeanName.isEmpty()) {
-                super.addWaitBean(new WaitBeanInfo(beanName, method.getReturnType().getName(),
+                super.addWaitBean(new WaitBeanInfo(beanName, method.getReturnType(),
                         obj, method, scope, paramsNameList, needBeanName));
                 continue;
+            }
+            //因为存在延迟加载，method上的properties选择后置处理
+            if (method.isAnnotationPresent(Properties.class)) {
+                Properties properties = method.getAnnotation(Properties.class);
+                PropertyPostProcessor.regPostProperties(beanName, properties);
             }
 
             Object[] paramsArray = paramsList.toArray();
@@ -132,6 +145,10 @@ public class MethodComponentRegistrar extends Registrar implements ScanAction {
 
             register(method.getReturnType(), beanName, bean, scope);
         }
+    }
+
+    private void propertiesMethod() {
+
     }
 
     @Override

@@ -34,43 +34,45 @@ public abstract class Registrar {
 
     /**
      * 注册时，完全可使用classInfo中的属性
+     *
      * @param classInfo 扫描包时提供的类信息
-     * @param obj 注册实例
-     * @param scope 注册策略
+     * @param obj       注册实例
+     * @param scope     注册策略
      */
     protected void register(ClassInfo classInfo, Object obj, String scope) {
-        register(classInfo.getDefinitionName(), classInfo.getClassName(), obj, scope);
+        register(classInfo.getDefinitionName(), classInfo.getClazz(), obj, scope);
         register(classInfo.getClazz(), obj, scope);
     }
 
     /**
      * 注册时，可自定义组件名
+     *
      * @param definitionName 自定义组件名
-     * @param classInfo 扫描包时提供的类信息
-     * @param obj 注册实例
-     * @param scope 注册策略
+     * @param classInfo      扫描包时提供的类信息
+     * @param obj            注册实例
+     * @param scope          注册策略
      */
     protected void register(ClassInfo classInfo, String definitionName, Object obj, String scope) {
-        register(definitionName, classInfo.getClassName(), obj, scope);
+        register(definitionName, classInfo.getClazz(), obj, scope);
         register(classInfo.getClazz(), obj, scope);
     }
 
     /**
-     *
-     * @param clazz 自定义类
+     * @param clazz          自定义类
      * @param definitionName 自定义组件名
-     * @param obj 注册实例
-     * @param scope 注册策略
+     * @param obj            注册实例
+     * @param scope          注册策略
      */
     protected void register(Class<?> clazz, String definitionName, Object obj, String scope) {
-        register(definitionName, clazz.getName(), obj, scope);
+        register(definitionName, clazz, obj, scope);
         register(clazz, obj, scope);
     }
 
     /**
      * 公共注册类，都要调用来做递归进行父类或接口注册
+     *
      * @param clazz 自定义类
-     * @param obj 注册实例
+     * @param obj   注册实例
      * @param scope 注册策略
      */
     protected void register(Class<?> clazz, Object obj, String scope) {
@@ -78,24 +80,24 @@ public abstract class Registrar {
 
         for (Class<?> anInterface : interfaces) {
             String interfaceSimpleName = anInterface.getSimpleName();
-            register(StrUtil.firstLowerCase(interfaceSimpleName), anInterface.getName(), obj, scope);
+            register(StrUtil.firstLowerCase(interfaceSimpleName), anInterface, obj, scope);
         }
 
         Class<?> superclass = clazz.getSuperclass();
 
         if (superclass != null && !superclass.equals(Object.class)) {
             String superclassSimpleName = superclass.getSimpleName();
-            register(StrUtil.firstLowerCase(superclassSimpleName), superclass.getName(), obj, scope);
+            register(StrUtil.firstLowerCase(superclassSimpleName), superclass, obj, scope);
         }
     }
 
     /**
-     *
      * @params: [definitionName, obj]
      * @return: void
      * @Description: 通用注册类，将definitionName作为key,obj作为value存到beanMap中
      **/
-    private void register(String definitionName, String className, Object obj, String scope) {
+    private void register(String definitionName, Class<?> clazz, Object obj, String scope) {
+        String className = clazz.getName();
         //检查definitionName是否存在
         if (beanMap.containsKey(definitionName)) {
             BeanInfo beanInfo = beanMap.get(definitionName);
@@ -106,7 +108,7 @@ public abstract class Registrar {
             return;
         }
         //将对象放到map容器
-        beanMap.put(definitionName, new BeanInfo(obj, scope, className));
+        beanMap.put(definitionName, new BeanInfo(definitionName, obj, scope, clazz));
         if (beanMap.containsKey(definitionName)) {
             logger.info("注册bean成功[键名][类名]", definitionName, className);
         }
@@ -121,6 +123,7 @@ public abstract class Registrar {
 
     /**
      * 根据这次注册的组件名来唤醒等待队列出队
+     *
      * @param definitionName 该次注册的组件名
      */
     private void awakeWaitBeansByDefinitionName(String definitionName) {
@@ -133,9 +136,10 @@ public abstract class Registrar {
 
     /**
      * 获取需要唤醒的组件列表
+     * only call by there {@link this#awakeWaitBeansByDefinitionName(String)}
+     *
      * @param definitionName 该次注册的组件名
      * @return 获取需要唤醒WaitBean
-     * {@link this#awakeWaitBeansByDefinitionName(String)} only call by there
      */
     private List<WaitBeanInfo> getNeedAwakeBean(String definitionName) {
         List<WaitBeanInfo> needAwakeBeans = new ArrayList<>();
@@ -151,8 +155,9 @@ public abstract class Registrar {
 
     /**
      * 唤醒等待注册的bean
+     * only call by there {@link this#awakeWaitBeansByDefinitionName(String)}
+     *
      * @param waitBeanInfo 需要唤醒的组件信息
-     * {@link this#awakeWaitBeansByDefinitionName(String)} only call by there
      */
     private void awakeWaitBean(WaitBeanInfo waitBeanInfo) {
         List<String> paramsNameList = waitBeanInfo.getParamsNameList();
@@ -166,7 +171,7 @@ public abstract class Registrar {
         if (bean == null) return;
 
         String beanName = waitBeanInfo.getBeanName();
-        register(beanName, waitBeanInfo.getClassName(), bean, waitBeanInfo.getScope());
+        register(beanName, waitBeanInfo.getClazz(), bean, waitBeanInfo.getScope());
         logger.warn("唤醒出列:" + beanName);
     }
 }

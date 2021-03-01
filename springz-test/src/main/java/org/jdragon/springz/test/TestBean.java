@@ -8,6 +8,7 @@ import org.jdragon.springz.test.component.ComponentTest;
 import org.jdragon.springz.test.controller.UserController;
 import org.jdragon.springz.test.dao.CarDao;
 import org.jdragon.springz.test.dao.UserDao;
+import org.jdragon.springz.test.domain.Car;
 import org.jdragon.springz.test.domain.User;
 import org.jdragon.springz.test.service.UserAddService;
 import org.jdragon.springz.utils.Log.Logger;
@@ -75,6 +76,8 @@ public class TestBean {
         carDao.resourceCar();
 
         carDao.qualifierCar();
+
+        carDao.propertyCar();
 
         System.out.println(httpUser);
 

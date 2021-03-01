@@ -12,22 +12,31 @@ public class BeanInfo {
 
     public final static String PROTOTYPE = "prototype";
 
+    private final String definedName;
+
     private final Object bean;
 
     private final String scope;
 
+    private final Class<?> clazz;
+
     private final String className;
 
-    public BeanInfo(Object bean, String className) {
+
+    public BeanInfo(String definedName,Object bean, Class<?> clazz) {
+        this.definedName = definedName;
         this.bean = bean;
-        this.className = className;
+        this.clazz = clazz;
+        this.className = clazz.getName();
         this.scope = SINGLETON;
     }
 
-    public BeanInfo(Object bean, String scope, String className) {
+    public BeanInfo(String definedName,Object bean, String scope, Class<?> clazz) {
+        this.definedName = definedName;
         this.bean = bean;
         this.scope = scope;
-        this.className = className;
+        this.clazz = clazz;
+        this.className = clazz.getName();
     }
 
     public Object getBean() {
@@ -49,5 +58,13 @@ public class BeanInfo {
 
     public String getClassName() {
         return className;
+    }
+
+    public Class<?> getClazz() {
+        return clazz;
+    }
+
+    public String getDefinedName() {
+        return definedName;
     }
 }

@@ -21,7 +21,9 @@ public class WaitBeanInfo {
 
     private final Object waitBean;
 
-    private final String className;
+//    private final String className;
+
+    private final Class<?> clazz;
 
     private final Method constructMethod;
 
@@ -33,9 +35,9 @@ public class WaitBeanInfo {
 
     private final String beanName;
 
-    public WaitBeanInfo(String beanName, String className,Object waitBean, Method constructMethod, String scope, List<String> paramsNameList, List<String> needBeanName) {
+    public WaitBeanInfo(String beanName, Class<?> clazz,Object waitBean, Method constructMethod, String scope, List<String> paramsNameList, List<String> needBeanName) {
         this.beanName = beanName;
-        this.className = className;
+        this.clazz = clazz;
         this.waitBean = waitBean;
         this.constructMethod = constructMethod;
         this.scope = scope;
@@ -69,15 +71,15 @@ public class WaitBeanInfo {
         return beanName;
     }
 
-    public String getClassName() {
-        return className;
+    public Class<?> getClazz() {
+        return clazz;
     }
 
     @Override
     public String toString() {
         return "WaitBeanInfo{" +
                 "waitBean=" + waitBean +
-                ", className='" + className + '\'' +
+                ", clazz=" + clazz +
                 ", constructMethod=" + constructMethod +
                 ", scope='" + scope + '\'' +
                 ", paramsNameList=" + paramsNameList +

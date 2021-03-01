@@ -127,11 +127,11 @@ public class TypeComponentRegistrar extends Registrar implements ScanAction {
         }
     }
 
-    /**
-     * @params: [interfaces, obj]
-     * @return: void
-     * @Description: 从传入的接口中，对接口的名称小写后注册到beanMap中
-     **/
+//    /**
+//     * @params: [interfaces, obj]
+//     * @return: void
+//     * @Description: 从传入的接口中，对接口的名称小写后注册到beanMap中
+//     **/
 //    private void registerInterfaces(Class<?>[] interfaces, Object obj, String scope) {
 //        for (Class<?> anInterface : interfaces) {
 //            String interfaceName = StrUtil.firstLowerCase(anInterface.getSimpleName());

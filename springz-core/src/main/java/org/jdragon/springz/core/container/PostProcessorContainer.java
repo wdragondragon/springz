@@ -3,6 +3,7 @@ package org.jdragon.springz.core.container;
 
 import org.jdragon.springz.core.entry.PostAutowiredBean;
 import org.jdragon.springz.core.processor.BeanPostProcessor;
+import org.jdragon.springz.core.processor.PropertyPostProcessor;
 import org.jdragon.springz.core.processor.TestPostProcessor;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 
@@ -21,6 +22,7 @@ public class PostProcessorContainer {
 
     static {
         PostProcessorContainer.registerBeanPostProcessor(new TestPostProcessor());
+        PostProcessorContainer.registerBeanPostProcessor(new PropertyPostProcessor());
     }
 
     public static List<BeanPostProcessor> get() {

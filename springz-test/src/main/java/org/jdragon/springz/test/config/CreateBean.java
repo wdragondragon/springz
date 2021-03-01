@@ -47,6 +47,12 @@ public class CreateBean {
         return new Car(username);
     }
 
+    @Bean("carProperty")
+    @Properties(prefix = "car")
+    public Car carProperty(){
+        return new Car();
+    }
+
     //循环依赖
     @Bean("httpUser")
     public User user(TestWaitBean testWaitBean){

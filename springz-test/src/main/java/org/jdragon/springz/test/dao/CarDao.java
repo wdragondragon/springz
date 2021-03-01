@@ -21,20 +21,25 @@ public class CarDao {
     Logger logger = LoggerFactory.getLogger(getClass());
 
     @Inject("carOne")
-//    @Resource("carOne")
     Car resourceCar;
 
     @Inject("carOne")
-//    @Qualifier("carOne")
     Car qualifierCar;
 
+    @Inject("carProperty")
+    private Car propertyCar;
+
     @PostConstruct
-    public void resourceCar(){
-        int i = 1/0;
-        logger.trace("CarDao","resourceCar:"+resourceCar);
+    public void resourceCar() {
+        int i = 1 / 0;
+        logger.trace("CarDao", "resourceCar:" + resourceCar);
     }
 
-    public void qualifierCar(){
-        logger.trace("CarDao","qualifierCar:"+qualifierCar);
+    public void qualifierCar() {
+        logger.trace("CarDao", "qualifierCar:" + qualifierCar);
+    }
+
+    public void propertyCar() {
+        logger.trace("CarDao", "propertyCar:" + propertyCar);
     }
 }
