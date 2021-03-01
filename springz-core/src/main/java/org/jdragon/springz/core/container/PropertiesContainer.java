@@ -29,6 +29,10 @@ public class PropertiesContainer {
         return propertiesCacheMap.get(source);
     }
 
+    public static Object getPropertyValue(String key) {
+        return getPropertyValue(key, DEFAULT_SOURCE);
+    }
+
     public static Object getPropertyValue(String prefix, String key, String source) {
         if (source.isEmpty()) {
             source = DEFAULT_SOURCE;
@@ -42,13 +46,13 @@ public class PropertiesContainer {
 
     public static Object getPropertyValue(String key, String source) {
         String[] split = key.split("\\.");
-        Map resultJson = getProperties(source);
+        Map<?, ?> resultJson = getProperties(source);
         for (String s : split) {
             Object temp = resultJson.get(s);
             if (!(temp instanceof Map)) {
                 return temp;
             }
-            resultJson = (Map) temp;
+            resultJson = (Map<?, ?>) temp;
         }
         return resultJson;
     }

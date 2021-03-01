@@ -92,6 +92,8 @@ public class TypeComponentRegistrar extends Registrar implements ScanAction {
             registerImport(c);
 
             //将@Value注册到对象中 Object->obj:baseField
+            //注意这里要与MethodComponentRegistrar中的操作区分，不能把他交给后置处理器管理
+            //@Component归在ioc系统中的类，并非第三方引入，会导致其他依赖组件中使用@Value下字段时没有及时注入
             registerFields(c.getDeclaredFields(), obj);
 
         } catch (NoSuchMethodException e) {
@@ -120,7 +122,7 @@ public class TypeComponentRegistrar extends Registrar implements ScanAction {
         Class<?>[] importClasses = importAnnotation.value();
         for (Class<?> importClass : importClasses) {
             super.register(importClass, StrUtil.firstLowerCase(importClass.getSimpleName())
-                    ,importClass.newInstance(), BeanInfo.SINGLETON);
+                    , importClass.newInstance(), BeanInfo.SINGLETON);
             //delete 2020-02-27
 //            beanMap.put(StrUtil.firstLowerCase(importClass.getSimpleName()),
 //                    new BeanInfo(importClass.newInstance(), importClass.getName()));
