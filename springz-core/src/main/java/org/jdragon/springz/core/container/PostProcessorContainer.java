@@ -35,8 +35,8 @@ public class PostProcessorContainer {
         beanPostProcessors.add(beanPostProcessor);
     }
 
-    public static Object invokePostProcessor(BeanInfo beanInfo, Object lastBean) {
-        PostAutowiredBean postAutowiredBean = new PostAutowiredBean(beanInfo, lastBean);
+    public static Object invokePostProcessor(PostAutowiredBean postAutowiredBean) {
+//        PostAutowiredBean postAutowiredBean = new PostAutowiredBean(beanInfo, lastBean);
 
         for (BeanPostProcessor beanPostProcessor : get()) {
             postAutowiredBean = beanPostProcessor.postProcessAfterInitialization(postAutowiredBean);
@@ -44,7 +44,7 @@ public class PostProcessorContainer {
         return postAutowiredBean.getLastBean();
     }
 
-    public static Object invokePostProcessor(BeanInfo beanInfo) {
-        return invokePostProcessor(beanInfo, beanInfo.getBean());
-    }
+//    public static Object invokePostProcessor(BeanInfo beanInfo) {
+//        return invokePostProcessor(beanInfo, beanInfo.getBean());
+//    }
 }

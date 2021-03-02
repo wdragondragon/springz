@@ -1,5 +1,6 @@
 package org.jdragon.springz.core;
 
+import org.jdragon.springz.core.hook.DestroyHook;
 import org.jdragon.springz.core.manager.BaseClassPackagesManager;
 import org.jdragon.springz.core.manager.ScanActionManager;
 import org.jdragon.springz.scanner.*;
@@ -31,6 +32,9 @@ public class IocContext {
 
     public static void run(String basePackageName) {
         long start = System.currentTimeMillis();
+
+        //注册销毁钩子，用来做实例销毁时的资源清理
+        DestroyHook.register();
 
         //获取要扫描的基础路径集
         String[] scanBasePackages = BaseClassPackagesManager.scanBaseClasses(basePackageName);

@@ -38,14 +38,13 @@ public class App {
     @Inject
     private static TestScope testScope;
 
-    @Inject
-    private static TestWeb testWeb;
+//    @Inject
+//    private static TestWeb testWeb;
 
     @Inject
     private static TestProperty testProperty;
 
     public static void main(String[] args) {
-
         IocContext.run(App.class);
 
         testBean.testBean();
@@ -56,7 +55,7 @@ public class App {
 
         testProperty.test();
 
-        testWeb.test();
+//        testWeb.test();
 
         IocContext.close();
     }

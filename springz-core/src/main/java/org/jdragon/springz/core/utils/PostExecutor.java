@@ -1,7 +1,11 @@
 package org.jdragon.springz.core.utils;
 
+import org.jdragon.springz.core.annotation.Destroy;
 import org.jdragon.springz.core.container.PostProcessorContainer;
+import org.jdragon.springz.core.entry.PostAutowiredBean;
+import org.jdragon.springz.scanner.BeanContainer;
 import org.jdragon.springz.scanner.entry.BeanInfo;
+import org.jdragon.springz.scanner.entry.InjectedObject;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
 
@@ -25,13 +29,17 @@ public class PostExecutor {
 
     public static Object postConstruct(Object bean, BeanInfo beanInfo) {
         //判断是否需要执行 构建完成的postConstruct方法
-        bean = PostProcessorContainer.invokePostProcessor(beanInfo, bean);//后置处理
+        PostAutowiredBean postAutowiredBean = new PostAutowiredBean(beanInfo, bean);
+        bean = PostProcessorContainer.invokePostProcessor(postAutowiredBean);//后置处理
         if (needPostConstruct(beanInfo)) {
             Class<?> aClass = bean.getClass();
             // cglib 多级代理处理
             if (aClass.getName().contains("$$")) {
                 aClass = aClass.getSuperclass();
             }
+
+            InjectedObject injectedObject = new InjectedObject(bean, aClass);
+
             for (Method method : aClass.getDeclaredMethods()) {
                 if (method.isAnnotationPresent(PostConstruct.class)) {
                     method.setAccessible(true);
@@ -41,11 +49,16 @@ public class PostExecutor {
                         e.printStackTrace();
                     }
                 }
+
+                if (method.isAnnotationPresent(Destroy.class)) {
+                    injectedObject.addDestroyMethod(method);
+                }
             }
             //如果是单例，只需要执行一次
             if (beanInfo.isSingleton()) {
                 postConstruct.add(beanInfo.getClassName());
             }
+            BeanContainer.getInjectedObjectList().add(injectedObject);
         }
         return bean;
     }

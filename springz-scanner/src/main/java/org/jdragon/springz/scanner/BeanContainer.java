@@ -1,6 +1,7 @@
 package org.jdragon.springz.scanner;
 
 import org.jdragon.springz.scanner.entry.BeanInfo;
+import org.jdragon.springz.scanner.entry.InjectedObject;
 import org.jdragon.springz.scanner.entry.WaitBeanInfo;
 import org.jdragon.springz.utils.Log.Logger;
 import org.jdragon.springz.utils.Log.LoggerFactory;
@@ -24,14 +25,20 @@ public class BeanContainer {
     //缺失依赖的bean
     private static final List<WaitBeanInfo> waitBeanList = new CopyOnWriteArrayList<>();
 
+    //已注入的对象实例，用来结束程序时执行销毁方法等
+    private static final List<InjectedObject> injectedObjectList = new LinkedList<>();
+
     public static Map<String, BeanInfo> getBeanMap() {
         return beanMap;
+    }
+
+    public static List<InjectedObject> getInjectedObjectList() {
+        return injectedObjectList;
     }
 
     public static List<WaitBeanInfo> getWaitBeanList() {
         return waitBeanList;
     }
-
 
     public static void printResult() {
         logger.warn("最后仍未注册成功的Bean", Arrays.toString(waitBeanList.stream()

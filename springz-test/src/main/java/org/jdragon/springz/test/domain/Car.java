@@ -1,5 +1,7 @@
 package org.jdragon.springz.test.domain;
 
+import org.jdragon.springz.core.annotation.Destroy;
+
 /**
  * @Author: Jdragon
  * @email: 1061917196@qq.com
@@ -23,6 +25,11 @@ public class Car {
 
     public void setBelong(String belong) {
         this.belong = belong;
+    }
+
+    @Destroy
+    public void destroy() {
+        System.out.println(this + ":被销毁了");
     }
 
     @Override
