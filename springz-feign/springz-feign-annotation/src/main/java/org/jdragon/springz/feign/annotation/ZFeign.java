@@ -21,7 +21,7 @@ public @interface ZFeign {
 
     /**
      * @Description: 解构提取返回结果
-    **/
+     **/
 
     /**
      * @Description: 解构提取返回结果
@@ -30,5 +30,11 @@ public @interface ZFeign {
 
     String[] headers() default {};
 
-    String fallback() default "";
+    Class<?> fallback() default Object.class;
+
+    String successCode() default "20000";
+
+    String successField() default "code";
+
+    String messageField() default "message";
 }
