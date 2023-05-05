@@ -22,7 +22,13 @@ public @interface ZFeign {
     /**
      * @Description: 解构提取返回结果
     **/
-    String[] depth() default {};
+
+    /**
+     * @Description: 解构提取返回结果
+     **/
+    String depth() default "";
+
+    String[] headers() default {};
 
     String fallback() default "";
 }

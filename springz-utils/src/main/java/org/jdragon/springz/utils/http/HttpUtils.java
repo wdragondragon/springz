@@ -6,10 +6,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -24,7 +21,6 @@ import org.jdragon.springz.utils.StrUtil;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,11 +52,31 @@ public class HttpUtils {
 
     private RequestConfig.Builder requestConfigBuilder = null;//build requestConfig
 
+    private String method = "GET";
+
+    private String url;
+
     private final List<NameValuePair> nameValuePairs = new ArrayList<>();
 
     private final List<Header> headers = new ArrayList<>();
 
-    private String body = "";
+    private HttpEntity httpEntity;
+
+    private final static Map<String, Class<? extends HttpRequestBase>> baseMethod = new HashMap<>();
+
+    private final static Map<String, Class<? extends HttpEntityEnclosingRequestBase>> entityMethod = new HashMap<>();
+
+    static {
+        entityMethod.put("POST", HttpPost.class);
+        entityMethod.put("PUT", HttpPut.class);
+        entityMethod.put("PATCH", HttpPatch.class);
+        baseMethod.put("GET", HttpGet.class);
+        baseMethod.put("DELETE", HttpDelete.class);
+        baseMethod.put("HEAD", HttpHead.class);
+        baseMethod.put("OPTIONS", HttpOptions.class);
+        baseMethod.put("TRACE", HttpTrace.class);
+    }
+
 
     static {
         pcm = new PoolingHttpClientConnectionManager();
@@ -90,8 +106,19 @@ public class HttpUtils {
         return httpUtils;
     }
 
-    public static HttpUtils initJson(){
-        return init().setHeader("Content-type","application/json;charset=utf-8");
+    public static HttpUtils initJson() {
+        return init().setHeader("Content-type", "application/json;charset=utf-8");
+    }
+
+
+    public HttpUtils setMethod(String method) {
+        this.method = method;
+        return this;
+    }
+
+    public HttpUtils setUrl(String url) {
+        this.url = url;
+        return this;
     }
 
     /**
@@ -136,9 +163,28 @@ public class HttpUtils {
      * 设置字符串参数
      */
     public HttpUtils setBody(Object body) {
-        this.body = JSON.toJSONString(body);
+        if (body != null) {
+            String bodyStr = JSON.toJSONString(body);
+            if (!StrUtil.isBlank(bodyStr)) {
+                this.httpEntity = new StringEntity(bodyStr, charset);
+            }
+        }
         return this;
     }
+
+//    public HttpUtils setFile(String name, MultipartFile value) {
+//        if (value != null) {
+//            String fileName = value.getName();
+//            try {
+//                MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+//                builder.addBinaryBody(name, value.getInputStream(), ContentType.MULTIPART_FORM_DATA, fileName);
+//                this.httpEntity = builder.build();
+//            } catch (IOException e) {
+//                log.error(CommonConstants.DEFAULT_ERROR_MESSAGE, e);
+//            }
+//        }
+//        return this;
+//    }
 
     /**
      * 设置连接超时时间
@@ -149,6 +195,7 @@ public class HttpUtils {
         requestConfig = requestConfigBuilder.build();
         return this;
     }
+
     /**
      * 设置连接超时时间
      */
@@ -169,98 +216,69 @@ public class HttpUtils {
             uri = uriBuilder.build();
         } catch (URISyntaxException e) {
             log.error("url 地址异常");
-            e.printStackTrace();
         }
         return uri;
     }
 
-    /**
-     * http get 请求
-     */
-    public Map<String, String> get(String url) {
-        Map<String, String> resultMap = new HashMap<>();
-        //获取请求URI
-        URI uri = getUri(url);
-        log.info("get url :" + url);
-        log.info("params :" + nameValuePairs);
-        if (uri != null) {
-            HttpGet httpGet = new HttpGet(uri);
-            httpGet.setConfig(requestConfig);
-            if (!CollectionUtils.isEmpty(headers)) {
-                Header[] header = new Header[headers.size()];
-                httpGet.setHeaders(headers.toArray(header));
-            }
-
-            //执行get请求
-            try {
-                CloseableHttpResponse response = httpClient.execute(httpGet);
-                return getHttpResult(response, url, httpGet, resultMap);
-            } catch (Exception e) {
-                httpGet.abort();
-                resultMap.put("result", e.getMessage());
-                log.error("获取http GET请求返回值失败 url======" + url);
-                e.printStackTrace();
-                throw new HttpException(e);
-            }
+    public Map<String, String> exec(String url) {
+        this.url = url;
+        try {
+            return exec();
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
         }
-        return resultMap;
     }
 
-    /**
-     * http post 请求
-     */
-    public Map<String, String> post(String url){
+    public Map<String, String> exec() throws ReflectiveOperationException {
+        if (StrUtil.isBlank(url)) {
+            throw new HttpException("请求的url不允许为空");
+        }
         URI uri = this.getUri(url);
-        HttpPost httpPost = new HttpPost(uri);
-        httpPost.setConfig(requestConfig);
+        HttpRequestBase requestBase;
+        if (entityMethod.containsKey(method)) {
+            HttpEntityEnclosingRequestBase httpRequest = entityMethod.get(method)
+                    .getConstructor(URI.class)
+                    .newInstance(uri);
+            if (httpEntity != null) {
+                httpRequest.setEntity(httpEntity);
+            }
+            requestBase = httpRequest;
+        } else if (baseMethod.containsKey(method)) {
+            requestBase = baseMethod.get(method)
+                    .getConstructor(URI.class)
+                    .newInstance(uri);
+        } else {
+            throw new HttpException("不支持的请求方法" + method);
+        }
         if (!CollectionUtils.isEmpty(headers)) {
             Header[] header = new Header[headers.size()];
-            httpPost.setHeaders(headers.toArray(header));
+            requestBase.setHeaders(headers.toArray(header));
         }
-//        if (!CollectionUtils.isEmpty(nameValuePairs)) {
-//            try {
-//                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, charset));
-//            } catch (Exception e) {
-//                log.error("http post entity form error", e);
-//                throw new HttpException(e);
-//            }
-//        }
-        if (!StrUtil.isEmpty(body) && !body.equals("")) {
-            try {
-                httpPost.setEntity(new StringEntity(body, charset));
-            } catch (UnsupportedCharsetException e) {
-                log.error("http post entity form error");
-                e.printStackTrace();
-                throw new HttpException(e);
-            }
-        }
+        return exec(requestBase);
+    }
 
-        log.info("post url :" + url);
-        log.info("params :" + nameValuePairs);
-
+    public Map<String, String> exec(HttpRequestBase requestBase) {
         Map<String, String> resultMap = new HashMap<>();
         //执行post请求
         try {
-            CloseableHttpResponse response = httpClient.execute(httpPost);
-            return getHttpResult(response, url, httpPost, resultMap);
+            CloseableHttpResponse response = httpClient.execute(requestBase);
+            return getHttpResult(response, requestBase, resultMap);
         } catch (Exception e) {
-            httpPost.abort();
+            requestBase.abort();
             resultMap.put("result", e.getMessage());
-            log.error("获取http POST请求返回值失败 url======" + url);
+            log.error("获取http请求返回值失败 url={}", url);
             e.printStackTrace();
             throw new HttpException(e);
         }
-        //return resultMap;
     }
 
     /**
      * 获取请求返回值
      */
-    private Map<String, String> getHttpResult(CloseableHttpResponse response, String url, HttpUriRequest request, Map<String, String> resultMap) {
+    private Map<String, String> getHttpResult(CloseableHttpResponse response, HttpUriRequest request, Map<String, String> resultMap) {
 
         String result = "";
         int statusCode = response.getStatusLine().getStatusCode();
-        resultMap.put("statusCode", statusCode + "");
         HttpEntity entity = response.getEntity();
         if (entity != null) {
             try {
@@ -268,17 +286,17 @@ public class HttpUtils {
                 EntityUtils.consume(entity);//释放连接
             } catch (Exception e) {
                 log.error("获取http请求返回值解析失败");
-                e.printStackTrace();
                 request.abort();
             }
         }
+
+        log.info("result :" + result);
         if (statusCode != 200) {
-            result = "HttpClient status code :" + statusCode + "  request url===" + url;
-            log.info("HttpClient status code :" + statusCode + "  request url===" + url);
-            log.info("Message :" + result);
+            log.warn("HttpClient status code :" + statusCode + "  request url===" + url);
             request.abort();
         }
-        log.info("result :" + result);
+
+        resultMap.put("statusCode", statusCode + "");
         resultMap.put("result", result);
         return resultMap;
     }

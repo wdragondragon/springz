@@ -31,13 +31,7 @@ public class FeignRegistrar extends Registrar implements ScanAction {
         }
 
         ZFeign zFeign = clazz.getAnnotation(ZFeign.class);
-        String baseUrl = zFeign.baseUrl();
-        String basePath = zFeign.basePath();
-        String url = baseUrl + basePath;
-
-        Object o = new DynaProxyHttp(url, zFeign.depth()).bindInterface(clazz);
-
-
+        Object o = new DynaProxyHttp(zFeign).bindInterface(clazz);
 
         register(classInfo, o, BeanInfo.SINGLETON);
     }
