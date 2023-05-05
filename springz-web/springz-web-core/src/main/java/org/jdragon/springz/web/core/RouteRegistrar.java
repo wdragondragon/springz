@@ -7,7 +7,6 @@ import org.jdragon.springz.core.utils.BeanHelper;
 import org.jdragon.springz.scanner.Filter;
 import org.jdragon.springz.scanner.ScanAction;
 import org.jdragon.springz.scanner.entry.ClassInfo;
-import org.jdragon.springz.web.annotation.RequestBody;
 import org.jdragon.springz.web.annotation.RequestMapping;
 import org.jdragon.springz.web.annotation.RequestMethod;
 import org.jdragon.springz.web.annotation.ResponseBody;

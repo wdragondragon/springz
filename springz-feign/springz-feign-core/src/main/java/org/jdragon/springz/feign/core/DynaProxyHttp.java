@@ -31,8 +31,6 @@ public class DynaProxyHttp implements InvocationHandler {
     private final static List<String> noProxyMethod =
             Arrays.stream(Object.class.getDeclaredMethods()).map(Method::getName).collect(Collectors.toList());
 
-    private final static String DATE_FORMAT = "yyyy-MM-dd hh:mm:ss";
-
     static {
         globalParam.put(RequestHeader.class, new HashMap<>());
         globalParam.put(RequestBody.class, new HashMap<>());

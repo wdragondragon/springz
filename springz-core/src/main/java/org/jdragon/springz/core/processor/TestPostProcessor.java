@@ -1,8 +1,6 @@
 package org.jdragon.springz.core.processor;
 
 import org.jdragon.springz.core.entry.PostAutowiredBean;
-import org.jdragon.springz.scanner.entry.BeanInfo;
-import org.jdragon.springz.utils.Bean2Utils;
 
 /**
  * @Author: Jdragon

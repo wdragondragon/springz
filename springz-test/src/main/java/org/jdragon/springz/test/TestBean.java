@@ -2,13 +2,12 @@ package org.jdragon.springz.test;
 
 import org.jdragon.springz.ImportTest;
 import org.jdragon.springz.core.IocContext;
-import org.jdragon.springz.core.annotation.Inject;
 import org.jdragon.springz.core.annotation.Component;
+import org.jdragon.springz.core.annotation.Inject;
 import org.jdragon.springz.test.component.ComponentTest;
 import org.jdragon.springz.test.controller.UserController;
 import org.jdragon.springz.test.dao.CarDao;
 import org.jdragon.springz.test.dao.UserDao;
-import org.jdragon.springz.test.domain.Car;
 import org.jdragon.springz.test.domain.User;
 import org.jdragon.springz.test.service.UserAddService;
 import org.jdragon.springz.utils.Log.Logger;

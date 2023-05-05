@@ -1,6 +1,5 @@
 package org.jdragon.springz.web.core;
 
-import io.netty.handler.codec.http.HttpMethod;
 import lombok.Getter;
 import org.jdragon.springz.web.annotation.RequestMethod;
 import org.jdragon.springz.web.core.entity.RouteInfo;

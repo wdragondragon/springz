@@ -2,7 +2,6 @@ package org.jdragon.springz.aop.core.factory;
 
 import org.jdragon.springz.aop.core.AopContext;
 import org.jdragon.springz.aop.core.entity.PointCutInfo;
-import org.jdragon.springz.scanner.entry.BeanInfo;
 
 /**
  * @Author: Jdragon

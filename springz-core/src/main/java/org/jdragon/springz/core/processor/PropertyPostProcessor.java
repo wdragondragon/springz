@@ -1,7 +1,6 @@
 package org.jdragon.springz.core.processor;
 
 import com.alibaba.fastjson.JSON;
-import lombok.SneakyThrows;
 import org.jdragon.springz.core.annotation.Properties;
 import org.jdragon.springz.core.annotation.Value;
 import org.jdragon.springz.core.container.PropertiesContainer;

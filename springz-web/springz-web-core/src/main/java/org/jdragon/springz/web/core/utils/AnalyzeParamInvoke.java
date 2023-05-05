@@ -1,6 +1,5 @@
 package org.jdragon.springz.web.core.utils;
 
-import lombok.Getter;
 import org.jdragon.springz.utils.MethodUtils;
 import org.jdragon.springz.utils.json.JsonUtils;
 import org.jdragon.springz.web.core.entity.*;

@@ -5,7 +5,6 @@ import org.jdragon.springz.core.entry.PostAutowiredBean;
 import org.jdragon.springz.core.processor.BeanPostProcessor;
 import org.jdragon.springz.core.processor.PropertyPostProcessor;
 import org.jdragon.springz.core.processor.TestPostProcessor;
-import org.jdragon.springz.scanner.entry.BeanInfo;
 
 import java.util.ArrayList;
 import java.util.Comparator;

@@ -1,6 +1,5 @@
 package org.jdragon.springz.web.core.resolver;
 
-import com.alibaba.fastjson.JSON;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.jdragon.springz.utils.json.JsonUtils;
 import org.jdragon.springz.web.annotation.RequestHeader;

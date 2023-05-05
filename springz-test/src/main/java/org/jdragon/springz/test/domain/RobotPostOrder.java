@@ -1,8 +1,6 @@
 package org.jdragon.springz.test.domain;
 
 
-import java.io.Serializable;
-
 /**
  * @Author: Jdragon
  * @email: 1061917196@qq.com

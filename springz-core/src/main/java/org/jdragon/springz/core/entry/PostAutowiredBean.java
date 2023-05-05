@@ -1,6 +1,5 @@
 package org.jdragon.springz.core.entry;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
 import org.jdragon.springz.scanner.entry.BeanInfo;
 
 /**

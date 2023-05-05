@@ -1,7 +1,6 @@
 package org.jdragon.springz.web.core.entity;
 
 import io.netty.handler.codec.http.HttpHeaders;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.HashMap;

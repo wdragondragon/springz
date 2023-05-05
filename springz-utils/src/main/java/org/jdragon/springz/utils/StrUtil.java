@@ -1,6 +1,5 @@
 package org.jdragon.springz.utils;
 
-import java.sql.Struct;
 import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

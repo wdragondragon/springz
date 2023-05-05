@@ -3,8 +3,6 @@ package org.jdragon.springz.scanner;
 
 import org.jdragon.springz.scanner.entry.ClassInfo;
 
-import java.lang.reflect.InvocationTargetException;
-
 /**
  * @Author: Jdragon
  * @email: 1061917196@qq.com
